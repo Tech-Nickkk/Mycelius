@@ -23,9 +23,23 @@ const instrument = Instrument_Serif({
   variable: "--font-instrument",
 });
 
-const merchant = localFont({
-  src: "./fonts/Merchant-Medium.ttf",
-  variable: "--font-merchant",
+const ppMori = localFont({
+  src: "./fonts/PPMori.otf",
+  variable: "--font-ppmori",
+});
+
+const ppEditorial = localFont({
+  src: [
+    {
+      path: "./fonts/PPEditorial.otf",
+    },
+    {
+      path: "./fonts/PPEditorialItalic.otf",
+      weight: "400",
+      style: "italic",
+    },
+  ],
+  variable: "--font-ppeditorial",
 });
 
 export const metadata: Metadata = {
@@ -39,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${outfit.variable} ${instrument.variable} ${merchant.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${syne.variable} ${outfit.variable} ${instrument.variable} ${ppMori.variable} ${ppEditorial.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-[#ffffff] text-[#0f0f0f] antialiased font-sans selection:bg-[#FF6118]/20 selection:text-[#FF6118]" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
       </body>

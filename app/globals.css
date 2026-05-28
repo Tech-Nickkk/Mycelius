@@ -1,60 +1,58 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-outfit), sans-serif;
-  --font-display: var(--font-merchant), serif;
-  --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+    --font-ppmori: var(--font-ppmori), sans-serif;
+    --font-ppeditorial: var(--font-ppeditorial), serif;
+    --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
 
-  @keyframes scroll-line {
-    0% {
-      transform: scaleY(0);
-      transform-origin: top;
+    @keyframes scroll-line {
+        0% {
+            transform: scaleY(0);
+            transform-origin: top;
+        }
+
+        45% {
+            transform: scaleY(1);
+            transform-origin: top;
+        }
+
+        55% {
+            transform: scaleY(1);
+            transform-origin: bottom;
+        }
+
+        100% {
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
     }
-    45% {
-      transform: scaleY(1);
-      transform-origin: top;
-    }
-    55% {
-      transform: scaleY(1);
-      transform-origin: bottom;
-    }
-    100% {
-      transform: scaleY(0);
-      transform-origin: bottom;
-    }
-  }
 }
 
-/* Lenis smooth scrolling integration styles */
+/* Lenis smooth scrolling — required overrides, not possible in Tailwind */
 html.lenis,
 html.lenis body {
-  height: auto;
+    height: auto;
 }
 
 .lenis-smooth {
-  scroll-behavior: auto !important;
+    scroll-behavior: auto !important;
 }
 
 .lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
+    overscroll-behavior: contain;
 }
 
 .lenis-stopped {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .lenis-scrolling iframe {
-  pointer-events: none;
+    pointer-events: none;
 }
 
-/* Custom properties for mask line rendering required by SplitText */
+/* GSAP SplitText injected class — cannot be set via Tailwind since GSAP creates these elements at runtime */
 .line-item {
-  position: relative;
-  will-change: transform;
-  display: block;
-}
-
-/* Ensure smooth styling defaults for links across transition zones */
-nav a, .hero-content a, .hero-content p {
-  display: block;
+    position: relative;
+    will-change: transform;
+    display: block;
 }
