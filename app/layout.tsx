@@ -1,45 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
-import { Syne, Outfit, Instrument_Serif } from "next/font/google";
+import "./globals.css";
 import localFont from "next/font/local";
 
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "700", "800"],
-  variable: "--font-syne",
-});
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-outfit",
-});
 
-const instrument = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-instrument",
-});
-
-const ppMori = localFont({
-  src: "./fonts/PPMori.otf",
-  variable: "--font-ppmori",
-});
-
-const ppEditorial = localFont({
+const suisseIntl = localFont({
   src: [
-    {
-      path: "./fonts/PPEditorial.otf",
-    },
-    {
-      path: "./fonts/PPEditorialItalic.otf",
-      weight: "400",
-      style: "italic",
-    },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-Light.otf", weight: "300", style: "normal" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-LightIt.otf", weight: "300", style: "italic" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-RegularIt.otf", weight: "400", style: "italic" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-Medium.otf", weight: "500", style: "normal" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-MediumIt.otf", weight: "500", style: "italic" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-Bold.otf", weight: "700", style: "normal" },
+    { path: "./fonts/suisse-font-family/SuisseIntlTrial-BoldIt.otf", weight: "700", style: "italic" },
   ],
-  variable: "--font-ppeditorial",
+  variable: "--font-suisse",
 });
 
 export const metadata: Metadata = {
@@ -53,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${outfit.variable} ${instrument.variable} ${ppMori.variable} ${ppEditorial.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${suisseIntl.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-[#ffffff] text-[#0f0f0f] antialiased font-sans selection:bg-[#FF6118]/20 selection:text-[#FF6118]" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
       </body>

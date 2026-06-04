@@ -6,7 +6,7 @@ import Lenis from "lenis";
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
-  { label: "Other", href: "#other" },
+  { label: "Portfolio", href: "#portfolio" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -30,7 +30,7 @@ function scrollToSection(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 w-full px-8 py-6 flex justify-between items-center z-[99] mix-blend-difference">
+    <nav className="fixed top-0 left-0 w-full px-8 py-6 flex justify-between items-center z-99 mix-blend-difference">
       {/* Logo */}
       <div className="flex justify-center items-center">
         <a href="#home" onClick={(e) => scrollToSection(e, "#home")} className="block">
@@ -39,7 +39,7 @@ export default function Navbar() {
             alt="MYCELIUS"
             width={180}
             height={60}
-            className="h-15 w-auto object-contain brightness-0 invert"
+            className="h-12 md:h-14 w-auto object-contain brightness-0 invert"
             priority
           />
         </a>
@@ -55,7 +55,7 @@ export default function Navbar() {
             className="group relative uppercase tracking-[0.07em] text-xs pb-1"
           >
             {link.label}
-            <span className="absolute left-0 bottom-0 w-full h-[1px] bg-white scale-x-0 origin-right transition-transform duration-300 ease-out group-hover:scale-x-100 group-hover:origin-left"></span>
+            <span className="absolute left-0 bottom-0 w-full h-px bg-white scale-x-0 origin-right transition-transform duration-300 ease-out group-hover:scale-x-100 group-hover:origin-left"></span>
           </a>
         ))}
       </div>
@@ -63,8 +63,9 @@ export default function Navbar() {
       {/* Right Side Action */}
       <div className="flex justify-end items-center">
         <a
-          href="#collaborate"
-          className="group relative overflow-hidden font-ppmori text-xs uppercase tracking-[0.05em] px-6 py-3 border border-white text-white rounded-full transition-colors duration-300 flex items-center justify-center"
+          href="#contact"
+          onClick={(e) => scrollToSection(e, "#contact")}
+          className="group relative overflow-hidden font-ppmori text-xs uppercase tracking-wider px-6 py-3 border border-white text-white rounded-full transition-colors duration-300 flex items-center justify-center"
         >
           <span className="relative z-10 group-hover:text-black transition-colors duration-300">
             Collab
