@@ -213,6 +213,26 @@ export default function TargetAudience() {
 
 
 
+    // Separate ScrollTrigger for the mushroom entry animation as the section scrolls into view
+    gsap.fromTo(
+      ".mushroom-left",
+      {
+        y: 350,
+        rotation: -25,
+      },
+      {
+        y: 0,
+        rotation: 0,
+        scrollTrigger: {
+          trigger: stickySectionRef.current,
+          start: "top center", // Starts when the top of the section enters the bottom of the viewport
+          end: "bottom top", 
+          // markers: true,     // Completes when the top of the section is 30% from the top of the viewport
+          scrub: 1.2,
+        },
+      }
+    );
+
     // The scroll trigger
     ScrollTrigger.create({
         trigger: stickySectionRef.current,
@@ -231,6 +251,12 @@ export default function TargetAudience() {
 
             const currentSlide = Math.floor(mainMove / slideWidth);
             const sliderProgress = (mainMove % slideWidth) / slideWidth;
+
+            const wordsLeft = slidesContainerRef.current?.querySelectorAll('.word-left');
+            const wordsRight = slidesContainerRef.current?.querySelectorAll('.word-right');
+            
+            if (wordsLeft) wordsLeft.forEach((w) => gsap.set(w, { x: mainMove * 0.08 }));
+            if (wordsRight) wordsRight.forEach((w) => gsap.set(w, { x: -mainMove * 0.08 }));
 
             slides.forEach((slide, index) => {
                 const image = slide.querySelector("img");
@@ -268,102 +294,134 @@ export default function TargetAudience() {
               <SectionShader color="#ffffff" scrollTarget="#target-audience-scroll" speed={1.13} />
               
               <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-6xl px-8 text-white py-12">
-                <div className="w-full flex flex-col gap-4 md:gap-8">
+                <div className="w-full flex flex-col items-center text-center gap-4 md:gap-8">
                   {/* Who */}
-                  <div className="w-full">
-                    <div className="pl-[0%]">
-                      <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">Who</span>
-                    </div>
+                  <div className="w-full flex justify-center word-left will-change-transform">
+                    <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">Who</span>
                   </div>
                   {/* we */}
-                  <div className="w-full">
-                    <div className="pl-[15%] md:pl-[20%]">
-                      <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">we</span>
-                    </div>
+                  <div className="w-full flex justify-center word-right will-change-transform">
+                    <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">we</span>
                   </div>
                   {/* work */}
-                  <div className="w-full">
-                    <div className="pl-[30%] md:pl-[40%]">
-                      <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">work</span>
-                    </div>
+                  <div className="w-full flex justify-center word-left will-change-transform">
+                    <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">work</span>
                   </div>
                   {/* with */}
-                  <div className="w-full flex items-end">
-                    <div className="w-full flex items-center justify-between pl-[45%] md:pl-[60%] pr-4">
-                      <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">with</span>
-                      <span className="text-4xl md:text-[5rem] font-light">&rarr;</span>
-                    </div>
+                  <div className="w-full flex justify-center items-center gap-4 md:gap-8 word-right will-change-transform">
+                    <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">with</span>
+                    <span className="text-4xl md:text-[5rem] font-light">&rarr;</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Left Decorative Mushroom */}
+              <div className="mushroom-left absolute left-[8%] md:left-[15%] top-[55%] -translate-y-1/2 w-28 h-28 md:w-44 md:h-44 pointer-events-none z-10">
+                <img src="/mushroom.png" alt="Mushroom Decor" className="w-full h-full object-contain" style={{ filter: "brightness(0) invert(1)" }} />
               </div>
             </div>
 
             {/* Slide 2 */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute inset-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop" alt="Interior Designers" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                </div>
-                <div className="audience-title absolute top-full left-0 w-full pt-10 overflow-hidden z-10 text-center">
-                  <h1 className="relative text-white text-[2rem] md:text-[45px] lg:text-[55px] font-normal tracking-tight leading-[0.9] will-change-transform font-ppeditorial">
+                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                  <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Interior Designers
                   </h1>
+                </div>
+
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop" alt="Interior Designers" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                  
+                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
+                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
+                      Interior Designers
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Slide 3 */}
-            <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
+            <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute inset-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop" alt="Architects" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                </div>
-                <div className="audience-title absolute top-full left-0 w-full pt-10 overflow-hidden z-10 text-center">
-                  <h1 className="relative text-white text-[2rem] md:text-[45px] lg:text-[55px] font-normal tracking-tight leading-[0.9] will-change-transform font-ppeditorial">
+                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                  <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Architects
                   </h1>
+                </div>
+
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop" alt="Architects" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                  
+                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
+                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
+                      Architects
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Slide 4 */}
-            <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
+            <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute inset-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop" alt="Luxury Residences" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                </div>
-                <div className="audience-title absolute top-full left-0 w-full pt-10 overflow-hidden z-10 text-center">
-                  <h1 className="relative text-white text-[2rem] md:text-[45px] lg:text-[55px] font-normal tracking-tight leading-[0.9] will-change-transform font-ppeditorial">
+                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                  <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Luxury Residences
                   </h1>
+                </div>
+
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop" alt="Luxury Residences" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                  
+                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
+                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
+                      Luxury Residences
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Slide 5 */}
-            <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
+            <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute inset-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop" alt="Hospitality Spaces" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                </div>
-                <div className="audience-title absolute top-full left-0 w-full pt-10 overflow-hidden z-10 text-center">
-                  <h1 className="relative text-white text-[2rem] md:text-[45px] lg:text-[55px] font-normal tracking-tight leading-[0.9] will-change-transform font-ppeditorial">
+                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                  <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Hospitality Spaces
                   </h1>
+                </div>
+
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop" alt="Hospitality Spaces" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                  
+                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
+                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
+                      Hospitality Spaces
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Slide 6 */}
-            <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
+            <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute inset-0 overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" alt="Sustainable Commercial Interiors" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                </div>
-                <div className="audience-title absolute top-full left-0 w-full pt-10 overflow-hidden z-10 text-center">
-                  <h1 className="relative text-white text-[2rem] md:text-[45px] lg:text-[55px] font-normal tracking-tight leading-[0.9] will-change-transform font-ppeditorial">
+                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                  <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Sustainable Commercial
                   </h1>
+                </div>
+
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" alt="Sustainable Commercial Interiors" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                  
+                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
+                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
+                      Sustainable Commercial
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
