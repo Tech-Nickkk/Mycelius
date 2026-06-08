@@ -200,6 +200,7 @@ export default function TargetAudience() {
   const stickySectionRef = useRef<HTMLElement>(null);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const linePathRef = useRef<SVGPathElement>(null);
 
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -210,8 +211,6 @@ export default function TargetAudience() {
     const stickyHeight = window.innerHeight * 7;
     const totalMove = slidesContainerRef.current.offsetWidth - sliderRef.current.offsetWidth;
     const slideWidth = sliderRef.current.offsetWidth;
-
-
 
     // Separate ScrollTrigger for the mushroom entry animation as the section scrolls into view
     gsap.fromTo(
@@ -233,52 +232,86 @@ export default function TargetAudience() {
       }
     );
 
-    // The scroll trigger
-    ScrollTrigger.create({
+    const wordsLeft = slidesContainerRef.current.querySelectorAll(".word-left");
+    const wordsRight = slidesContainerRef.current.querySelectorAll(".word-right");
+
+    // Main horizontal scroll timeline with pinning and scrubbing
+    const tl = gsap.timeline({
+      scrollTrigger: {
         trigger: stickySectionRef.current,
         start: "top top",
         end: `+=${stickyHeight}px`,
-        scrub: 1,
+        scrub: 0.3, // Very responsive 100ms lag to absorb micro-jitters without lag feel
         pin: true,
         pinSpacing: true,
-        onUpdate: (self) => {
-            const progress = self.progress;
-            const mainMove = progress * totalMove;
-
-            gsap.set(slidesContainerRef.current, {
-                x: -mainMove,
-            });
-
-            const currentSlide = Math.floor(mainMove / slideWidth);
-            const sliderProgress = (mainMove % slideWidth) / slideWidth;
-
-            const wordsLeft = slidesContainerRef.current?.querySelectorAll('.word-left');
-            const wordsRight = slidesContainerRef.current?.querySelectorAll('.word-right');
-            
-            if (wordsLeft) wordsLeft.forEach((w) => gsap.set(w, { x: mainMove * 0.08 }));
-            if (wordsRight) wordsRight.forEach((w) => gsap.set(w, { x: -mainMove * 0.08 }));
-
-            slides.forEach((slide, index) => {
-                const image = slide.querySelector("img");
-                if (image) {
-                    if (index === currentSlide || index === currentSlide + 1) {
-                        const relativeProgress =
-                            index === currentSlide ? sliderProgress : sliderProgress - 1;
-                        const parallaxAmount = relativeProgress * slideWidth * 0.25;
-                        gsap.set(image, {
-                            x: parallaxAmount,
-                            scale: 1.35,
-                        });
-                    } else {
-                        gsap.set(image, {
-                            x: 0,
-                            scale: 1.35,
-                        });
-                    }
-                }
-            });
-        },
+      }
     });
+
+    // 1. Translate slidesContainerRef horizontally
+    tl.to(slidesContainerRef.current, {
+      x: -totalMove,
+      ease: "none",
+      duration: 1,
+    }, 0);
+
+    // 2. Animate the left-moving words
+    tl.to(wordsLeft, {
+      x: totalMove * 0.08,
+      ease: "none",
+      duration: 1,
+    }, 0);
+
+    // 3. Animate the right-moving words
+    tl.to(wordsRight, {
+      x: -totalMove * 0.08,
+      ease: "none",
+      duration: 1,
+    }, 0);
+
+    // 4. Parallax effect for each slide image
+    slides.forEach((slide, index) => {
+      const image = slide.querySelector("img");
+      if (!image) return;
+
+      gsap.set(image, { scale: 1.35 });
+
+      // Determine timeline progress range for this slide's parallax
+      const startProgress = Math.max(0, (index - 1) / 5);
+      const endProgress = Math.min(1, (index + 1) / 5);
+      const duration = endProgress - startProgress;
+
+      if (duration > 0) {
+        const startX = (index === 0) ? 0 : -slideWidth * 0.25;
+        const endX = (index === 5) ? 0 : slideWidth * 0.25;
+
+        tl.fromTo(image, 
+          { x: startX },
+          {
+            x: endX,
+            ease: "none",
+            duration: duration,
+          },
+          startProgress
+        );
+      }
+    });
+
+    // 5. SVG line path drawing animation on horizontal scroll start
+    if (linePathRef.current) {
+      const path = linePathRef.current;
+      const pathLength = path.getTotalLength();
+      
+      gsap.set(path, {
+        strokeDasharray: pathLength,
+        strokeDashoffset: pathLength,
+      });
+
+      tl.to(path, {
+        strokeDashoffset: 0,
+        ease: "none",
+        duration: 0.2, // draw path over the first 20% of horizontal scroll
+      }, 0);
+    }
 
   }, { scope: stickySectionRef });
 
@@ -289,6 +322,44 @@ export default function TargetAudience() {
         <div ref={sliderRef} className="relative w-full h-full overflow-hidden">
           <div ref={slidesContainerRef} className="relative w-[600%] h-full flex will-change-transform">
             
+            {/* SVG Connecting Line */}
+            <svg 
+              className="absolute left-[62vw] md:left-[56vw] w-[38vw] md:w-[60vw] h-[30vh] md:h-[40vh] top-[55%] md:top-[48%] pointer-events-none z-20 overflow-visible"
+              viewBox="0 0 500 400"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <marker
+                  id="arrowhead"
+                  viewBox="0 0 10 10"
+                  refX="6"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 1 2 L 7 5 L 1 8"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                </marker>
+              </defs>
+              <path
+                ref={linePathRef}
+                d="M 87.543 249.701 C 95.84 233.107 105.472 217.806 115.738 202.407 C 121.626 193.574 129.119 185.096 137.566 178.76 C 224.715 113.398 242.927 263.652 296.729 285.172 C 331.696 299.158 369.959 256.977 403.14 256.977"
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                markerEnd="url(#arrowhead)"
+              />
+            </svg>
+
             {/* Slide 1 - Intro */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full bg-[#0f0f0f] flex items-center justify-center overflow-hidden">
               <SectionShader color="#ffffff" scrollTarget="#target-audience-scroll" speed={1.13} />
@@ -310,7 +381,6 @@ export default function TargetAudience() {
                   {/* with */}
                   <div className="w-full flex justify-center items-center gap-4 md:gap-8 word-right will-change-transform">
                     <span className="text-[12vw] md:text-[8vw] font-normal tracking-tighter leading-[0.8]">with</span>
-                    <span className="text-4xl md:text-[5rem] font-light">&rarr;</span>
                   </div>
                 </div>
               </div>
@@ -322,22 +392,15 @@ export default function TargetAudience() {
             </div>
 
             {/* Slide 2 */}
-            <div className="audience-slide relative w-1/6 shrink-0 h-full flex flex-col items-center justify-center p-8">
+            <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop" alt="Interior Designers" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                </div>
+                <div className="absolute left-0 right-0 top-full mt-4 md:mt-6 flex justify-center pointer-events-none z-20">
                   <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Interior Designers
                   </h1>
-                </div>
-
-                <div className="absolute inset-0 overflow-hidden z-10">
-                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop" alt="Interior Designers" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                  
-                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
-                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
-                      Interior Designers
-                    </h1>
-                  </div>
                 </div>
               </div>
             </div>
@@ -345,20 +408,13 @@ export default function TargetAudience() {
             {/* Slide 3 */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop" alt="Architects" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                </div>
+                <div className="absolute left-0 right-0 top-full mt-4 md:mt-6 flex justify-center pointer-events-none z-20">
                   <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Architects
                   </h1>
-                </div>
-
-                <div className="absolute inset-0 overflow-hidden z-10">
-                  <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop" alt="Architects" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                  
-                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
-                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
-                      Architects
-                    </h1>
-                  </div>
                 </div>
               </div>
             </div>
@@ -366,20 +422,13 @@ export default function TargetAudience() {
             {/* Slide 4 */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop" alt="Luxury Residences" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                </div>
+                <div className="absolute left-0 right-0 top-full mt-4 md:mt-6 flex justify-center pointer-events-none z-20">
                   <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Luxury Residences
                   </h1>
-                </div>
-
-                <div className="absolute inset-0 overflow-hidden z-10">
-                  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop" alt="Luxury Residences" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                  
-                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
-                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
-                      Luxury Residences
-                    </h1>
-                  </div>
                 </div>
               </div>
             </div>
@@ -387,20 +436,13 @@ export default function TargetAudience() {
             {/* Slide 5 */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop" alt="Hospitality Spaces" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                </div>
+                <div className="absolute left-0 right-0 top-full mt-4 md:mt-6 flex justify-center pointer-events-none z-20">
                   <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Hospitality Spaces
                   </h1>
-                </div>
-
-                <div className="absolute inset-0 overflow-hidden z-10">
-                  <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop" alt="Hospitality Spaces" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                  
-                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
-                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
-                      Hospitality Spaces
-                    </h1>
-                  </div>
                 </div>
               </div>
             </div>
@@ -408,20 +450,13 @@ export default function TargetAudience() {
             {/* Slide 6 */}
             <div className="audience-slide relative w-1/6 shrink-0 h-full flex items-center justify-center p-8">
               <div className="relative w-full md:w-[70vw] h-[65vh]">
-                <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none z-0">
+                <div className="absolute inset-0 overflow-hidden z-10">
+                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" alt="Sustainable Commercial Interiors" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
+                </div>
+                <div className="absolute left-0 right-0 top-full mt-4 md:mt-6 flex justify-center pointer-events-none z-20">
                   <h1 className="text-white text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
                     Sustainable Commercial
                   </h1>
-                </div>
-
-                <div className="absolute inset-0 overflow-hidden z-10">
-                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" alt="Sustainable Commercial Interiors" className="relative w-full h-full object-cover will-change-transform scale-[1.35]" />
-                  
-                  <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 flex justify-center pointer-events-none">
-                    <h1 className="text-[#FF6118] text-[7.5vw] lg:text-[5.5vw] font-normal tracking-tight leading-[0.9] whitespace-nowrap font-ppeditorial">
-                      Sustainable Commercial
-                    </h1>
-                  </div>
                 </div>
               </div>
             </div>

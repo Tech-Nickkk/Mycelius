@@ -35,12 +35,12 @@ export default function Preloader() {
     tl.to(".loader .divider", {
       scaleY: "100%",
       duration: 1,
-      onComplete: () => gsap.to(".loader .divider", { opacity: 0, duration: 0.4, delay: 0.3 }),
+      onStart: () => gsap.to(".loader .divider", { opacity: 0, duration: 1, delay: 0.7 }),
     });
 
     // Animate words apart horizontally as the line comes in
-    tl.to("#word-1", { x: "-20px", duration: 1 }, "<");
-    tl.to("#word-2", { x: "20px", duration: 1 }, "<");
+    tl.to("#word-1", { x: "-15px", duration: 1 }, "<");
+    tl.to("#word-2", { x: "15px", duration: 1 }, "<");
 
     tl.to("#word-1 h1", { y: "105%", duration: 1, delay: 0.3 });
     tl.to("#word-2 h1", { y: "-105%", duration: 1 }, "<");
@@ -67,29 +67,29 @@ export default function Preloader() {
   }, { dependencies: [] }); // Empty array ensures this only runs once on mount, omitting scope allows global query
 
   return (
-    <div ref={preloaderRef} className="loader fixed inset-0 w-screen h-svh overflow-hidden z-100 pointer-events-none">
+    <div ref={preloaderRef} className="loader fixed inset-0 w-screen h-svh overflow-hidden z-[9999] pointer-events-none">
       {/* Dark overlay blocks */}
-      <div className="overlay absolute top-0 w-full h-full flex">
-        <div className="block w-full h-full bg-[#1a1a1a] [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" style={{ willChange: "clip-path" }}></div>
-        <div className="block w-full h-full bg-[#1a1a1a] [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" style={{ willChange: "clip-path" }}></div>
+      <div className="overlay absolute top-0 w-full h-full">
+        <div className="block absolute left-0 top-0 w-[50.5%] h-full bg-[#1a1a1a] [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" style={{ willChange: "clip-path" }}></div>
+        <div className="block absolute right-0 top-0 w-[50.5%] h-full bg-[#1a1a1a] [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" style={{ willChange: "clip-path" }}></div>
       </div>
 
       {/* Intro logo words */}
-      <div className="intro-logo absolute top-1/2 left-1/2 translate-x-[-75%] -translate-y-1/2 flex font-ppeditorial font-medium z-102">
-        <div className="word [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] relative" id="word-1">
-          <h1 className="text-[2.5rem] max-[900px]:text-[2rem] text-white font-medium leading-none translate-y-[-120%]">
-            Myceli
+      <div className="intro-logo absolute inset-0 font-neue-haas font-light z-102 pointer-events-none">
+        <div className="word absolute right-1/2 top-1/2 -translate-y-1/2 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" id="word-1">
+          <h1 className="text-[2.5rem] tracking-wider max-[900px]:text-[2rem] text-white leading-none translate-y-[-120%] whitespace-nowrap">
+            myceli
           </h1>
         </div>
-        <div className="word [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" id="word-2">
-          <h1 className="text-[2.5rem] max-[900px]:text-[2rem] text-orange-500 leading-none translate-y-[120%]">
-            us
+        <div className="word absolute left-1/2 top-1/2 -translate-y-1/2 [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" id="word-2">
+          <h1 className="text-[2.5rem] tracking-wider max-[900px]:text-[2rem] text-orange-500 leading-none translate-y-[120%] whitespace-nowrap">
+            us<span className="text-white">.</span>
           </h1>
         </div>
       </div>
 
       {/* Divider line */}
-      <div className="divider absolute top-0 left-1/2 -translate-x-1/2 scale-y-0 origin-top w-px h-full bg-white/20 z-101"></div>
+      <div className="divider absolute top-0 left-1/2 -translate-x-1/2 scale-y-0 origin-top w-px h-full bg-white/40 z-101"></div>
     </div>
   );
 }

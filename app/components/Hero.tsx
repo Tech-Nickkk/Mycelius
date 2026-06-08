@@ -131,13 +131,13 @@ function HeroShader({
     resizeWebGL();
     window.addEventListener("resize", resizeWebGL);
 
-    let scrollProgress = 0;
+    let targetProgress = 0;
     const handleScroll = () => {
       if (!heroElement) return;
       const scroll = window.scrollY;
       const maxScroll = heroElement.offsetHeight;
       if (maxScroll > 0) {
-        scrollProgress = Math.min((scroll / maxScroll) * speed, 1.1);
+        targetProgress = Math.min((scroll / maxScroll) * speed, 1.1);
       }
     };
 
@@ -150,11 +150,19 @@ function HeroShader({
     const animateWebGL = () => {
       if (!material || !renderer) return;
       
-      // Only render if the scroll progress actually changed to save GPU cycles
-      if (scrollProgress !== lastRenderedProgress) {
-        material.uniforms.uProgress.value = scrollProgress;
+      const diff = targetProgress - material.uniforms.uProgress.value;
+      
+      // If the difference is meaningful, continue interpolating and rendering
+      if (Math.abs(diff) > 0.001) {
+        material.uniforms.uProgress.value += diff * 0.08;
         renderer.render(scene, camera);
-        lastRenderedProgress = scrollProgress;
+        lastRenderedProgress = material.uniforms.uProgress.value;
+      } 
+      // If we just reached the target, do one final exact render and then sleep
+      else if (lastRenderedProgress !== targetProgress) {
+        material.uniforms.uProgress.value = targetProgress;
+        renderer.render(scene, camera);
+        lastRenderedProgress = targetProgress;
       }
       
       animationFrameId = requestAnimationFrame(animateWebGL);
@@ -198,16 +206,14 @@ export default function Hero() {
       <HeroShader color="#ffffff" spread={0.5} speed={1.0} scrollTarget="#hero-video-wrapper" />
 
       {/* Hero Text Overlay */}
-      <div className="hero-content absolute inset-0 w-full h-svh px-8 flex flex-col items-center justify-center text-center z-10">
-        <div className="hero-header w-full max-w-4xl flex flex-col items-center justify-center text-center">
-          <h1 className="text-white text-[12svh] max-sm:text-4xl font-ppmori leading-[1.1]  mb-4 text-center">
-            Not manufactured.<br />
-            Cultivated.
+      <div className="hero-content absolute inset-0 w-full h-svh px-6 sm:px-8 flex flex-col items-center justify-center text-center z-10">
+        <div className="hero-header w-full max-w-5xl flex flex-col items-center justify-center text-center font-suisse">
+          <h1 className="text-white text-5xl sm:text-7xl md:text-[10vw] lg:text-[12svh] xl:text-[14svh] leading-[1.05] mb-6 text-center font-medium tracking-tight">
+            Luxury.<br />
+            Grown Slowly.
           </h1>
-          <p className="text-white max-w-xl text-xs md:text-sm font-ppmori tracking-wide font-light text-center">
-            Premium mycelium biomaterials designed for interior spaces where
-            sustainability, functionality, and material culture coexist
-            beautifully.
+          <p className="text-white/90 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl text-xs sm:text-lg md:text-xl lg:text-[2.2svh] xl:text-[2.5svh] tracking-wide font-normal text-center leading-relaxed">
+            Exclusive mycelium biomaterials for interiors, furniture and objects.
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 
 interface Story {
   title: string[];
@@ -46,6 +46,7 @@ export default function WhatWeDo() {
   const [cursorText, setCursorText] = useState("Next");
   const [isOnImage, setIsOnImage] = useState(false);
   const isCursorVisible = useRef(false);
+  const mousePositionRef = useRef({ x: -1000, y: -1000 });
 
   // Keep a ref of activeStory to avoid stale closures inside event listeners
   const activeStoryRef = useRef(activeStory);
@@ -151,13 +152,18 @@ export default function WhatWeDo() {
     const newTitles0 = containerRef.current?.querySelectorAll(".new-title-text.title-0");
     const oldTitles1 = containerRef.current?.querySelectorAll(".old-title-text.title-1");
     const newTitles1 = containerRef.current?.querySelectorAll(".new-title-text.title-1");
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
     if (newTitles0) {
-      gsap.set(newTitles0, { yPercent: direction === "next" ? 110 : -110, y: 0 });
+      // On mobile, upcoming text always comes from bottom (110). On desktop, respect direction.
+      const startY = isMobile ? 110 : (direction === "next" ? 110 : -110);
+      gsap.set(newTitles0, { yPercent: startY, y: 0 });
       gsap.to(newTitles0, { yPercent: 0, duration: 0.5, delay: 0.4 });
     }
     if (oldTitles0) {
-      gsap.to(oldTitles0, { yPercent: direction === "next" ? -110 : 110, duration: 0.5, delay: 0.4 });
+      // On mobile, previous text always goes to top (-110). On desktop, respect direction.
+      const endY = isMobile ? -110 : (direction === "next" ? -110 : 110);
+      gsap.to(oldTitles0, { yPercent: endY, duration: 0.5, delay: 0.4 });
     }
 
     if (newTitles1) {
@@ -278,12 +284,13 @@ export default function WhatWeDo() {
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (typeof window === "undefined" || !cursorRef.current) return;
     
+    const { clientX, clientY } = event;
+    mousePositionRef.current = { x: clientX, y: clientY };
+
     // If the cursor was hidden by a scroll event, reveal it the moment they move the mouse
     if (!isCursorVisible.current) {
-      handleMouseEnter();
+      handleMouseEnter(event);
     }
-
-    const { clientX, clientY } = event;
 
     if (xTo.current && yTo.current) {
       xTo.current(clientX - 50);
@@ -301,9 +308,17 @@ export default function WhatWeDo() {
     }
   };
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (event?: React.MouseEvent | { clientX: number; clientY: number }) => {
     if (cursorRef.current && !isCursorVisible.current) {
       isCursorVisible.current = true;
+
+      if (event) {
+        gsap.set(cursorRef.current, {
+          x: event.clientX - 50,
+          y: event.clientY - 50,
+        });
+      }
+
       gsap.to(cursorRef.current, {
         opacity: 1,
         scale: 1,
@@ -324,6 +339,46 @@ export default function WhatWeDo() {
       });
     }
   };
+
+  // Track global mouse position and handle visibility boundaries on move and scroll
+  useEffect(() => {
+    const updateGlobalMouse = (e: MouseEvent) => {
+      mousePositionRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      
+      const { x, y } = mousePositionRef.current;
+      if (x < 0 || y < 0) return; // Not initialized yet
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      const isOverContainer = (
+        x >= rect.left &&
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom
+      );
+      
+      if (isOverContainer) {
+        if (!isCursorVisible.current) {
+          handleMouseEnter({ clientX: x, clientY: y });
+        }
+      } else {
+        if (isCursorVisible.current) {
+          handleMouseLeave();
+        }
+      }
+    };
+
+    window.addEventListener("mousemove", updateGlobalMouse, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener("mousemove", updateGlobalMouse);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Handle screen taps/clicks for navigation
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -348,31 +403,16 @@ export default function WhatWeDo() {
     changeStory();
   };
 
-  // Hide custom cursor when scrolling out of the section
-  useGSAP(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    
-    if (!containerRef.current) return;
-    
-    ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: "top bottom",
-      end: "bottom top",
-      onLeave: handleMouseLeave,
-      onLeaveBack: handleMouseLeave,
-    });
-  }, { scope: containerRef });
-
 
   return (
     <section
-      id="portfolio"
+      id="what-we-do"
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleContainerClick}
-      className="custom-carousel-container relative w-full h-svh font-ppmori text-[#0f0f0f] select-none overflow-hidden bg-[#ffffff] flex items-center justify-center"
+      className="custom-carousel-container relative w-full h-svh font-suisse text-[#0f0f0f] select-none overflow-hidden bg-[#ffffff] flex items-center justify-center"
     >
       {/* cursor:none on whole section */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -394,31 +434,36 @@ export default function WhatWeDo() {
       <div
         ref={cursorRef}
         className={`cursor fixed top-0 left-0 w-[100px] h-[100px] hidden md:flex justify-center items-center rounded-full pointer-events-none z-100 opacity-0 scale-75 transition-[backdrop-filter,background-color,border] duration-300 ${isOnImage ? 'backdrop-blur-[20px] border border-[#FF6118]/40' : ''}`}
-        style={{ backgroundColor: isOnImage ? 'rgba(255, 97, 24, 0.35)' : '#FF6118' }}
+        style={{ 
+          backgroundColor: isOnImage ? 'rgba(255, 97, 24, 0.35)' : '#FF6118',
+          transform: 'translate3d(-1000px, -1000px, 0)'
+        }}
       >
-        <p className="text-[12px] uppercase text-white font-normal font-ppmori tracking-wider select-none">
+        <p className="text-[12px] uppercase text-white font-normal font-suisse tracking-wider select-none">
           {cursorText}
         </p>
       </div>
+
 
       {/* Central Interactive Card Wrapper */}
       <div className="relative w-[90vw] md:w-[75vw] lg:w-[60vw] h-[55vh] md:h-[65vh] lg:h-[75vh]">
         
         {/* LAYER 1: BLACK TEXT (Behind the image, overflows naturally over the white background) */}
         {/* Line 0: Overlapping below top left corner */}
-        <div className="absolute top-[4%] left-[-15%] md:left-[-25%] xl:left-[-30%] overflow-hidden pointer-events-none z-10 grid">
+        {/* Line 0: Overlapping below top left corner */}
+        <div className="absolute max-md:bottom-[-25px] max-md:top-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[0] && (
-            <h1 className="old-title-text title-0 col-start-1 row-start-1 justify-self-start whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#0f0f0f] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em]">
-              {stories[prevStory].title[0]}
+            <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#0f0f0f] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+              {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>
             </h1>
           )}
-          <h1 className="new-title-text title-0 col-start-1 row-start-1 justify-self-start whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#0f0f0f] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em]">
-            {stories[activeStory].title[0]}
+          <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#0f0f0f] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+            {stories[activeStory].title[0]}<span className="md:hidden"> {stories[activeStory].title[1]}</span>
           </h1>
         </div>
 
         {/* Line 1: Overlapping above bottom right corner */}
-        <div className="absolute bottom-[4%] right-[-15%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-10 grid">
+        <div className="absolute max-md:hidden md:bottom-[4%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[1] && (
             <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#0f0f0f] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
               {stories[prevStory].title[1]}
@@ -446,19 +491,19 @@ export default function WhatWeDo() {
 
           {/* LAYER 3: WHITE TEXT (Inside image container, physically clipped by overflow-hidden at the exact image boundary) */}
           {/* Line 0: White Text */}
-          <div className="absolute top-[4%] left-[-15%] md:left-[-25%] xl:left-[-30%] overflow-hidden pointer-events-none z-30 grid">
+          <div className="absolute max-md:bottom-[-25px] max-md:top-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-30 grid">
             {prevStory !== null && stories[prevStory].title[0] && (
-              <h1 className="old-title-text title-0 col-start-1 row-start-1 justify-self-start whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em]">
-                {stories[prevStory].title[0]}
+              <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+                {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>
               </h1>
             )}
-            <h1 className="new-title-text title-0 col-start-1 row-start-1 justify-self-start whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em]">
-              {stories[activeStory].title[0]}
+            <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+              {stories[activeStory].title[0]}<span className="md:hidden"> {stories[activeStory].title[1]}</span>
             </h1>
           </div>
 
           {/* Line 1: White Text */}
-          <div className="absolute bottom-[4%] right-[-15%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-30 grid">
+          <div className="absolute max-md:hidden md:bottom-[4%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-30 grid">
             {prevStory !== null && stories[prevStory].title[1] && (
               <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
                 {stories[prevStory].title[1]}
@@ -471,7 +516,7 @@ export default function WhatWeDo() {
         </div>
 
         {/* LAYER 4: Segmented Progress indicators */}
-        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto w-[80%] md:w-[40%] mx-auto px-1 z-40">
+        <div className="absolute max-md:-top-10 max-md:bottom-auto -bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto w-[80%] md:w-[40%] mx-auto px-1 z-40">
           <div className="indices w-full h-[10px] flex justify-between items-center gap-[0.25em]">
             {stories.map((_, idx) => (
               <div

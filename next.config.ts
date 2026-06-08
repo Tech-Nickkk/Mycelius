@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Allow mobile device to access dev server over LAN
-  allowedDevOrigins: ["10.89.10.222"],
+  allowedDevOrigins: ["10.89.10.222", "10.237.212.222"],
 };
 
 export default nextConfig;
