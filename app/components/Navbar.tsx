@@ -95,12 +95,12 @@ export default function Navbar() {
       <div
         ref={containerRef}
         onMouseLeave={handleMouseLeave}
-        className="fixed top-6 left-1/2 -translate-x-1/2 font-suisse text-black bg-white px-6 h-12 rounded-full flex items-stretch max-[900px]:hidden z-50"
+        className="fixed top-6 left-1/2 -translate-x-1/2 font-suisse text-black bg-white/70 px-6 h-12 rounded-full flex items-stretch max-[900px]:hidden z-50"
       >
         {/* Sliding Hover Background Pill */}
         <div
           ref={hoverBgRef}
-          className="absolute bg-black rounded-full pointer-events-none opacity-0 scale-90 z-0"
+          className="absolute bg-black/90 rounded-full pointer-events-none opacity-0 scale-90 z-0"
           style={{ willChange: "left, width, height, top" }}
         />
 
