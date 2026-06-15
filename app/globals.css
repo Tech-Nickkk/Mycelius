@@ -5,6 +5,7 @@
     --font-serif: var(--font-suisse), sans-serif;
     --font-suisse: var(--font-suisse), sans-serif;
     --font-neue-haas: var(--font-neue-haas), sans-serif;
+    --font-saans: var(--font-saans), sans-serif;
     --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
     --color-orange-500: #F15B20;
     --color-brand-orange: #F15B20;
@@ -75,4 +76,17 @@ html.lenis body {
 
 .animate-float {
     animation: float 6s ease-in-out infinite;
+}
+
+.mushroom-orange {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(100%) saturate(366%) hue-rotate(330deg) brightness(85%) contrast(130%);
+}
+
+/* Hide default browser scrollbar globally */
+html::-webkit-scrollbar {
+    display: none;
+}
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }

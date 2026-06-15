@@ -173,12 +173,12 @@ export default function About() {
 
       <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center text-center -translate-y-12 md:-translate-y-20">
         {/* Heading */}
-        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-suisse font-medium text-[#0f0f0f] leading-[1.1] tracking-tight mb-8">
+        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-suisse font-medium text-[#12110E] leading-[1.1] tracking-tight mb-8">
           Designed Without Compromise.
         </h2>
 
         {/* Animated Paragraph */}
-        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-suisse font-normal text-[#0f0f0f]/80 leading-[1.35] tracking-[-0.015em] max-w-5xl">
+        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-suisse font-normal text-[#12110E]/80 leading-[1.35] tracking-[-0.015em] max-w-5xl">
           Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and agricultural waste.
         </p>
       </div>
