@@ -35,6 +35,17 @@ const AUDIENCES = [
   },
 ];
 
+const textFillStyle: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
 export default function TargetAudience() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -53,6 +64,22 @@ export default function TargetAudience() {
 
       // Extra scroll room so the movement feels slower and smoother
       const stickyHeight = totalScrollWidth * 1.2 + window.innerHeight;
+
+      // Text fill animation (plays as the section enters the viewport, before pinning)
+      if (headingRef.current) {
+        const fillLines = headingRef.current.querySelectorAll(".fill-line");
+        gsap.to(fillLines, {
+          backgroundPosition: "0% 100%",
+          stagger: 0.01,
+          ease: "power1.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 35%",
+            end: "top -50%",
+            scrub: 0.5,
+          },
+        });
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -73,7 +100,7 @@ export default function TargetAudience() {
         duration: 1,
       });
 
-      // Slide heading off to the left as user scrolls
+      // Slide heading off to the left as user scrolls (previous animation kept exactly as is)
       if (headingRef.current) {
         tl.to(
           headingRef.current,
@@ -86,7 +113,7 @@ export default function TargetAudience() {
         );
       }
 
-      // "we" and "with" lines move faster
+      // "we" and "with" lines move faster (previous animation kept exactly as is)
       if (weWithRef.current) {
         tl.to(
           weWithRef.current.querySelectorAll(".fast-line"),
@@ -139,11 +166,31 @@ export default function TargetAudience() {
         }}
         className="absolute left-16 md:left-24 top-1/2 -translate-y-1/2 z-20 pointer-events-none will-change-transform"
       >
-        <h2 className="text-white text-[14vw] md:text-[8vw] font-normal tracking-tight leading-[1.05]">
-          <span className="block text-left">Who</span>
-          <span className="fast-line block pl-[18vw] md:pl-[12vw] will-change-transform">we</span>
-          <span className="block text-left">work</span>
-          <span className="fast-line block pl-[13vw] md:pl-[8.5vw] will-change-transform">with</span>
+        <h2 className="text-[14vw] md:text-[8vw] font-normal tracking-tight leading-[1.05]">
+          <span
+            className="fill-line block text-left will-change-[background-position]"
+            style={textFillStyle}
+          >
+            Who
+          </span>
+          <span
+            className="fill-line fast-line block pl-[18vw] md:pl-[12vw] will-change-[background-position,transform]"
+            style={textFillStyle}
+          >
+            we
+          </span>
+          <span
+            className="fill-line block text-left will-change-[background-position]"
+            style={textFillStyle}
+          >
+            work
+          </span>
+          <span
+            className="fill-line fast-line block pl-[13vw] md:pl-[8.5vw] will-change-[background-position,transform]"
+            style={textFillStyle}
+          >
+            with
+          </span>
         </h2>
       </div>
 

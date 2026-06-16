@@ -225,7 +225,7 @@ export default function Navbar() {
               openMenu();
             }
           }}
-          className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans"
+          className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans group"
         >
           <div className="menu-toggle-label overflow-hidden h-[1.2em]">
             <p className="menu-toggle-label-text relative translate-y-0 will-change-transform uppercase tracking-[0.07em] text-xs font-semibold">
@@ -234,14 +234,14 @@ export default function Navbar() {
           </div>
 
           {/* Circle Hamburger Icon */}
-          <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative">
+          <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative transition-colors duration-300 group-hover:bg-white group-hover:border-white">
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
+              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
                 isOpen ? "translate-y-0 rotate-45 scale-x-[1.05]" : "translate-y-[-3px]"
               }`}
             />
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
+              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
                 isOpen ? "translate-y-0 -rotate-45 scale-x-[1.05]" : "translate-y-[3px]"
               }`}
             />
