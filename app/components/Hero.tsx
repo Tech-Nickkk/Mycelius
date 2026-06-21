@@ -191,7 +191,7 @@ export default function Hero() {
   return (
     <section id="home" className="hero relative w-full h-screen overflow-visible">
       {/* Background Video */}
-      <div id="hero-video-wrapper" className="hero-img absolute inset-0 w-full h-[120vh] overflow-hidden origin-center will-change-transform scale-150 z-1">
+      <div id="hero-video-wrapper" className="hero-img absolute inset-0 w-full h-[120vh] overflow-hidden origin-center will-change-transform z-1">
         <video
           src="/hero-video-3.mp4"
           autoPlay

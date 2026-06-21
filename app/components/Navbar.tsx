@@ -6,6 +6,9 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { CustomEase } from "gsap/CustomEase";
 import Lenis from "lenis";
+import ButtonShader from "./ButtonShader";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const getLenis = (): Lenis | undefined => {
   if (typeof window !== "undefined") {
@@ -24,7 +27,10 @@ const MENU_LINKS = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollabHovered, setIsCollabHovered] = useState(false);
+  const [isMenuHovered, setIsMenuHovered] = useState(false);
   const isAnimating = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -156,9 +162,14 @@ export default function Navbar() {
   };
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
-
     if (isAnimating.current) return;
+
+    if (pathname !== "/") {
+      closeMenu();
+      return;
+    }
+
+    e.preventDefault();
 
     // Close the menu first
     closeMenu();
@@ -189,7 +200,11 @@ export default function Navbar() {
         
         {/* Logo */}
         <div className="pointer-events-auto flex items-center h-12 md:h-14">
-          <a href="#home" onClick={(e) => handleLinkClick(e, "#home")} className="block">
+          <Link
+            href={pathname === "/" ? "#home" : "/"}
+            onClick={(e) => handleLinkClick(e, "#home")}
+            className="block"
+          >
             <Image
               src="/mycelius-logo.png"
               alt="MYCELIUS"
@@ -198,22 +213,25 @@ export default function Navbar() {
               className="h-12 md:h-14 w-auto object-contain brightness-0 invert"
               priority
             />
-          </a>
+          </Link>
         </div>
 
         {/* Centered Collab Button */}
         <div className="menu-collab-btn pointer-events-auto flex items-center justify-center will-change-[opacity,transform] h-12 md:h-14">
-          <a
-            href="#contact"
-            onClick={(e) => handleLinkClick(e, "#contact")}
-            className="group relative overflow-hidden font-sans text-xs uppercase tracking-wider px-6 py-2.5 border border-white text-white rounded-full transition-colors duration-300 flex items-center justify-center"
+          <Link
+            href="/collab"
+            onClick={() => {
+              if (isOpen) closeMenu();
+            }}
+            onMouseEnter={() => setIsCollabHovered(true)}
+            onMouseLeave={() => setIsCollabHovered(false)}
+            className="group relative overflow-hidden font-sans text-xs uppercase tracking-wider px-6 py-2.5 border border-white text-white rounded-full transition-all duration-300 flex items-center justify-center"
           >
-            <span className="relative z-10 group-hover:text-black transition-colors duration-300 font-semibold">
+            <ButtonShader isHovered={isCollabHovered} colorA="#12110E" colorB="#ffffff" />
+            <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black font-semibold">
               Collab
             </span>
-            {/* Expanding circle background */}
-            <div className="absolute left-1/2 bottom-0 w-[300px] h-[300px] -translate-x-1/2 translate-y-1/2 scale-0 group-hover:scale-50 rounded-full bg-white transition-transform duration-500 ease-in-out z-0"></div>
-          </a>
+          </Link>
         </div>
 
         {/* Toggle Button */}
@@ -225,6 +243,8 @@ export default function Navbar() {
               openMenu();
             }
           }}
+          onMouseEnter={() => setIsMenuHovered(true)}
+          onMouseLeave={() => setIsMenuHovered(false)}
           className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans group"
         >
           <div className="menu-toggle-label overflow-hidden h-[1.2em]">
@@ -234,14 +254,15 @@ export default function Navbar() {
           </div>
 
           {/* Circle Hamburger Icon */}
-          <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative transition-colors duration-300 group-hover:bg-white group-hover:border-white">
+          <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative overflow-hidden transition-colors duration-300 group-hover:border-white">
+            <ButtonShader isHovered={isMenuHovered} colorA="#12110E" colorB="#ffffff" />
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
+              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
                 isOpen ? "translate-y-0 rotate-45 scale-x-[1.05]" : "translate-y-[-3px]"
               }`}
             />
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform ${
+              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
                 isOpen ? "translate-y-0 -rotate-45 scale-x-[1.05]" : "translate-y-[3px]"
               }`}
             />
@@ -272,13 +293,13 @@ export default function Navbar() {
             <div className="menu-col flex flex-col gap-2 my-auto w-full">
               {MENU_LINKS.map((link) => (
                 <div key={link.label} className="menu-link overflow-hidden">
-                  <a
-                    href={link.href}
+                  <Link
+                    href={pathname === "/" ? link.href : "/" + link.href}
                     onClick={(e) => handleLinkClick(e, link.href)}
                     className="menu-anim-line block text-[2rem] xs:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] font-medium leading-[1.2] translate-y-[-110%] will-change-transform text-white hover:text-[#F15B20] transition-colors duration-300 font-sans uppercase tracking-tight"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </div>
               ))}
             </div>

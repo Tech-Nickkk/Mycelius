@@ -3,14 +3,13 @@
 import { useRef, useMemo, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SplitText from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useGLTF, Environment, Float } from "@react-three/drei";
 import * as THREE from "three";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  gsap.registerPlugin(ScrollTrigger);
 }
 
 interface MushroomInstanceProps {
@@ -119,6 +118,17 @@ function Mushrooms({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | n
 
 useGLTF.preload("/3d/mushroom.glb");
 
+const gradientTextFillStyle: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #12110E 50%, rgba(18, 17, 14, 0.15) 50%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
 export default function About() {
   const containerRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -127,40 +137,33 @@ export default function About() {
   useGSAP(() => {
     if (!headingRef.current || !textRef.current) return;
 
-    // Split the text into characters
-    const headingSplit = new SplitText(headingRef.current, { type: "words,chars" });
-    const textSplit = new SplitText(textRef.current, { type: "words,chars" });
+    // Get all fill-line elements from both heading and paragraph
+    const headingLines = headingRef.current.querySelectorAll(".fill-line");
+    const paragraphLines = textRef.current.querySelectorAll(".fill-line");
 
-    // Set initial low opacity on both sets of characters
-    gsap.set([headingSplit.chars, textSplit.chars], { opacity: 0.15 });
-
-    // Create timeline with scroll scrub trigger
+    // Create timeline with scroll scrub trigger (start top 78% to play title animation a bit later on scroll)
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top 75%",
-        end: "center 42%",
+        start: "top 78%",
+        end: "center 38%",
         scrub: 1,
       },
     });
 
-    // Sequence the character reveals
-    tl.to(headingSplit.chars, {
-      opacity: 1,
-      stagger: 0.03,
+    // Sequence the heading line reveals with stagger, starting first
+    tl.to(headingLines, {
+      backgroundPosition: "0% 100%",
+      stagger: 0.1,
       ease: "power1.out",
-    });
+    }, 0);
 
-    tl.to(textSplit.chars, {
-      opacity: 1,
-      stagger: 0.01,
+    // Sequence the paragraph line reveals, starting slightly later (time 0.12)
+    tl.to(paragraphLines, {
+      backgroundPosition: "0% 100%",
+      stagger: 0.05,
       ease: "power1.out",
-    }, "+=0.1");
-
-    return () => {
-      headingSplit.revert();
-      textSplit.revert();
-    };
+    }, 0.12);
   }, { scope: containerRef, dependencies: [] });
 
   return (
@@ -173,13 +176,17 @@ export default function About() {
 
       <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center text-center -translate-y-12 md:-translate-y-20">
         {/* Heading */}
-        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-suisse font-medium text-[#12110E] leading-[1.1] tracking-tight mb-8">
-          Designed Without Compromise.
+        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-suisse font-medium leading-[1.1] tracking-tight mb-8 text-center">
+          <span className="fill-line block will-change-[background-position]" style={gradientTextFillStyle}>
+            Designed Without Compromise.
+          </span>
         </h2>
 
         {/* Animated Paragraph */}
-        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-suisse font-normal text-[#12110E]/80 leading-[1.35] tracking-[-0.015em] max-w-5xl">
-          Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and agricultural waste.
+        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-suisse font-normal leading-[1.35] tracking-[-0.015em] max-w-5xl text-center">
+          <span className="fill-line block will-change-[background-position]" style={gradientTextFillStyle}>
+            Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and agricultural waste.
+          </span>
         </p>
       </div>
     </section>

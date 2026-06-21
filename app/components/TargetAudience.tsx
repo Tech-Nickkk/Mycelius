@@ -205,21 +205,21 @@ export default function TargetAudience() {
           {AUDIENCES.map((item, i) => (
             <div
               key={i}
-              className="audience-card relative shrink-0 w-[65vw] md:w-[35vw] h-[55vh] md:h-[60vh] overflow-hidden group"
+              className="shrink-0 w-[65vw] md:w-[35vw] flex flex-col gap-4 group"
             >
-              {/* Image */}
-              <Image
-                src={item.image}
-                alt={item.title}
-                fill
-                sizes="(max-width: 768px) 65vw, 35vw"
-                className="object-cover scale-[1.2] will-change-transform"
-              />
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent z-10" />
-              {/* Title on top of image */}
-              <div className="absolute bottom-5 left-5 right-5 z-20">
-                <span className="text-white text-[3.5vw] md:text-[1.6vw] font-normal tracking-tight leading-[1.1] font-ppeditorial">
+              {/* Image Wrapper */}
+              <div className="audience-card relative w-full h-[45vh] md:h-[50vh] overflow-hidden rounded-[1.5rem] border border-white/5">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 768px) 65vw, 35vw"
+                  className="object-cover scale-[1.2] will-change-transform"
+                />
+              </div>
+              {/* Title below image */}
+              <div className="text-center w-full">
+                <span className="text-white text-[4.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1] font-ppeditorial">
                   {item.title}
                 </span>
               </div>

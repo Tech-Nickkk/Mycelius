@@ -1,15 +1,23 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import SplitText from "gsap/SplitText";
 import CustomEase from "gsap/CustomEase";
 
+// Global variable tracks preloader state across client-side router transitions
+let hasPlayedPreloader = false;
+
 export default function Preloader() {
   const preloaderRef = useRef<HTMLDivElement>(null);
+  const [shouldRender, setShouldRender] = useState(!hasPlayedPreloader);
 
   useGSAP(() => {
+    if (hasPlayedPreloader) {
+      return;
+    }
+
     gsap.registerPlugin(CustomEase, SplitText);
     CustomEase.create("hop", "0.9, 0, 0.1, 1");
 
@@ -50,7 +58,6 @@ export default function Preloader() {
       clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
       duration: 1,
       stagger: 0.1,
-      onStart: () => gsap.to(".hero-img", { scale: 1, duration: 2, ease: "hop" }),
     });
 
     // 4. Hero text slide in
@@ -62,9 +69,15 @@ export default function Preloader() {
       onComplete: () => {
         // Remove preloader from rendering entirely
         gsap.set(".loader", { display: "none" });
+        hasPlayedPreloader = true;
+        setShouldRender(false);
       },
     }, "<0.2");
   }, { dependencies: [] }); // Empty array ensures this only runs once on mount, omitting scope allows global query
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <div ref={preloaderRef} className="loader fixed inset-0 w-screen h-svh overflow-hidden z-[9999] pointer-events-none">

@@ -1,11 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-    --font-sans: var(--font-suisse), sans-serif;
-    --font-serif: var(--font-suisse), sans-serif;
     --font-suisse: var(--font-suisse), sans-serif;
     --font-neue-haas: var(--font-neue-haas), sans-serif;
-    --font-saans: var(--font-saans), sans-serif;
     --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
     --color-orange-500: #F15B20;
     --color-brand-orange: #F15B20;

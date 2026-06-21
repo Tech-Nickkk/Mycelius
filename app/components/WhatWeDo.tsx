@@ -451,7 +451,7 @@ export default function WhatWeDo() {
         {/* LAYER 1: BLACK TEXT (Behind the image, overflows naturally over the white background) */}
         {/* Line 0: Overlapping below top left corner */}
         {/* Line 0: Overlapping below top left corner */}
-        <div className="absolute max-md:bottom-[-25px] max-md:top-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-10 grid">
+        <div className="absolute max-md:top-[calc(100%+16px)] max-md:bottom-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[0] && (
             <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#12110E] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
               {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>
@@ -491,7 +491,7 @@ export default function WhatWeDo() {
 
           {/* LAYER 3: WHITE TEXT (Inside image container, physically clipped by overflow-hidden at the exact image boundary) */}
           {/* Line 0: White Text */}
-          <div className="absolute max-md:bottom-[-25px] max-md:top-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-30 grid">
+          <div className="absolute max-md:top-[calc(100%+16px)] max-md:bottom-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-30 grid">
             {prevStory !== null && stories[prevStory].title[0] && (
               <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
                 {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>

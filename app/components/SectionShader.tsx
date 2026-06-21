@@ -16,6 +16,7 @@ const fragmentShader = `
   uniform vec2 uResolution;
   uniform vec3 uColor;
   uniform float uSpread;
+  uniform float uInvert;
   varying vec2 vUv;
 
   float Hash(vec2 p) {
@@ -54,6 +55,10 @@ const fragmentShader = `
     float pixelSize = 1.0 / uResolution.y;
     float alpha = smoothstep(-pixelSize, pixelSize, d);
 
+    if (uInvert > 0.5) {
+      alpha = 1.0 - alpha;
+    }
+
     gl_FragColor = vec4(uColor, alpha);
   }
 `;
@@ -74,6 +79,8 @@ interface SectionShaderProps {
   spread?: number;
   speed?: number;
   scrollTarget?: string;
+  playLate?: boolean;
+  invert?: boolean;
 }
 
 export default function SectionShader({
@@ -81,6 +88,8 @@ export default function SectionShader({
   spread = 0.5,
   speed = 1.0,
   scrollTarget = "#black-section",
+  playLate = false,
+  invert = false,
 }: SectionShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -112,6 +121,7 @@ export default function SectionShader({
         },
         uColor: { value: new THREE.Vector3(rgb.r, rgb.g, rgb.b) },
         uSpread: { value: spread },
+        uInvert: { value: invert ? 1.0 : 0.0 },
       },
       transparent: true,
     });
@@ -140,7 +150,19 @@ export default function SectionShader({
       const currentScroll = windowHeight - rect.top;
       
       if (currentScroll >= 0) {
-        targetProgress = Math.min((currentScroll / windowHeight) * speed, 1.2);
+        if (playLate) {
+          const startScroll = windowHeight * 0.75;
+          const endScroll = windowHeight * 0.95;
+          if (currentScroll > startScroll) {
+            const range = endScroll - startScroll;
+            const factor = Math.min((currentScroll - startScroll) / range, 1.0);
+            targetProgress = factor * 0.35;
+          } else {
+            targetProgress = 0;
+          }
+        } else {
+          targetProgress = Math.min((currentScroll / windowHeight) * speed, 1.2);
+        }
       } else {
         targetProgress = 0;
       }
@@ -180,7 +202,7 @@ export default function SectionShader({
       geometry.dispose();
       material.dispose();
     };
-  }, [color, spread, speed, scrollTarget]);
+  }, [color, spread, speed, scrollTarget, playLate, invert]);
 
   return (
     <canvas
