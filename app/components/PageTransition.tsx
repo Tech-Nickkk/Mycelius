@@ -65,6 +65,7 @@ export default function PageTransition() {
   const pathname = usePathname();
 
   const [overlayActive, setOverlayActive] = useState(false);
+  const [showLogo, setShowLogo] = useState(false);
 
   // Animation state refs
   const targetProgressRef = useRef(0.0);
@@ -72,11 +73,17 @@ export default function PageTransition() {
   const pendingRouteRef = useRef<string | null>(null);
   const isNavigatingRef = useRef(false);
 
-  // Pathname change hook: when routing completes, trigger reveal
   useEffect(() => {
     targetProgressRef.current = 0.0;
     pendingRouteRef.current = null;
     isNavigatingRef.current = false;
+    
+    // Wrap the state update in a timeout to prevent synchronous cascading renders
+    const timer = setTimeout(() => {
+      setShowLogo(false);
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   // Click interceptor to handle internal navigation links
@@ -103,6 +110,7 @@ export default function PageTransition() {
         e.stopPropagation();
 
         setOverlayActive(true);
+        setShowLogo(true);
         targetProgressRef.current = 1.25;
         pendingRouteRef.current = href;
       }
@@ -208,11 +216,26 @@ export default function PageTransition() {
   }, [router]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={`fixed inset-0 w-screen h-screen z-[99999] ${
-        overlayActive ? "pointer-events-auto" : "pointer-events-none"
-      }`}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className={`fixed inset-0 w-screen h-screen z-[99999] ${
+          overlayActive ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      />
+      <div 
+        className={`fixed inset-0 w-screen h-screen z-[100000] pointer-events-none flex items-center justify-center transition-opacity duration-700 ease-in-out ${
+          showLogo ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div className="animate-pulse">
+          <img
+            src="/mycelius-logo.png"
+            alt="Loading..."
+            className="h-12 md:h-16 w-auto object-contain brightness-0 invert opacity-80"
+          />
+        </div>
+      </div>
+    </>
   );
 }

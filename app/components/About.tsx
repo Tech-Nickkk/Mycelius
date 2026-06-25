@@ -170,11 +170,11 @@ export default function About() {
     <section
       id="about"
       ref={containerRef}
-      className="relative flex items-center justify-center min-h-screen bg-[#ffffff] px-8 overflow-hidden"
+      className="relative flex items-center justify-center min-h-[60vh] md:min-h-[70vh] py-20 md:py-28 bg-[#ffffff] px-8 overflow-hidden"
     >
       <Mushrooms sectionRef={containerRef} />
 
-      <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center text-center -translate-y-12 md:-translate-y-20">
+      <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center text-center -translate-y-4 md:-translate-y-8">
         {/* Heading */}
         <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-suisse font-medium leading-[1.1] tracking-tight mb-8 text-center">
           <span className="fill-line block will-change-[background-position]" style={gradientTextFillStyle}>
