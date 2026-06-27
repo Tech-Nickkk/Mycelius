@@ -95,11 +95,12 @@ export default function PageTransition() {
       const href = anchor.getAttribute("href");
       const target = anchor.getAttribute("target");
 
-      // Only intercept internal non-hash links
+      // Only intercept internal non-hash links, and exclude Sanity studio links
       if (
         href &&
         href.startsWith("/") &&
         !href.startsWith("#") &&
+        !href.startsWith("/studio") &&
         target !== "_blank" &&
         !e.defaultPrevented
       ) {

@@ -6,35 +6,12 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
 
-interface Story {
+export interface Story {
   title: string[];
   storyImg: string;
 }
 
-const stories: Story[] = [
-  {
-    title: ["Custom", "Installations"],
-    storyImg: "/carousel/slide-img-1.png",
-  },
-  {
-    title: ["Cultivated", "Furniture"],
-    storyImg: "/carousel/slide-img-2.png",
-  },
-  {
-    title: ["Wall", "Panels"],
-    storyImg: "/carousel/slide-img-3.png",
-  },
-  {
-    title: ["Design", "Luminaires"],
-    storyImg: "/carousel/slide-img-4.png",
-  },
-  {
-    title: ["Wall", "Panels"],
-    storyImg: "/carousel/slide-img-5.png",
-  },
-];
-
-export default function WhatWeDo() {
+export default function WhatWeDo({ stories }: { stories: Story[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const storyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -481,12 +458,12 @@ export default function WhatWeDo() {
           onMouseLeave={() => setIsOnImage(false)}
         >
           {prevStory !== null && (
-            <div className="img absolute inset-0 w-full h-full old-img-container">
-              <Image src={stories[prevStory].storyImg} alt="" fill className="object-cover old-story-img" />
+            <div className="img absolute inset-0 w-full h-full old-img-container skeleton-shimmer">
+              <Image src={stories[prevStory].storyImg} alt="" fill unoptimized className="object-cover old-story-img" />
             </div>
           )}
-          <div className="img absolute inset-0 w-full h-full new-img-container">
-            <Image src={stories[activeStory].storyImg} alt="mycelium asset" fill priority className="object-cover new-story-img" />
+          <div className="img absolute inset-0 w-full h-full new-img-container skeleton-shimmer">
+            <Image src={stories[activeStory].storyImg} alt="mycelium asset" fill priority unoptimized className="object-cover new-story-img" />
           </div>
 
           {/* LAYER 3: WHITE TEXT (Inside image container, physically clipped by overflow-hidden at the exact image boundary) */}
@@ -551,7 +528,7 @@ export default function WhatWeDo() {
       {/* Hidden elements for caching and preloading all high-res story slides */}
       <div className="hidden" aria-hidden="true">
         {stories.map((story, idx) => (
-          <Image key={idx} src={story.storyImg} alt="preload" width={10} height={10} loading="eager" />
+          <Image key={idx} src={story.storyImg} alt="preload" width={10} height={10} loading="eager" unoptimized />
         ))}
       </div>
     </section>

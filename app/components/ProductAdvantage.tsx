@@ -198,15 +198,15 @@ export default function ProductAdvantage() {
             <Fragment key={idx}>
               {/* Product Content (no background card) */}
               <div
-                className="relative shrink-0 w-[65vw] md:w-[26vw] h-[50vh] md:h-[55vh] flex flex-col justify-center items-center gap-8 px-6 select-none"
+                className="relative shrink-0 w-[65vw] md:w-[24vw] h-[50vh] md:h-[55vh] flex flex-col justify-center items-center gap-8 px-6 select-none"
               >
                 {/* Icon Container */}
-                <div className="relative w-32 h-32 md:w-44 md:h-44 flex items-center justify-center">
+                <div className="relative w-40 h-40 md:w-56 md:h-56 flex items-center justify-center">
                   <Image
                     src={item.iconPath}
                     alt={`${item.title} icon`}
                     fill
-                    sizes="(max-width: 768px) 128px, 176px"
+                    sizes="(max-width: 768px) 160px, 224px"
                     className={`object-contain ${
                       item.title === "Made in India"
                         ? "scale-140 md:scale-130"
@@ -224,7 +224,7 @@ export default function ProductAdvantage() {
 
               {/* Arrow pointing to next (except after last card) */}
               {idx < ADVANTAGES_DATA.length - 1 && (
-                <div className="shrink-0 w-[15vw] md:w-[10vw] flex items-center justify-center">
+                <div className="shrink-0 w-[12vw] md:w-[8vw] flex items-center justify-center">
                   <span
                     className="reveal-arrow text-[8vw] md:text-[5vw] font-light leading-none will-change-[background-position]"
                     style={horizontalTextFillStyle}

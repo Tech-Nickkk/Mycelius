@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePathname } from "next/navigation";
 
 export default function SmoothScroll({
   children,
@@ -11,8 +12,12 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
+    // Disable smooth scroll completely inside the Sanity Studio dashboard
+    if (pathname && pathname.startsWith("/studio")) return;
+
     // Register GSAP ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 

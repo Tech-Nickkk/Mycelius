@@ -7,33 +7,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionShader from "./SectionShader";
 import Image from "next/image";
 
-const AUDIENCES = [
-  {
-    title: "Interior Designers",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    title: "Architects",
-    image:
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    title: "Luxury Residences",
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    title: "Hospitality Spaces",
-    image:
-      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    title: "Sustainable Commercial",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop",
-  },
-];
+export interface Audience {
+  title: string;
+  image: string;
+}
 
 const textFillStyle: React.CSSProperties = {
   backgroundImage:
@@ -46,7 +23,7 @@ const textFillStyle: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-export default function TargetAudience() {
+export default function TargetAudience({ audiences }: { audiences: Audience[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
@@ -202,18 +179,19 @@ export default function TargetAudience() {
       >
         {/* Cards row */}
         <div className="flex items-center gap-6 md:gap-8 h-full py-12">
-          {AUDIENCES.map((item, i) => (
+          {audiences.map((item, i) => (
             <div
               key={i}
               className="shrink-0 w-[65vw] md:w-[35vw] flex flex-col gap-4 group"
             >
               {/* Image Wrapper */}
-              <div className="audience-card relative w-full h-[45vh] md:h-[50vh] overflow-hidden rounded-[1.5rem] border border-white/5">
+              <div className="audience-card relative w-full h-[45vh] md:h-[50vh] overflow-hidden rounded-[1.5rem] border border-white/5 skeleton-shimmer-dark">
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
                   sizes="(max-width: 768px) 65vw, 35vw"
+                  unoptimized
                   className="object-cover scale-[1.2] will-change-transform"
                 />
               </div>
