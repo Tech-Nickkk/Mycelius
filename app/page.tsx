@@ -12,6 +12,8 @@ import { client } from "../sanity/lib/client";
 import { urlFor } from "../sanity/lib/image";
 import { type SanityImageSource } from "@sanity/image-url";
 
+export const revalidate = 60;
+
 const defaultStories: Story[] = [
   { title: ["Custom", "Installations"], storyImg: "/carousel/slide-img-1.png" },
   { title: ["Cultivated", "Furniture"], storyImg: "/carousel/slide-img-2.png" },
