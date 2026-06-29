@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import WhatWeDo, { Story } from "./components/WhatWeDo";
 import TargetAudience, { Audience } from "./components/TargetAudience";
+import Incubators from "./components/Incubators";
 import ProductAdvantage from "./components/ProductAdvantage";
 import Collaborations from "./components/Collaborations";
 import Contact from "./components/Contact";
@@ -31,20 +32,25 @@ const defaultAudiences: Audience[] = [
 ];
 
 async function getSanityData() {
-  const whatWeDoData = await client.fetch(`*[_type == "whatWeDo"]`);
-  const targetAudienceData = await client.fetch(`*[_type == "targetAudience"]`);
-  
-  const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource }) => ({
-    title: [item.titleLine1, item.titleLine2],
-    storyImg: urlFor(item.image).url(),
-  }));
+  try {
+    const whatWeDoData = await client.fetch(`*[_type == "whatWeDo"]`);
+    const targetAudienceData = await client.fetch(`*[_type == "targetAudience"]`);
+    
+    const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource }) => ({
+      title: [item.titleLine1, item.titleLine2],
+      storyImg: urlFor(item.image).url(),
+    }));
 
-  const audiences: Audience[] = targetAudienceData.map((item: { title: string; image: SanityImageSource }) => ({
-    title: item.title,
-    image: urlFor(item.image).url(),
-  }));
+    const audiences: Audience[] = targetAudienceData.map((item: { title: string; image: SanityImageSource }) => ({
+      title: item.title,
+      image: urlFor(item.image).url(),
+    }));
 
-  return { stories, audiences };
+    return { stories, audiences };
+  } catch (error) {
+    console.error("Failed to fetch Sanity data:", error);
+    return { stories: [], audiences: [] };
+  }
 }
 
 export default async function Home() {
@@ -65,6 +71,7 @@ export default async function Home() {
           <TargetAudience audiences={finalAudiences} />
           <ProductAdvantage />
           <Collaborations />
+          <Incubators />
           <Contact />
         </div>
       </div>

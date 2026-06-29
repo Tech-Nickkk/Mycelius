@@ -23,6 +23,14 @@ const textFillStyle: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
+const STATIC_BLOBS = [
+  "60% 40% 30% 70% / 60% 30% 70% 40%", // 3 curves (top-right flat)
+  "30% 70% 60% 40% / 30% 60% 40% 70%", // 3 curves (top-left flat)
+  "70% 30% 40% 60% / 40% 70% 30% 60%", // 3 curves (bottom-left flat)
+  "60% 40% 70% 30% / 70% 30% 40% 60%", // 3 curves (bottom-right flat)
+  "40% 60% 70% 30% / 30% 70% 40% 60%", // 3 curves (smooth 3-curve leaf shape)
+];
+
 export default function TargetAudience({ audiences }: { audiences: Audience[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -35,90 +43,168 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
 
       if (!sectionRef.current || !trackRef.current) return;
 
-      // Calculate how far to scroll horizontally
-      const totalScrollWidth =
-        trackRef.current.scrollWidth - window.innerWidth;
+      const mm = gsap.matchMedia();
 
-      // Extra scroll room so the movement feels slower and smoother
-      const stickyHeight = totalScrollWidth * 1.2 + window.innerHeight;
+      // Desktop: Horizontal Scroll
+      mm.add("(min-width: 768px)", () => {
+        // Calculate how far to scroll horizontally
+        const totalScrollWidth = trackRef.current!.scrollWidth - window.innerWidth;
+        const stickyHeight = totalScrollWidth * 1.2 + window.innerHeight;
 
-      // Text fill animation (plays as the section enters the viewport, before pinning)
-      if (headingRef.current) {
-        const fillLines = headingRef.current.querySelectorAll(".fill-line");
-        gsap.to(fillLines, {
-          backgroundPosition: "0% 100%",
-          stagger: 0.01,
-          ease: "power1.out",
+        // Text fill animation
+        if (headingRef.current) {
+          const fillLines = headingRef.current.querySelectorAll(".fill-line");
+          gsap.to(fillLines, {
+            backgroundPosition: "0% 100%",
+            stagger: 0.01,
+            ease: "power1.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 35%",
+              end: "top -50%",
+              scrub: 0.5,
+            },
+          });
+        }
+
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 35%",
-            end: "top -50%",
-            scrub: 0.5,
+            start: "top top",
+            end: `+=${stickyHeight}px`,
+            scrub: 0.3,
+            pin: true,
+            pinSpacing: true,
+            pinType: "transform",
           },
         });
-      }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: `+=${stickyHeight}px`,
-          scrub: 0.3,
-          pin: true,
-          pinSpacing: true,
-          pinType: "transform",
-        },
+        // Horizontal scroll the track
+        tl.to(trackRef.current, {
+          x: -totalScrollWidth,
+          ease: "none",
+          duration: 1,
+        });
+
+        // Slide heading off to the left as user scrolls
+        if (headingRef.current) {
+          tl.to(
+            headingRef.current,
+            {
+              x: -window.innerWidth * 0.6,
+              ease: "none",
+              duration: 0.4,
+            },
+            0
+          );
+        }
+
+        // "we" and "with" lines move faster
+        if (weWithRef.current) {
+          tl.to(
+            weWithRef.current.querySelectorAll(".fast-line"),
+            {
+              x: -window.innerWidth * 0.1,
+              ease: "none",
+              duration: 0.4,
+            },
+            0
+          );
+        }
+
+        // Parallax each card image
+        const cards = gsap.utils.toArray(".audience-card") as HTMLElement[];
+        cards.forEach((card, i) => {
+          const img = card.querySelector("img");
+          if (!img) return;
+
+          const start = Math.max(0, (i - 1) / cards.length);
+          const end = Math.min(1, (i + 2) / cards.length);
+
+          tl.fromTo(
+            img,
+            { x: -30 },
+            { x: 30, ease: "none", duration: end - start },
+            start
+          );
+        });
       });
 
-      // Horizontal scroll the track
-      tl.to(trackRef.current, {
-        x: -totalScrollWidth,
-        ease: "none",
-        duration: 1,
+      // Mobile: Vertical Scroll
+      mm.add("(max-width: 767px)", () => {
+        // Text fill animation
+        if (headingRef.current) {
+          const fillLines = headingRef.current.querySelectorAll(".fill-line");
+          gsap.to(fillLines, {
+            backgroundPosition: "0% 100%",
+            stagger: 0.1,
+            ease: "power1.out",
+            scrollTrigger: {
+              trigger: headingRef.current,
+              start: "top 65%",
+              end: "bottom 15%",
+              scrub: 1,
+            },
+          });
+
+          // Elegant scroll-triggered horizontal slide: slide-left from left, slide-right from right
+          const leftLines = headingRef.current.querySelectorAll(".slide-left");
+          const rightLines = headingRef.current.querySelectorAll(".slide-right");
+
+          gsap.fromTo(
+            leftLines,
+            { x: -45 },
+            {
+              x: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: headingRef.current,
+                start: "top 65%",
+                end: "bottom 15%",
+                scrub: 1,
+              },
+            }
+          );
+
+          gsap.fromTo(
+            rightLines,
+            { x: 45 },
+            {
+              x: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: headingRef.current,
+                start: "top 65%",
+                end: "bottom 15%",
+                scrub: 1,
+              },
+            }
+          );
+        }
+
+        // Simple vertical parallax for card images
+        const cards = gsap.utils.toArray(".audience-card") as HTMLElement[];
+        cards.forEach((card) => {
+          const img = card.querySelector("img");
+          if (!img) return;
+          gsap.fromTo(
+            img,
+            { y: -20 },
+            {
+              y: 20,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card as HTMLElement,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        });
       });
 
-      // Slide heading off to the left as user scrolls (previous animation kept exactly as is)
-      if (headingRef.current) {
-        tl.to(
-          headingRef.current,
-          {
-            x: -window.innerWidth * 0.6,
-            ease: "none",
-            duration: 0.4,
-          },
-          0
-        );
-      }
-
-      // "we" and "with" lines move faster (previous animation kept exactly as is)
-      if (weWithRef.current) {
-        tl.to(
-          weWithRef.current.querySelectorAll(".fast-line"),
-          {
-            x: -window.innerWidth * 0.1,
-            ease: "none",
-            duration: 0.4,
-          },
-          0
-        );
-      }
-
-      // Parallax each card image (subtle shift)
-      const cards = gsap.utils.toArray(".audience-card") as HTMLElement[];
-      cards.forEach((card, i) => {
-        const img = card.querySelector("img");
-        if (!img) return;
-
-        const start = Math.max(0, (i - 1) / cards.length);
-        const end = Math.min(1, (i + 2) / cards.length);
-
-        tl.fromTo(
-          img,
-          { x: -30 },
-          { x: 30, ease: "none", duration: end - start },
-          start
-        );
-      });
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
@@ -127,43 +213,49 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
     <section
       id="target-audience-scroll"
       ref={sectionRef}
-      className="relative w-full h-screen bg-[#12110E] overflow-hidden"
+      className="relative w-full md:h-screen bg-[#12110E] md:overflow-hidden pt-36 pb-16 md:py-0"
     >
-      <SectionShader
-        color="#ffffff"
-        scrollTarget="#target-audience-scroll"
-        speed={1.13}
-      />
+      {/* Wrapper to fix SectionShader sizing and positioning on mobile */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
+        <div id="target-audience-shader-size" className="sticky top-0 w-full h-screen">
+          <SectionShader
+            color="#ffffff"
+            scrollTarget="#target-audience-scroll"
+            sizeTarget="#target-audience-shader-size"
+            speed={1.13}
+          />
+        </div>
+      </div>
 
-      {/* Left-side heading — slides out as you scroll */}
+      {/* Heading — left on desktop, centered/top on mobile */}
       <div
         ref={(el) => {
           headingRef.current = el;
           weWithRef.current = el;
         }}
-        className="absolute left-16 md:left-24 top-1/2 -translate-y-1/2 z-20 pointer-events-none will-change-transform"
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-0 px-6 md:px-0 pt-8 md:pt-0 md:absolute md:left-24 md:top-1/2 md:-translate-y-1/2 md:w-auto md:block"
       >
-        <h2 className="text-[14vw] md:text-[8vw] font-normal tracking-tight leading-[1.05]">
+        <h2 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-left">
           <span
-            className="fill-line block text-left will-change-[background-position]"
+            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
             style={textFillStyle}
           >
             Who
           </span>
           <span
-            className="fill-line fast-line block pl-[18vw] md:pl-[12vw] will-change-[background-position,transform]"
+            className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
             style={textFillStyle}
           >
             we
           </span>
           <span
-            className="fill-line block text-left will-change-[background-position]"
+            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
             style={textFillStyle}
           >
             work
           </span>
           <span
-            className="fill-line fast-line block pl-[13vw] md:pl-[8.5vw] will-change-[background-position,transform]"
+            className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
             style={textFillStyle}
           >
             with
@@ -171,33 +263,37 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
         </h2>
       </div>
 
-      {/* Horizontal scroll track */}
+      {/* Track — horizontal scroll on desktop, vertical stack on mobile */}
       <div
         ref={trackRef}
-        className="absolute top-0 left-0 h-full flex items-center will-change-transform"
-        style={{ paddingLeft: "42vw", paddingRight: "4vw" }}
+        className="md:absolute md:top-0 md:left-0 md:h-full flex flex-col md:flex-row items-center will-change-transform w-full md:w-auto md:pl-[42vw] md:pr-[4vw]"
       >
-        {/* Cards row */}
-        <div className="flex items-center gap-6 md:gap-8 h-full py-12">
+        {/* Cards container */}
+        <div className="flex flex-col md:flex-row items-center gap-20 md:gap-24 h-full py-0 md:py-12 w-full px-6 md:px-0">
           {audiences.map((item, i) => (
             <div
               key={i}
-              className="shrink-0 w-[65vw] md:w-[35vw] flex flex-col gap-4 group"
+              className="shrink-0 w-full md:w-[35vw] flex flex-col gap-4 group"
             >
               {/* Image Wrapper */}
-              <div className="audience-card relative w-full h-[45vh] md:h-[50vh] overflow-hidden rounded-[1.5rem] border border-white/5 skeleton-shimmer-dark">
+              <div 
+                className="audience-card relative w-full h-[55vh] md:h-[50vh] overflow-hidden border border-white/5 skeleton-shimmer-dark"
+                style={{
+                  borderRadius: STATIC_BLOBS[i % STATIC_BLOBS.length]
+                }}
+              >
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  sizes="(max-width: 768px) 65vw, 35vw"
+                  sizes="(max-width: 768px) 100vw, 35vw"
                   unoptimized
                   className="object-cover scale-[1.2] will-change-transform"
                 />
               </div>
               {/* Title below image */}
               <div className="text-center w-full">
-                <span className="text-white text-[4.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1] font-ppeditorial">
+                <span className="text-white text-[5.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1] font-ppeditorial">
                   {item.title}
                 </span>
               </div>

@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import ButtonShader from "../components/ButtonShader";
+import ButtonShader, { useHoverInteraction } from "../components/ButtonShader";
 import { Engine, Render, Runner, Bodies, Composite, Body } from "matter-js";
 
 export default function CollabPage() {
-  const [isSubmitHovered, setIsSubmitHovered] = useState(false);
-  const [isBackHovered, setIsBackHovered] = useState(false);
+  const { isHovered: isSubmitHovered, handlers: submitHandlers } = useHoverInteraction();
+  const { isHovered: isBackHovered, handlers: backHandlers } = useHoverInteraction();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -113,7 +113,8 @@ export default function CollabPage() {
     Composite.add(world, [floorLeft, floorRight, leftWall, rightWall]);
 
     // Create cursor body (invisible force field)
-    const cursorRadius = 45;
+    const isMobile = width < 768;
+    const cursorRadius = isMobile ? 25 : 45;
     const cursorBody = Bodies.circle(
       -9999,
       -9999,
@@ -172,15 +173,16 @@ export default function CollabPage() {
       if (spawned) return;
       spawned = true;
 
-      const count = 10; 
+      const isMobile = width < 768;
+      const count = 8; 
+      const radius = isMobile ? 32 : 65;
       const mushrooms: Matter.Body[] = [];
 
       for (let i = 0; i < count; i++) {
-        const radius = 65;
         const overlapFactor = 1.12;
         const scale = ((radius * 2) / 896) * overlapFactor;
 
-        const x = Math.random() * (width - 200) + 100;
+        const x = Math.random() * (width - 2 * radius) + radius;
         const y = -150 - Math.random() * 500; // staggered spawn heights
 
         const mushroom = Bodies.circle(x, y, radius, {
@@ -315,11 +317,10 @@ export default function CollabPage() {
       />
 
       {/* Back Button - Absolute Top Right */}
-      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20">
+      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
         <Link
           href="/"
-          onMouseEnter={() => setIsBackHovered(true)}
-          onMouseLeave={() => setIsBackHovered(false)}
+          {...backHandlers}
           className="group relative overflow-hidden font-suisse text-[10px] md:text-xs uppercase tracking-widest px-4 py-2 border border-[#12110E] text-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center font-medium"
         >
           <ButtonShader isHovered={isBackHovered} colorA="#ffffff" colorB="#12110E" />
@@ -401,8 +402,7 @@ export default function CollabPage() {
           <div className="mt-6 flex justify-center">
             <button
               type="submit"
-              onMouseEnter={() => setIsSubmitHovered(true)}
-              onMouseLeave={() => setIsSubmitHovered(false)}
+              {...submitHandlers}
               className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white font-suisse text-xs md:text-sm font-semibold tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
             >
               <ButtonShader isHovered={isSubmitHovered} />

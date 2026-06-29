@@ -79,6 +79,7 @@ interface SectionShaderProps {
   spread?: number;
   speed?: number;
   scrollTarget?: string;
+  sizeTarget?: string;
   playLate?: boolean;
   invert?: boolean;
 }
@@ -88,6 +89,7 @@ export default function SectionShader({
   spread = 0.5,
   speed = 1.0,
   scrollTarget = "#black-section",
+  sizeTarget,
   playLate = false,
   invert = false,
 }: SectionShaderProps) {
@@ -99,6 +101,9 @@ export default function SectionShader({
 
     const sectionElement = document.querySelector(scrollTarget) as HTMLElement;
     if (!sectionElement) return;
+
+    const sizeElement = sizeTarget ? document.querySelector(sizeTarget) as HTMLElement : sectionElement;
+    if (!sizeElement) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -131,8 +136,8 @@ export default function SectionShader({
 
     const resizeWebGL = () => {
       if (!sectionElement || !renderer || !material) return;
-      const width = sectionElement.offsetWidth;
-      const height = sectionElement.offsetHeight;
+      const width = sizeElement.offsetWidth;
+      const height = sizeElement.offsetHeight;
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       material.uniforms.uResolution.value.set(width, height);
@@ -202,7 +207,7 @@ export default function SectionShader({
       geometry.dispose();
       material.dispose();
     };
-  }, [color, spread, speed, scrollTarget, playLate, invert]);
+  }, [color, spread, speed, scrollTarget, sizeTarget, playLate, invert]);
 
   return (
     <canvas

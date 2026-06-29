@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { CustomEase } from "gsap/CustomEase";
 import Lenis from "lenis";
-import ButtonShader from "./ButtonShader";
+import ButtonShader, { useHoverInteraction } from "./ButtonShader";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -29,8 +29,8 @@ const MENU_LINKS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isCollabHovered, setIsCollabHovered] = useState(false);
-  const [isMenuHovered, setIsMenuHovered] = useState(false);
+  const { isHovered: isCollabHovered, handlers: collabHandlers } = useHoverInteraction();
+  const { isHovered: isMenuHovered, handlers: menuHandlers } = useHoverInteraction();
   const isAnimating = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -223,8 +223,7 @@ export default function Navbar() {
             onClick={() => {
               if (isOpen) closeMenu();
             }}
-            onMouseEnter={() => setIsCollabHovered(true)}
-            onMouseLeave={() => setIsCollabHovered(false)}
+            {...collabHandlers}
             className="group relative overflow-hidden font-sans text-xs uppercase tracking-wider px-6 py-2.5 border border-white text-white rounded-full transition-all duration-300 flex items-center justify-center"
           >
             <ButtonShader isHovered={isCollabHovered} colorA="#12110E" colorB="#ffffff" />
@@ -243,11 +242,10 @@ export default function Navbar() {
               openMenu();
             }
           }}
-          onMouseEnter={() => setIsMenuHovered(true)}
-          onMouseLeave={() => setIsMenuHovered(false)}
+          {...menuHandlers}
           className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans group"
         >
-          <div className="menu-toggle-label overflow-hidden h-[1.2em]">
+          <div className="menu-toggle-label hidden md:block overflow-hidden h-[1.2em]">
             <p className="menu-toggle-label-text relative translate-y-0 will-change-transform uppercase tracking-[0.07em] text-xs font-semibold">
               Menu
             </p>

@@ -34,9 +34,9 @@ export default function Collaborations() {
         stagger: 0.12,
         ease: "power2.out",
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 42%",
-          end: "bottom 85%",
+          trigger: headingRef.current,
+          start: "top 85%",
+          end: "bottom 45%",
           scrub: 0.5,
         },
       });
@@ -48,11 +48,11 @@ export default function Collaborations() {
     <section
       ref={sectionRef}
       id="collaborations-section"
-      className="relative w-full h-screen bg-[#12110E] flex items-center justify-center px-6 md:px-16 lg:px-24 overflow-hidden select-none z-30"
+      className="relative w-full min-h-[50vh] md:h-screen bg-[#12110E] flex items-center justify-center py-12 md:py-0 px-6 md:px-16 lg:px-24 overflow-hidden select-none z-30"
     >
       {/* Core Typography Statement */}
       <div ref={headingRef} className="max-w-5xl w-full">
-        <h2 className="text-[7.5vw] md:text-[5vw] lg:text-[4vw] font-normal leading-[1.15] tracking-tight font-ppeditorial text-center">
+        <h2 className="text-[7vw] xs:text-[6.5vw] sm:text-[5.5vw] md:text-[5vw] lg:text-[4vw] font-normal leading-[1.15] tracking-tight font-ppeditorial text-center">
           <span
             className="fill-line block text-center will-change-[background-position]"
             style={textFillStyle}

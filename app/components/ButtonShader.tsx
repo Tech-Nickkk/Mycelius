@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 
 const vertexShader = `
@@ -80,6 +80,38 @@ interface ButtonShaderProps {
   colorA?: string;
   colorB?: string;
   spread?: number;
+}
+
+export function useHoverInteraction() {
+  const [isHovered, setIsHovered] = useState(false);
+  const isTouch = useRef(false);
+
+  const handlers = {
+    onMouseEnter: () => {
+      if (!isTouch.current) setIsHovered(true);
+    },
+    onMouseLeave: () => {
+      if (!isTouch.current) setIsHovered(false);
+    },
+    onTouchStart: () => {
+      isTouch.current = true;
+      setIsHovered(true);
+    },
+    onTouchEnd: () => {
+      setIsHovered(false);
+      setTimeout(() => {
+        isTouch.current = false;
+      }, 500);
+    },
+    onTouchCancel: () => {
+      setIsHovered(false);
+      setTimeout(() => {
+        isTouch.current = false;
+      }, 500);
+    },
+  };
+
+  return { isHovered, handlers };
 }
 
 export default function ButtonShader({
