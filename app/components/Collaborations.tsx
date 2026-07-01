@@ -52,7 +52,7 @@ export default function Collaborations() {
     >
       {/* Core Typography Statement */}
       <div ref={headingRef} className="max-w-5xl w-full">
-        <h2 className="text-[7vw] xs:text-[6.5vw] sm:text-[5.5vw] md:text-[5vw] lg:text-[4vw] font-normal leading-[1.15] tracking-tight font-ppeditorial text-center">
+        <h2 className="text-[7vw] xs:text-[6.5vw] sm:text-[5.5vw] md:text-[5vw] lg:text-[4vw] font-normal leading-[1.15] tracking-tight text-center">
           <span
             className="fill-line block text-center will-change-[background-position]"
             style={textFillStyle}

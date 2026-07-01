@@ -240,7 +240,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
             style={textFillStyle}
           >
-            Who
+            who
           </span>
           <span
             className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
@@ -293,7 +293,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
               </div>
               {/* Title below image */}
               <div className="text-center w-full">
-                <span className="text-white text-[5.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1] font-ppeditorial">
+                <span className="text-white text-[5.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1]">
                   {item.title}
                 </span>
               </div>

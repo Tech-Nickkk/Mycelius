@@ -7,6 +7,7 @@ import TargetAudience, { Audience } from "./components/TargetAudience";
 import Incubators from "./components/Incubators";
 import ProductAdvantage from "./components/ProductAdvantage";
 import Collaborations from "./components/Collaborations";
+import LimitedEditions from "./components/LimitedEditions";
 import Contact from "./components/Contact";
 
 import { client } from "../sanity/lib/client";
@@ -72,6 +73,7 @@ export default async function Home() {
           <ProductAdvantage />
           <Collaborations />
           <Incubators />
+          <LimitedEditions />
           <Contact />
         </div>
       </div>

@@ -3,10 +3,11 @@ import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
 import localFont from "next/font/local";
+import { Bricolage_Grotesque } from "next/font/google";
 
-const suisseIntl = localFont({
-  src: "./fonts/suisse.ttf",
-  variable: "--font-suisse",
+const bricolageGrotesque = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
 });
 
 const neueHaasDisplay = localFont({
@@ -41,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${suisseIntl.variable} ${neueHaasDisplay.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-[#ffffff] text-[#12110E] antialiased font-sans selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
+    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen bg-[#ffffff] text-[#12110E] antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
         <PageTransition />
       </body>

@@ -308,7 +308,7 @@ export default function CollabPage() {
   return (
     <main 
       ref={containerRef}
-      className="h-screen w-screen bg-[#F6F6F6] text-[#12110E] flex flex-col items-center justify-center font-suisse px-6 md:px-12 py-4 selection:bg-[#FF6118] selection:text-black overflow-hidden relative"
+      className="h-screen w-screen bg-[#F6F6F6] text-[#12110E] flex flex-col items-center justify-center px-6 md:px-12 py-4 selection:bg-[#FF6118] selection:text-black overflow-hidden relative"
     >
       {/* Physics Canvas for falling mushrooms */}
       <canvas
@@ -321,7 +321,7 @@ export default function CollabPage() {
         <Link
           href="/"
           {...backHandlers}
-          className="group relative overflow-hidden font-suisse text-[10px] md:text-xs uppercase tracking-widest px-4 py-2 border border-[#12110E] text-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center font-medium"
+          className="group relative overflow-hidden text-[10px] md:text-xs uppercase tracking-widest px-4 py-2 border border-[#12110E] text-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center font-medium"
         >
           <ButtonShader isHovered={isBackHovered} colorA="#ffffff" colorB="#12110E" />
           <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-white">
@@ -335,13 +335,13 @@ export default function CollabPage() {
         
         {/* Header Block */}
         <div className="text-center mb-10 md:mb-12">
-          <h1 className="text-3xl md:text-[2.6rem] font-medium tracking-tight font-suisse text-[#12110E] leading-[1.15] mb-3">
+          <h1 className="text-3xl md:text-[2.6rem] font-medium tracking-tight text-[#12110E] leading-[1.15] mb-3">
             Start your <span className="text-[#F15B20]">Bioshift</span> journey today
           </h1>
         </div>
 
         {/* Minimal Underlined Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-7 font-suisse font-normal">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-7 font-normal">
           
           {/* Name */}
           <div className="flex flex-col">
@@ -403,7 +403,7 @@ export default function CollabPage() {
             <button
               type="submit"
               {...submitHandlers}
-              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white font-suisse text-xs md:text-sm font-semibold tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
+              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-semibold tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
             >
               <ButtonShader isHovered={isSubmitHovered} />
               <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black">

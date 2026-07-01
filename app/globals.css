@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-    --font-suisse: var(--font-suisse), sans-serif;
+    --font-bricolage: var(--font-bricolage), sans-serif;
     --font-neue-haas: var(--font-neue-haas), sans-serif;
     --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
     --color-orange-500: #F15B20;
@@ -106,4 +106,8 @@ html {
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+}
+
+body {
+    font-family: var(--font-bricolage), sans-serif;
 }

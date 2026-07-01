@@ -207,12 +207,12 @@ export default function Hero() {
 
       {/* Hero Text Overlay */}
       <div className="hero-content absolute inset-0 w-full h-svh px-6 sm:px-8 flex flex-col items-center justify-center text-center z-10">
-        <div className="hero-header w-full max-w-5xl flex flex-col items-center justify-center text-center font-suisse">
-          <h1 className="text-white text-5xl sm:text-7xl md:text-[10vw] lg:text-[12svh] xl:text-[14svh] leading-[1.05] mb-6 text-center font-medium tracking-tight">
+        <div className="hero-header w-full max-w-5xl flex flex-col items-center justify-center text-center">
+          <h1 className="text-white text-5xl sm:text-7xl md:text-[10vw] lg:text-[12svh] xl:text-[16svh] leading-[1.05] mb-6 text-center font-medium tracking-tight">
             Luxury.<br />
             Grown Slowly.
           </h1>
-          <p className="text-white/90 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl text-xs sm:text-lg md:text-xl lg:text-[2.2svh] xl:text-[2.5svh] tracking-wide font-normal text-center leading-relaxed">
+          <p className="text-white/90 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl text-xs sm:text-lg md:text-xl lg:text-[2.2svh] xl:text-[2.8svh] tracking-wide font-normal text-center leading-relaxed">
             Exclusive mycelium biomaterials for interiors, furniture and objects.
           </p>
         </div>

@@ -21,7 +21,7 @@ export default function Footer() {
 
       {/* Footer Text in the Center */}
       <div className="relative z-10 text-center select-none">
-        <h2 className="text-white text-[10vw] md:text-[6vw] font-normal tracking-tight font-suisse leading-none uppercase">
+        <h2 className="text-white text-[10vw] md:text-[6vw] font-normal tracking-tight leading-none uppercase">
           Footer
         </h2>
       </div>

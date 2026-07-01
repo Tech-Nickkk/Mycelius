@@ -67,7 +67,7 @@ export default function Contact() {
       <div className="relative z-2 max-w-4xl mx-auto flex flex-col items-center text-center gap-6 md:gap-10 -translate-y-8 md:translate-y-0">
         {/* Heading */}
         <div ref={headingRef}>
-          <h2 className="text-[6.5vw] xs:text-[6vw] sm:text-[5.5vw] md:text-[4.5vw] lg:text-[3.5vw] font-normal leading-[1.2] tracking-tight font-ppeditorial text-[#12110E]">
+          <h2 className="text-[6.5vw] xs:text-[6vw] sm:text-[5.5vw] md:text-[4.5vw] lg:text-[3.5vw] font-normal leading-[1.2] tracking-tight text-[#12110E]">
             <span
               className="fill-line block will-change-[background-position] pb-1"
               style={textFillStyle}
@@ -98,7 +98,7 @@ export default function Contact() {
       </div>
 
       {/* Footer Info inside the black shader transition area */}
-      <div className="absolute bottom-0 left-0 w-full pt-4 pb-4 px-6 md:p-10 z-20 text-white font-suisse select-text">
+      <div className="absolute bottom-0 left-0 w-full pt-4 pb-4 px-6 md:p-10 z-20 text-white select-text">
         <div className="max-w-6xl mx-auto flex flex-col gap-6 md:gap-8">
           
           {/* Main Footer Info Row */}

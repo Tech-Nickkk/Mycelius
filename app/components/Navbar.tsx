@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -8,7 +8,7 @@ import { CustomEase } from "gsap/CustomEase";
 import Lenis from "lenis";
 import ButtonShader, { useHoverInteraction } from "./ButtonShader";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const getLenis = (): Lenis | undefined => {
   if (typeof window !== "undefined") {
@@ -19,20 +19,60 @@ const getLenis = (): Lenis | undefined => {
 
 // Navigation links configuration
 const MENU_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "What We Do", href: "#what-we-do" },
-  { label: "Who We Work With", href: "#target-audience-scroll" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", targetId: "#home" },
+  { label: "About", targetId: "#about" },
+  { label: "What We Do", targetId: "#what-we-do" },
+  { label: "Who We Work With", targetId: "#target-audience-scroll" },
+  { label: "Contact", targetId: "#contact" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { isHovered: isCollabHovered, handlers: collabHandlers } = useHoverInteraction();
   const { isHovered: isMenuHovered, handlers: menuHandlers } = useHoverInteraction();
   const isAnimating = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle scrolling to section stored in sessionStorage after page load/navigation
+  useEffect(() => {
+    if (pathname === "/" && typeof window !== "undefined") {
+      const target = sessionStorage.getItem("scrollToSection");
+      if (target) {
+        sessionStorage.removeItem("scrollToSection");
+        // Delay scroll slightly to allow layout/animations to settle
+        setTimeout(() => {
+          const lenis = getLenis();
+          if (lenis) {
+            const targetPos = (target === "/" || target === "#home") ? 0 : target;
+            lenis.scrollTo(targetPos, {
+              duration: 1.5,
+              easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            });
+          } else {
+            const element = (target === "/" || target === "#home") ? document.body : document.querySelector(target);
+            if (element) {
+              element.scrollIntoView({ behavior: "smooth" });
+            }
+          }
+        }, 200);
+      }
+    }
+  }, [pathname]);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > window.innerHeight / 2);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Initialize GSAP plugins
   useGSAP(() => {
@@ -161,11 +201,14 @@ export default function Navbar() {
       .to(columns, { opacity: 0.25, duration: 1.4, ease: "hop" }, "<");
   };
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     if (isAnimating.current) return;
 
     if (pathname !== "/") {
+      e.preventDefault();
+      sessionStorage.setItem("scrollToSection", targetId);
       closeMenu();
+      router.push("/");
       return;
     }
 
@@ -179,16 +222,17 @@ export default function Navbar() {
       if (typeof window !== "undefined") {
         const lenis = getLenis();
         if (lenis) {
-          lenis.scrollTo(id, {
+          const target = (targetId === "/" || targetId === "#home") ? 0 : targetId;
+          lenis.scrollTo(target, {
             duration: 1.5,
             easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           });
           return;
         }
       }
-      const element = document.querySelector(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      const targetElement = (targetId === "/" || targetId === "#home") ? document.body : document.querySelector(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth" });
       }
     }, 1400);
   };
@@ -196,12 +240,12 @@ export default function Navbar() {
   return (
     <div ref={containerRef}>
       {/* Fixed Menu Bar (Always visible) */}
-      <div className="fixed top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-50 mix-blend-difference pointer-events-none">
+      <div className={`fixed top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-50 pointer-events-none ${isScrolled ? "mix-blend-difference" : ""}`}>
         
         {/* Logo */}
         <div className="pointer-events-auto flex items-center h-12 md:h-14">
           <Link
-            href={pathname === "/" ? "#home" : "/"}
+            href="/"
             onClick={(e) => handleLinkClick(e, "#home")}
             className="block"
           >
@@ -292,8 +336,8 @@ export default function Navbar() {
               {MENU_LINKS.map((link) => (
                 <div key={link.label} className="menu-link overflow-hidden">
                   <Link
-                    href={pathname === "/" ? link.href : "/" + link.href}
-                    onClick={(e) => handleLinkClick(e, link.href)}
+                    href="/"
+                    onClick={(e) => handleLinkClick(e, link.targetId)}
                     className="menu-anim-line block text-[2rem] xs:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] font-medium leading-[1.2] translate-y-[-110%] will-change-transform text-white hover:text-[#F15B20] transition-colors duration-300 font-sans uppercase tracking-tight"
                   >
                     {link.label}

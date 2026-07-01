@@ -1,141 +1,167 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ButtonShader, { useHoverInteraction } from "./ButtonShader";
+import MagneticCards from "./MagneticCards";
 
 export interface LimitedEditionItem {
   name: string;
   status: string;
   image: string;
-  description?: string;
 }
 
-interface Props {
-  items: LimitedEditionItem[];
-  showLink?: boolean;
-}
+const DEFAULT_ITEMS: LimitedEditionItem[] = [
+  {
+    name: "Mayu Lamp",
+    status: "5 available",
+    image: "/limited-1.png",
+  },
+  {
+    name: "Mycelium Wall Sculpture",
+    status: "2 available",
+    image: "/limited-2.png",
+  },
+  {
+    name: "Parametric Table Object",
+    status: "Sold Out",
+    image: "/limited-3.png",
+  },
+];
 
-export default function LimitedEditions({ items, showLink = true }: Props) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+const headingTextFillStyle: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
 
-  useGSAP(
-    () => {
-      gsap.registerPlugin(ScrollTrigger);
+export default function LimitedEditions() {
+  const spotlightRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
 
-      if (!sectionRef.current) return;
+  const { isHovered: isBtnHovered, handlers: btnHandlers } = useHoverInteraction();
 
-      const tl = gsap.timeline({
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Scroll Trigger animations for Title text reveal
+    const fillLines = headingRef.current?.querySelectorAll(".fill-line") || [];
+    fillLines.forEach((line) => {
+      gsap.to(line, {
+        backgroundPosition: "0% 100%",
+        ease: "none",
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
-          toggleActions: "play none none reverse",
+          trigger: line,
+          start: "top 85%",
+          end: "bottom 45%",
+          scrub: true,
         },
       });
-
-      if (titleRef.current) {
-        tl.from(titleRef.current, {
-          y: 50,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        });
-      }
-
-      if (gridRef.current) {
-        const cards = gridRef.current.querySelectorAll(".le-card");
-        tl.from(
-          cards,
-          {
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.2,
-            ease: "power3.out",
-          },
-          "-=0.4"
-        );
-      }
-    },
-    { scope: sectionRef }
-  );
+    });
+  }, []);
 
   return (
     <section
-      ref={sectionRef}
-      className="relative w-full py-24 md:py-32 bg-[#12110E] text-white overflow-hidden border-t border-white/10"
+      ref={spotlightRef}
+      className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-[980px] bg-[#12110E] text-white overflow-hidden flex flex-col justify-between py-14 md:py-16 z-10 select-none"
     >
-      <div className="container mx-auto px-6 md:px-12 flex flex-col items-center">
-        <h2
-          ref={titleRef}
-          className="text-[10vw] md:text-[6vw] font-normal tracking-tight text-center leading-none font-ppeditorial mb-6"
-        >
-          Limited Editions
+      {/* Title block */}
+      <div 
+        ref={headingRef} 
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-6 px-6"
+      >
+        <h2 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
+          <span 
+            className="fill-line block text-center will-change-[background-position,transform]"
+            style={headingTextFillStyle}
+          >
+            Limited Editions
+          </span>
         </h2>
-        
-        <p className="text-center text-white/70 max-w-2xl text-[4vw] md:text-[1.2vw] font-suisse leading-relaxed mb-16">
+        <p className="text-white/50 max-w-2xl mx-auto text-sm md:text-base lg:text-lg leading-relaxed mt-5 text-center">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
+      </div>
 
-        <div
-          ref={gridRef}
-          className="w-full flex flex-wrap justify-center gap-8 md:gap-12"
-        >
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="le-card group flex flex-col w-full md:w-[28vw] max-w-md"
-            >
-              <div className="relative w-full aspect-4/5 overflow-hidden rounded-2xl skeleton-shimmer-dark bg-white/5 mb-6">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                
-                {/* Exclusivity Badge */}
-                <div className="absolute top-4 right-4 z-10 px-4 py-1.5 rounded-full backdrop-blur-md bg-black/40 border border-white/20 text-[0.8rem] font-suisse tracking-wider uppercase text-white shadow-lg">
-                  {item.status}
-                </div>
-              </div>
+      {/* Reusable Magnetic Cards container */}
+      <MagneticCards
+        parentRef={spotlightRef}
+        className="relative w-full flex-grow flex items-center justify-center h-[1140px] md:h-full"
+        cardsContainerClassName="cards absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]"
+        config={{
+          proximityRadius: 420,
+          pushForce: 7,
+          tiltAmount: 0.08,
+          neighborInfluence: 0.12,
+          springStiffness: 0.06,
+          bounceFriction: 0.82,
+        }}
+        layout={{
+          rotation: [-5, 5, -8],
+          x: [-350, 0, 350],
+          y: [-10, 8, -5],
+          mobileRotation: [-2, 1, -3],
+          mobileX: [0, 0, 0],
+          mobileY: [-340, 0, 340],
+        }}
+      >
+        {DEFAULT_ITEMS.map((item, idx) => (
+          <div
+            key={idx}
+            className="card w-[230px] h-[310px] md:w-[280px] md:h-[375px] rounded-2xl overflow-hidden shadow-2xl bg-[#1c1a17] border border-white/10 cursor-grab active:cursor-grabbing group will-change-transform"
+          >
+            {/* Card Image */}
+            <div className="relative w-full h-full">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover pointer-events-none"
+                sizes="(max-width: 768px) 230px, 280px"
+                priority
+              />
               
-              <div className="flex flex-col">
-                <h3 className="text-[6vw] md:text-[2vw] font-ppeditorial leading-tight mb-2">
+              {/* Gradient Shadow Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-transparent pointer-events-none" />
+
+              {/* Exclusivity Badge */}
+              <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full backdrop-blur-md bg-black/50 border border-white/10 text-[9px] md:text-[10px] tracking-widest capitalize text-white shadow-md pointer-events-none font-semibold">
+                {item.status}
+              </div>
+
+              {/* Content Overlays inside the card */}
+              <div className="absolute bottom-0 left-0 w-full p-5 md:p-6 flex flex-col pointer-events-none">
+                <h3 className="text-white text-base md:text-lg font-semibold leading-tight capitalize tracking-wide">
                   {item.name}
                 </h3>
-                {item.description && (
-                  <p className="text-white/60 text-sm md:text-base font-suisse line-clamp-2">
-                    {item.description}
-                  </p>
-                )}
               </div>
             </div>
-          ))}
-        </div>
-
-        {showLink && items.length > 0 && (
-          <div className="mt-20">
-            <Link
-              href="/limited-editions"
-              className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full border border-white/30 hover:border-white/80 transition-colors duration-300"
-            >
-              <span className="font-suisse text-sm uppercase tracking-widest text-white">
-                View Full Collection
-              </span>
-              <span className="group-hover:translate-x-1 transition-transform duration-300">
-                &rarr;
-              </span>
-            </Link>
           </div>
-        )}
+        ))}
+      </MagneticCards>
+
+      {/* Button block */}
+      <div className="w-full flex justify-center px-6 relative z-20">
+        <Link
+          href="/"
+          {...btnHandlers}
+          className="group relative overflow-hidden text-xs uppercase tracking-wider px-8 py-3.5 border border-white hover:border-white text-white rounded-full transition-all duration-300 flex items-center justify-center pointer-events-auto"
+        >
+          <ButtonShader isHovered={isBtnHovered} colorA="#12110E" colorB="#ffffff" />
+          <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-[#12110E] font-semibold flex items-center gap-2">
+            View Full Collection &rarr;
+          </span>
+        </Link>
       </div>
     </section>
   );

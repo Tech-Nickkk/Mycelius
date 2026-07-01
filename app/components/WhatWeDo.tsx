@@ -389,7 +389,7 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleContainerClick}
-      className="custom-carousel-container relative w-full h-svh font-suisse text-[#12110E] select-none overflow-hidden bg-[#ffffff] flex items-center justify-center"
+      className="custom-carousel-container relative w-full h-svh text-[#12110E] select-none overflow-hidden bg-[#ffffff] flex items-center justify-center"
     >
       {/* cursor:none on whole section */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -416,7 +416,7 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
           transform: 'translate3d(-1000px, -1000px, 0)'
         }}
       >
-        <p className="text-[12px] uppercase text-white font-normal font-suisse tracking-wider select-none">
+        <p className="text-[12px] uppercase text-white font-normal tracking-wider select-none">
           {cursorText}
         </p>
       </div>
@@ -430,11 +430,11 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
         {/* Line 0: Overlapping below top left corner */}
         <div className="absolute max-md:top-[calc(100%+16px)] max-md:bottom-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[0] && (
-            <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#12110E] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+            <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#12110E] leading-none tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
               {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>
             </h1>
           )}
-          <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#12110E] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+          <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-[#12110E] leading-none tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
             {stories[activeStory].title[0]}<span className="md:hidden"> {stories[activeStory].title[1]}</span>
           </h1>
         </div>
@@ -442,11 +442,11 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
         {/* Line 1: Overlapping above bottom right corner */}
         <div className="absolute max-md:hidden md:bottom-[4%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[1] && (
-            <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#12110E] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
+            <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#12110E] leading-none tracking-tight px-[0.2em] py-[0.05em] text-right">
               {stories[prevStory].title[1]}
             </h1>
           )}
-          <h1 className="new-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#12110E] leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
+          <h1 className="new-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-[#12110E] leading-none tracking-tight px-[0.2em] py-[0.05em] text-right">
             {stories[activeStory].title[1]}
           </h1>
         </div>
@@ -470,11 +470,11 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
           {/* Line 0: White Text */}
           <div className="absolute max-md:top-[calc(100%+16px)] max-md:bottom-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-30 grid">
             {prevStory !== null && stories[prevStory].title[0] && (
-              <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+              <h1 className={`old-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none tracking-tight px-[0.2em] py-[0.05em] relative ${stories[prevStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
                 {stories[prevStory].title[0]}<span className="md:hidden"> {stories[prevStory].title[1]}</span>
               </h1>
             )}
-            <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
+            <h1 className={`new-title-text title-0 col-start-1 row-start-1 justify-self-start max-md:justify-self-center whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-md:text-[44px] max-sm:text-[36px] font-normal text-white leading-none tracking-tight px-[0.2em] py-[0.05em] relative ${stories[activeStory].title[0] === "Wall" ? "left-[3vw] md:left-[5vw] lg:left-[6vw] max-md:left-0" : ""}`}>
               {stories[activeStory].title[0]}<span className="md:hidden"> {stories[activeStory].title[1]}</span>
             </h1>
           </div>
@@ -482,11 +482,11 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
           {/* Line 1: White Text */}
           <div className="absolute max-md:hidden md:bottom-[4%] md:right-[-25%] xl:right-[-30%] overflow-hidden pointer-events-none z-30 grid">
             {prevStory !== null && stories[prevStory].title[1] && (
-              <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
+              <h1 className="old-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none tracking-tight px-[0.2em] py-[0.05em] text-right">
                 {stories[prevStory].title[1]}
               </h1>
             )}
-            <h1 className="new-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none font-ppeditorial tracking-tight px-[0.2em] py-[0.05em] text-right">
+            <h1 className="new-title-text title-1 col-start-1 row-start-1 justify-self-end whitespace-nowrap text-[60px] md:text-[80px] lg:text-[100px] max-sm:text-[40px] font-normal text-white leading-none tracking-tight px-[0.2em] py-[0.05em] text-right">
               {stories[activeStory].title[1]}
             </h1>
           </div>
