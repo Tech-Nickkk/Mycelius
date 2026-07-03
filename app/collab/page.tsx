@@ -174,7 +174,7 @@ export default function CollabPage() {
       spawned = true;
 
       const isMobile = width < 768;
-      const count = 8; 
+      const count = 12; 
       const radius = isMobile ? 32 : 65;
       const mushrooms: Matter.Body[] = [];
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import * as THREE from "three";
 
 const vertexShader = `
@@ -220,20 +221,23 @@ export default function PageTransition() {
     <>
       <canvas
         ref={canvasRef}
-        className={`fixed inset-0 w-screen h-screen z-[99999] ${
+        className={`fixed inset-0 w-screen h-screen z-99999 ${
           overlayActive ? "pointer-events-auto" : "pointer-events-none"
         }`}
       />
       <div 
-        className={`fixed inset-0 w-screen h-screen z-[100000] pointer-events-none flex items-center justify-center transition-opacity duration-700 ease-in-out ${
+        className={`fixed inset-0 w-screen h-screen z-100000 pointer-events-none flex items-center justify-center transition-opacity duration-700 ease-in-out ${
           showLogo ? "opacity-100" : "opacity-0"
         }`}
       >
         <div className="animate-pulse">
-          <img
+          <Image
             src="/mycelius-logo.png"
             alt="Loading..."
+            width={180}
+            height={60}
             className="h-12 md:h-16 w-auto object-contain brightness-0 invert opacity-80"
+            preload={true}
           />
         </div>
       </div>

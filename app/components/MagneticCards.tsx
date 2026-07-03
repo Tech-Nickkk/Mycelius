@@ -36,7 +36,7 @@ export default function MagneticCards({
   parentRef,
   config = {},
   layout = {},
-  className = "relative w-full flex-grow flex items-center justify-center h-full",
+  className = "relative w-full grow flex items-center justify-center h-full",
   cardsContainerClassName = "cards absolute top-[52%] left-[50%] -translate-x-[50%] -translate-y-[50%]",
 }: MagneticCardsProps) {
   const localSpotlightRef = useRef<HTMLDivElement>(null);
@@ -49,8 +49,9 @@ export default function MagneticCards({
     const spotlight = parentRef?.current || localSpotlightRef.current;
     const cardsContainer = cardsContainerRef.current;
     const cards = cardsRef.current.filter(Boolean);
+    const cardsComponent = localSpotlightRef.current;
 
-    if (!spotlight || !cardsContainer || cards.length === 0) return;
+    if (!spotlight || !cardsContainer || cards.length === 0 || !cardsComponent) return;
 
     // Physics parameters from config props with default fallbacks
     const PROXIMITY_RADIUS = config.proximityRadius ?? 500;
@@ -108,10 +109,10 @@ export default function MagneticCards({
       };
     });
 
-    let rect = spotlight.getBoundingClientRect();
+    let rect = cardsComponent.getBoundingClientRect();
     const updateRect = () => {
-      if (spotlight) {
-        rect = spotlight.getBoundingClientRect();
+      if (cardsComponent) {
+        rect = cardsComponent.getBoundingClientRect();
       }
     };
 
@@ -132,6 +133,7 @@ export default function MagneticCards({
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", updateRect, { passive: true });
     spotlight.addEventListener("mouseleave", handleMouseLeave);
 
     // Track touch events for mobile
@@ -248,6 +250,7 @@ export default function MagneticCards({
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", updateRect);
       spotlight.removeEventListener("mouseleave", handleMouseLeave);
       spotlight.removeEventListener("touchstart", handleTouchStart);
       spotlight.removeEventListener("touchmove", handleTouchMove);

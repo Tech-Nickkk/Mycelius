@@ -23,14 +23,6 @@ const textFillStyle: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-const STATIC_BLOBS = [
-  "60% 40% 30% 70% / 60% 30% 70% 40%", // 3 curves (top-right flat)
-  "30% 70% 60% 40% / 30% 60% 40% 70%", // 3 curves (top-left flat)
-  "70% 30% 40% 60% / 40% 70% 30% 60%", // 3 curves (bottom-left flat)
-  "60% 40% 70% 30% / 70% 30% 40% 60%", // 3 curves (bottom-right flat)
-  "40% 60% 70% 30% / 30% 70% 40% 60%", // 3 curves (smooth 3-curve leaf shape)
-];
-
 export default function TargetAudience({ audiences }: { audiences: Audience[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -278,9 +270,6 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
               {/* Image Wrapper */}
               <div 
                 className="audience-card relative w-full h-[55vh] md:h-[50vh] overflow-hidden border border-white/5 skeleton-shimmer-dark"
-                style={{
-                  borderRadius: STATIC_BLOBS[i % STATIC_BLOBS.length]
-                }}
               >
                 <Image
                   src={item.image}

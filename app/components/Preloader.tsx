@@ -80,7 +80,7 @@ export default function Preloader() {
   }
 
   return (
-    <div ref={preloaderRef} className="loader fixed inset-0 w-screen h-svh overflow-hidden z-[9999] pointer-events-none">
+    <div ref={preloaderRef} className="loader fixed inset-0 w-screen h-svh overflow-hidden z-9999 pointer-events-none">
       {/* Dark overlay blocks */}
       <div className="overlay absolute top-0 w-full h-full">
         <div className="block absolute left-0 top-0 w-[50.5%] h-full bg-[#1a1a1a] [clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]" style={{ willChange: "clip-path" }}></div>

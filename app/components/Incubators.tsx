@@ -20,48 +20,54 @@ const LOGOS = [
   {
     name: "BioLabs",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4.5 12c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5-2 4.5-4.5 4.5S4.5 14.5 4.5 12zm10.5 0c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5-2 4.5-4.5 4.5-4.5-2-4.5-4.5z" stroke="currentColor" strokeWidth="1.5" fill="none" />
       </svg>
     )
   },
   {
     name: "EcoVentures",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.5c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm-4 9.5c0-2.21 1.79-4 4-4s4 1.79 4 4H8z"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C8.5 7 6 10 6 13c0 3.3 2.7 6 6 6s6-2.7 6-6c0-3-2.5-6-6-11z" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M12 7c-1.5 2.5-3 4-3 6 0 1.7 1.3 3 3 3s3-1.3 3-3c0-2-1.5-3.5-3-6z" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.4" />
       </svg>
     )
   },
   {
     name: "DeepTech Labs",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M12 6v12M3.34 7l17.32 10M20.66 7L3.34 17" stroke="currentColor" strokeWidth="0.8" fill="none" opacity="0.3" />
       </svg>
     )
   },
   {
     name: "Nova Inc.",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6L12 2z"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] fill-current transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2c0 5.5 4.5 10 10 10-5.5 0-10 4.5-10 10-0-5.5-4.5-10-10-10 5.5 0 10-4.5 10-10z" />
       </svg>
     )
   },
   {
     name: "GreenGrowth",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M17 8C14.24 8 12 10.24 12 13c0 2.76 2.24 5 5 5s5-2.24 5-5c0-2.76-2.24-5-5-5zm-10 4c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5c0-2.76-2.24-5-5-5zm5-8c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5c0-2.76-2.24-5-5-5z"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22V10M12 14c2-2 4-2 6-4M12 12c-2-2-4-2-6-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <circle cx="18" cy="10" r="1.5" fill="currentColor" />
+        <circle cx="6" cy="8" r="1.5" fill="currentColor" />
       </svg>
     )
   },
   {
     name: "FutureMatter",
     icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 text-white/30 fill-current group-hover:text-white/70 transition-colors duration-300">
-        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 6h-4v2h4v2h-4v2h4v2H9V7h6v2z"/>
+      <svg viewBox="0 0 24 24" className="h-6 w-6 md:h-8 md:w-8 text-white/30 group-hover:text-[#F15B20] transition-colors duration-500" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="3 3" />
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
       </svg>
     )
   }
@@ -129,21 +135,24 @@ export default function Incubators() {
         </div>
 
         {/* Infinite Scrolling Marquee */}
-        <div className="relative w-full overflow-hidden py-4 select-none">
+        <div className="relative w-full overflow-hidden py-8 select-none">
           {/* Edge fades */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-48 bg-gradient-to-r from-[#12110E] to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-48 bg-gradient-to-l from-[#12110E] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-48 bg-linear-to-r from-[#12110E] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-48 bg-linear-to-l from-[#12110E] to-transparent z-10" />
 
           {/* Scrolling Track */}
-          <div className="flex gap-6 md:gap-16 animate-marquee">
+          <div className="flex items-center animate-marquee">
             {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-2.5 md:gap-3 px-5 py-3 md:px-8 md:py-4 bg-[#1C1B19]/30 border border-white/5 rounded-full backdrop-blur-sm group hover:bg-[#1C1B19]/60 hover:border-white/10 transition-all duration-300"
-              >
-                {item.icon}
-                <span className="text-white/30 font-sans text-[10px] md:text-xs tracking-[0.25em] font-semibold uppercase group-hover:text-white/70 transition-colors duration-300">
-                  {item.name}
+              <div key={idx} className="flex items-center shrink-0 gap-6 md:gap-10">
+                <div className="flex items-center gap-3.5 md:gap-5 group cursor-pointer">
+                  {item.icon}
+                  <span className="text-white/30 font-sans text-[11px] md:text-[13.5px] tracking-[0.3em] md:tracking-[0.4em] font-semibold uppercase group-hover:text-white/80 transition-colors duration-500">
+                    {item.name}
+                  </span>
+                </div>
+                {/* Separator with right margin to make total width perfectly symmetric */}
+                <span className="text-white/10 text-xs md:text-sm select-none pr-6 md:pr-10">
+                  ✦
                 </span>
               </div>
             ))}

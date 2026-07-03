@@ -114,6 +114,19 @@ export function useHoverInteraction() {
   return { isHovered, handlers };
 }
 
+const detectWebGL = () => {
+  if (typeof window === "undefined") return true;
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch (e) {
+    return false;
+  }
+};
+
 export default function ButtonShader({
   isHovered,
   colorA = "#12110E",
@@ -122,6 +135,7 @@ export default function ButtonShader({
 }: ButtonShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverRef = useRef(isHovered);
+  const [webglAvailable] = useState(() => detectWebGL());
 
   // Sync hover state ref without tearing down WebGL context
   useEffect(() => {
@@ -129,6 +143,8 @@ export default function ButtonShader({
   }, [isHovered]);
 
   useEffect(() => {
+    if (!webglAvailable) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -206,7 +222,19 @@ export default function ButtonShader({
       geometry.dispose();
       material.dispose();
     };
-  }, [colorA, colorB, spread]);
+  }, [colorA, colorB, spread, webglAvailable]);
+
+  if (!webglAvailable) {
+    return (
+      <div
+        className="absolute inset-0 w-full h-full transition-opacity duration-500 rounded-full z-0"
+        style={{
+          backgroundColor: colorB,
+          opacity: isHovered ? 1 : 0,
+        }}
+      />
+    );
+  }
 
   return (
     <canvas

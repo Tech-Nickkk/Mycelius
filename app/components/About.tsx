@@ -27,17 +27,17 @@ function MushroomInstance({ side, scrollTriggerRef }: MushroomInstanceProps) {
 
   // Viewport-based responsive scaling and position calculations
   const isMobile = viewport.width < 12;
-  const scale = isMobile ? Math.max(1.2, viewport.width * 0.22) : 3;
+  const scale = isMobile ? Math.max(1.5, viewport.width * 0.26) : 3.8;
   
   // On mobile, push the mushrooms slightly out of the viewport so they don't cover the text
-  const margin = isMobile ? -0.5 : 1;
+  const margin = isMobile ? -0.5 : 2.5;
 
   // Horizontal edge placement based on dynamic viewport width
   const initialX = side === "left" 
     ? -viewport.width / 2 + (isMobile ? -0.5 : 4) 
     : viewport.width / 2 - margin;
 
-  const initialY = side === "left" ? -6 : -9;
+  const initialY = side === "left" ? -9 : -9;
   const targetY = side === "left" ? 3 : 1;
   const zPosition = side === "left" ? 0 : -2;
 
