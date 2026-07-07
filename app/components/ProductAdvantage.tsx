@@ -204,7 +204,7 @@ export default function ProductAdvantage() {
           );
         }
 
-        // Mobile Arrows reveal (rotated to point down)
+        // Mobile Arrows reveal (pointing down)
         const arrows = trackRef.current?.querySelectorAll(".reveal-arrow");
         arrows?.forEach((arrow) => {
           gsap.to(arrow, {
@@ -297,9 +297,9 @@ export default function ProductAdvantage() {
 
               {/* Arrow pointing to next (except after last card) */}
               {idx < ADVANTAGES_DATA.length - 1 && (
-                <div className="shrink-0 flex items-center justify-center my-2 md:my-0 rotate-90 md:rotate-0">
+                <div className="shrink-0 flex items-center justify-center w-[20vw] h-[20vw] md:w-auto md:h-auto my-4 md:my-0">
                   <span
-                    className="reveal-arrow text-[20vw] md:text-[5vw] font-light leading-none will-change-[background-position]"
+                    className="reveal-arrow text-[15vw] md:text-[5vw] font-light leading-none will-change-[background-position] rotate-90 md:rotate-0 inline-block origin-center"
                     style={horizontalTextFillStyle}
                   >
                     &rarr;

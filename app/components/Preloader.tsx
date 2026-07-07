@@ -6,15 +6,26 @@ import { useGSAP } from "@gsap/react";
 import SplitText from "gsap/SplitText";
 import CustomEase from "gsap/CustomEase";
 
-// Global variable tracks preloader state across client-side router transitions
-let hasPlayedPreloader = false;
+declare global {
+  interface Window {
+    __hasPlayedPreloader?: boolean;
+  }
+}
 
 export default function Preloader() {
   const preloaderRef = useRef<HTMLDivElement>(null);
-  const [shouldRender, setShouldRender] = useState(!hasPlayedPreloader);
+  
+  // Safe state initialization checking if preloader has already run in the current session
+  const [shouldRender, setShouldRender] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !window.__hasPlayedPreloader;
+    }
+    return true;
+  });
 
   useGSAP(() => {
-    if (hasPlayedPreloader) {
+    if (typeof window !== "undefined" && window.__hasPlayedPreloader) {
+      setShouldRender(false);
       return;
     }
 
@@ -69,11 +80,17 @@ export default function Preloader() {
       onComplete: () => {
         // Remove preloader from rendering entirely
         gsap.set(".loader", { display: "none" });
-        hasPlayedPreloader = true;
+        if (typeof window !== "undefined") {
+          window.__hasPlayedPreloader = true;
+        }
         setShouldRender(false);
       },
     }, "<0.2");
   }, { dependencies: [] }); // Empty array ensures this only runs once on mount, omitting scope allows global query
+
+  if (typeof window !== "undefined" && window.__hasPlayedPreloader) {
+    return null;
+  }
 
   if (!shouldRender) {
     return null;

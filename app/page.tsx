@@ -4,10 +4,10 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import WhatWeDo, { Story } from "./components/WhatWeDo";
 import TargetAudience, { Audience } from "./components/TargetAudience";
-import Incubators from "./components/Incubators";
+import Incubators, { IncubatorItem } from "./components/Incubators";
 import ProductAdvantage from "./components/ProductAdvantage";
 import Collaborations from "./components/Collaborations";
-import LimitedEditions from "./components/LimitedEditions";
+import LimitedEditions, { LimitedEditionItem } from "./components/LimitedEditions";
 import Contact from "./components/Contact";
 
 import { client } from "../sanity/lib/client";
@@ -36,6 +36,8 @@ async function getSanityData() {
   try {
     const whatWeDoData = await client.fetch(`*[_type == "whatWeDo"]`);
     const targetAudienceData = await client.fetch(`*[_type == "targetAudience"]`);
+    const limitedEditionsData = await client.fetch(`*[_type == "limitedEdition"]`);
+    const incubatorsData = await client.fetch(`*[_type == "incubator"]`);
     
     const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource }) => ({
       title: [item.titleLine1, item.titleLine2],
@@ -47,15 +49,26 @@ async function getSanityData() {
       image: urlFor(item.image).url(),
     }));
 
-    return { stories, audiences };
+    const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { name: string; status: string; image: SanityImageSource }) => ({
+      name: item.name,
+      status: item.status,
+      image: urlFor(item.image).url(),
+    }));
+
+    const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource }) => ({
+      name: item.name,
+      logo: urlFor(item.logo).url(),
+    }));
+
+    return { stories, audiences, limitedEditions, incubators };
   } catch (error) {
     console.error("Failed to fetch Sanity data:", error);
-    return { stories: [], audiences: [] };
+    return { stories: [], audiences: [], limitedEditions: [], incubators: [] };
   }
 }
 
 export default async function Home() {
-  const { stories, audiences } = await getSanityData();
+  const { stories, audiences, limitedEditions, incubators } = await getSanityData();
 
   const finalStories = stories.length > 0 ? stories : defaultStories;
   const finalAudiences = audiences.length > 0 ? audiences : defaultAudiences;
@@ -72,8 +85,8 @@ export default async function Home() {
           <TargetAudience audiences={finalAudiences} />
           <ProductAdvantage />
           <Collaborations />
-          <Incubators />
-          <LimitedEditions />
+          <Incubators items={incubators} />
+          <LimitedEditions items={limitedEditions} />
           <Contact />
         </div>
       </div>

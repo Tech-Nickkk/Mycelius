@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, Fragment } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,6 +21,77 @@ const textFillStyle: React.CSSProperties = {
   WebkitBackgroundClip: "text",
   color: "transparent",
   WebkitTextFillColor: "transparent",
+};
+
+
+const getClipPathD = (xTop: number, xBottom: number) => {
+  const w = 0.45; // notch width
+  const c = 0.08; // transition width
+  
+  // Top notch (indented down to y = 0.08)
+  const x1_top = xTop - w / 2;
+  const x2_top = x1_top + c;
+  const x3_top = xTop + w / 2 - c;
+  const x4_top = xTop + w / 2;
+
+  // Bottom notch (indented up to y = 0.92)
+  const x1_bot = xBottom - w / 2;
+  const x2_bot = x1_bot + c;
+  const x3_bot = xBottom + w / 2 - c;
+  const x4_bot = xBottom + w / 2;
+
+  return `M 0,0.04 ` +
+    `C 0,0.02 0.02,0 0.04,0 ` +
+    `L ${x1_top},0 ` +
+    `C ${x1_top + c*0.4},0 ${x1_top + c*0.6},0.08 ${x2_top},0.08 ` +
+    `L ${x3_top},0.08 ` +
+    `C ${x4_top - c*0.6},0.08 ${x4_top - c*0.4},0 ${x4_top},0 ` +
+    `L 0.96,0 ` +
+    `C 0.98,0 1,0.02 1,0.04 ` +
+    `L 1,0.96 ` +
+    `C 1,0.98 0.98,1 0.96,1 ` +
+    `L ${x4_bot},1 ` +
+    `C ${x4_bot - c*0.4},1 ${x4_bot - c*0.6},0.92 ${x3_bot},0.92 ` +
+    `L ${x2_bot},0.92 ` +
+    `C ${x1_bot + c*0.6},0.92 ${x1_bot + c*0.4},1 ${x1_bot},1 ` +
+    `L 0.04,1 ` +
+    `C 0.02,1 0,0.98 0,0.96 ` +
+    `Z`;
+};
+
+const getClipPathMobileD = (yLeft: number, yRight: number) => {
+  const w = 0.45; // notch width (vertical height)
+  const c = 0.08; // transition width
+  
+  // Right notch (indented left to x = 0.92)
+  const y1_right = yRight - w / 2;
+  const y2_right = y1_right + c;
+  const y3_right = yRight + w / 2 - c;
+  const y4_right = yRight + w / 2;
+
+  // Left notch (indented right to x = 0.08)
+  const y1_left = yLeft - w / 2;
+  const y2_left = y1_left + c;
+  const y3_left = yLeft + w / 2 - c;
+  const y4_left = yLeft + w / 2;
+
+  return `M 0,0.04 ` +
+    `C 0,0.02 0.02,0 0.04,0 ` +
+    `L 0.96,0 ` +
+    `C 0.98,0 1,0.02 1,0.04 ` +
+    `L 1,${y1_right} ` +
+    `C 1,${y1_right + c*0.4} 0.92,${y1_right + c*0.6} 0.92,${y2_right} ` +
+    `L 0.92,${y3_right} ` +
+    `C 0.92,${y4_right - c*0.6} 1,${y4_right - c*0.4} 1,${y4_right} ` +
+    `L 1,0.96 ` +
+    `C 1,0.98 0.98,1 0.96,1 ` +
+    `L 0.04,1 ` +
+    `C 0.02,1 0,0.98 0,0.96 ` +
+    `L 0,${y4_left} ` +
+    `C 0,${y4_left - c*0.4} 0.08,${y4_left - c*0.6} 0.08,${y3_left} ` +
+    `L 0.08,${y2_left} ` +
+    `C 0.08,${y1_left + c*0.6} 0,${y1_left + c*0.4} 0,${y1_left} ` +
+    `Z`;
 };
 
 export default function TargetAudience({ audiences }: { audiences: Audience[] }) {
@@ -104,7 +175,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           );
         }
 
-        // Parallax each card image
+        // Parallax each card image and animate notch clip paths
         const cards = gsap.utils.toArray(".audience-card") as HTMLElement[];
         cards.forEach((card, i) => {
           const img = card.querySelector("img");
@@ -113,12 +184,33 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           const start = Math.max(0, (i - 1) / cards.length);
           const end = Math.min(1, (i + 2) / cards.length);
 
+          // Image horizontal parallax
           tl.fromTo(
             img,
             { x: -30 },
             { x: 30, ease: "none", duration: end - start },
             start
           );
+
+          // Notch horizontal shift: top (right to left), bottom (left to right)
+          const pathEl = document.getElementById(`audience-card-path-${i}`);
+          if (pathEl) {
+            const animObj = { xTop: 0.7, xBot: 0.3 };
+            tl.fromTo(
+              animObj,
+              { xTop: 0.7, xBot: 0.3 },
+              {
+                xTop: 0.3,
+                xBot: 0.7,
+                ease: "none",
+                duration: end - start,
+                onUpdate: () => {
+                  pathEl.setAttribute("d", getClipPathD(animObj.xTop, animObj.xBot));
+                },
+              },
+              start
+            );
+          }
         });
       });
 
@@ -174,11 +266,13 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           );
         }
 
-        // Simple vertical parallax for card images
+        // Simple vertical parallax and notch animation for card images
         const cards = gsap.utils.toArray(".audience-card") as HTMLElement[];
-        cards.forEach((card) => {
+        cards.forEach((card, i) => {
           const img = card.querySelector("img");
           if (!img) return;
+
+          // Image vertical parallax
           gsap.fromTo(
             img,
             { y: -20 },
@@ -193,6 +287,30 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
               },
             }
           );
+
+          // Notch vertical shift on mobile vertical scroll: left (bottom to top), right (top to bottom)
+          const pathElMobile = document.getElementById(`audience-card-path-mobile-${i}`);
+          if (pathElMobile) {
+            const animObj = { yLeft: 0.7, yRight: 0.3 };
+            gsap.fromTo(
+              animObj,
+              { yLeft: 0.7, yRight: 0.3 },
+              {
+                yLeft: 0.3,
+                yRight: 0.7,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card as HTMLElement,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                },
+                onUpdate: () => {
+                  pathElMobile.setAttribute("d", getClipPathMobileD(animObj.yLeft, animObj.yRight));
+                },
+              }
+            );
+          }
         });
       });
 
@@ -207,6 +325,20 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
       ref={sectionRef}
       className="relative w-full md:h-screen bg-[#12110E] md:overflow-hidden pt-36 pb-16 md:py-0"
     >
+      {/* Responsive Clip Path Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        ${audiences.map((_, i) => `
+          .audience-card-clip-${i} {
+            clip-path: url(#audience-card-clip-mobile-${i});
+          }
+          @media (min-width: 768px) {
+            .audience-card-clip-${i} {
+              clip-path: url(#audience-card-clip-desktop-${i});
+            }
+          }
+        `).join('\n')}
+      `}} />
+
       {/* Wrapper to fix SectionShader sizing and positioning on mobile */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
         <div id="target-audience-shader-size" className="sticky top-0 w-full h-screen">
@@ -269,16 +401,20 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             >
               {/* Image Wrapper */}
               <div 
-                className="audience-card relative w-full h-[55vh] md:h-[50vh] overflow-hidden border border-white/5 skeleton-shimmer-dark"
+                className={`audience-card audience-card-clip-${i} relative w-full h-[55vh] md:h-[50vh] p-px bg-white/10 skeleton-shimmer-dark transition-all duration-700 ease-in-out group-hover:bg-white/20 group-hover:scale-[1.01]`}
               >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 35vw"
-                  unoptimized
-                  className="object-cover scale-[1.2] will-change-transform"
-                />
+                <div 
+                  className={`audience-card-clip-${i} relative w-full h-full overflow-hidden bg-[#12110E]`}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 35vw"
+                    unoptimized
+                    className="object-cover scale-[1.2] will-change-transform"
+                  />
+                </div>
               </div>
               {/* Title below image */}
               <div className="text-center w-full">
@@ -290,6 +426,30 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           ))}
         </div>
       </div>
+
+      {/* SVG Clip Paths with top and bottom edge notch shapes for each card */}
+      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
+        <defs>
+          {audiences.map((_, i) => (
+            <Fragment key={i}>
+              {/* Desktop Clip Path (top/bottom notches) */}
+              <clipPath id={`audience-card-clip-desktop-${i}`} clipPathUnits="objectBoundingBox">
+                <path
+                  id={`audience-card-path-${i}`}
+                  d={getClipPathD(0.7, 0.3)}
+                />
+              </clipPath>
+              {/* Mobile Clip Path (left/right notches) */}
+              <clipPath id={`audience-card-clip-mobile-${i}`} clipPathUnits="objectBoundingBox">
+                <path
+                  id={`audience-card-path-mobile-${i}`}
+                  d={getClipPathMobileD(0.7, 0.3)}
+                />
+              </clipPath>
+            </Fragment>
+          ))}
+        </defs>
+      </svg>
     </section>
   );
 }

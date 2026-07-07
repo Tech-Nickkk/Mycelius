@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ButtonShader, { useHoverInteraction } from "./ButtonShader";
@@ -61,11 +60,23 @@ const headingTextFillStyle: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-export default function LimitedEditions() {
+export default function LimitedEditions({ items }: { items?: LimitedEditionItem[] }) {
   const spotlightRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
 
   const { isHovered: isBtnHovered, handlers: btnHandlers } = useHoverInteraction();
+
+  const finalItems = items && items.length > 0 ? items : DEFAULT_ITEMS;
+  const N = finalItems.length;
+
+  const layout = {
+    rotation: Array.from({ length: N }, (_, i) => [-5, 5, -8, 6, -4, 7][i % 6] || 0),
+    x: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 350),
+    y: Array.from({ length: N }, (_, i) => [-10, 8, -5, 10, -8, 5][i % 6] || 0),
+    mobileRotation: Array.from({ length: N }, (_, i) => [-2, 1, -3, 2, -1, 3][i % 6] || 0),
+    mobileX: Array.from({ length: N }, () => 0),
+    mobileY: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 340),
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -118,7 +129,7 @@ export default function LimitedEditions() {
     return () => {
       triggers.forEach((t) => t.kill());
     };
-  }, []);
+  }, [finalItems]);
 
   return (
     <section
@@ -156,16 +167,9 @@ export default function LimitedEditions() {
           springStiffness: 0.06,
           bounceFriction: 0.82,
         }}
-        layout={{
-          rotation: [-5, 5, -8],
-          x: [-350, 0, 350],
-          y: [-10, 8, -5],
-          mobileRotation: [-2, 1, -3],
-          mobileX: [0, 0, 0],
-          mobileY: [-340, 0, 340],
-        }}
+        layout={layout}
       >
-        {DEFAULT_ITEMS.map((item, idx) => (
+        {finalItems.map((item, idx) => (
           <div
             key={idx}
             className="card w-[230px] h-[310px] md:w-[280px] md:h-[375px] rounded-2xl overflow-hidden bg-[#1c1a17] border border-white/10 cursor-grab active:cursor-grabbing group will-change-transform"

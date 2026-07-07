@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import ButtonShader, { useHoverInteraction } from "../components/ButtonShader";
-import { Engine, Render, Runner, Bodies, Composite, Body } from "matter-js";
+// import { Engine, Render, Runner, Bodies, Composite, Body } from "matter-js";
+// import Ferrofluid from "../components/Ferrofluid";
+import Ballpit from "../components/Ballpit";
 
 export default function CollabPage() {
   const { isHovered: isSubmitHovered, handlers: submitHandlers } = useHoverInteraction();
   const { isHovered: isBackHovered, handlers: backHandlers } = useHoverInteraction();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [formData, setFormData] = useState({
@@ -30,6 +32,7 @@ export default function CollabPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /*
   // Matter.js Physics Animation on Collab Page
   useEffect(() => {
     if (typeof window === "undefined" || !canvasRef.current || !containerRef.current) return;
@@ -178,15 +181,17 @@ export default function CollabPage() {
       const radius = isMobile ? 32 : 65;
       const mushrooms: Matter.Body[] = [];
 
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count + 1; i++) {
+        const isTiny = i === count;
+        const currentRadius = isTiny ? (isMobile ? 12 : 24) : radius;
         const overlapFactor = 1.12;
-        const scale = ((radius * 2) / 896) * overlapFactor;
+        const scale = ((currentRadius * 2) / 896) * overlapFactor;
 
-        const x = Math.random() * (width - 2 * radius) + radius;
+        const x = Math.random() * (width - 2 * currentRadius) + currentRadius;
         const y = -150 - Math.random() * 500; // staggered spawn heights
 
-        const mushroom = Bodies.circle(x, y, radius, {
-          restitution: 0.45,
+        const mushroom = Bodies.circle(x, y, currentRadius, {
+          restitution: isTiny ? 0.65 : 0.45, // slightly more bouncy for the cute tiny one
           friction: 0.001,
           frictionStatic: 0,
           frictionAir: 0.02,
@@ -200,10 +205,10 @@ export default function CollabPage() {
           },
         });
 
-        Body.setAngularVelocity(mushroom, (Math.random() - 0.5) * 0.15);
+        Body.setAngularVelocity(mushroom, (Math.random() - 0.5) * (isTiny ? 0.35 : 0.15)); // spins faster since it's smaller
         Body.setVelocity(mushroom, {
-          x: (Math.random() - 0.5) * 4,
-          y: Math.random() * 2,
+          x: (Math.random() - 0.5) * (isTiny ? 6 : 4), // slightly faster horizontal speed for the tiny one
+          y: Math.random() * (isTiny ? 3 : 2),
         });
 
         mushrooms.push(mushroom);
@@ -304,17 +309,51 @@ export default function CollabPage() {
       Engine.clear(engine);
     };
   }, []);
+  */
 
   return (
     <main 
       ref={containerRef}
       className="h-screen w-screen bg-[#F6F6F6] text-[#12110E] flex flex-col items-center justify-center px-6 md:px-12 py-4 selection:bg-[#FF6118] selection:text-black overflow-hidden relative"
     >
-      {/* Physics Canvas for falling mushrooms */}
+      {/* Ballpit Background from React Bits */}
+      <Ballpit
+        className="fixed inset-0 w-screen h-screen z-0 opacity-40 pointer-events-none"
+        count={100}
+        gravity={0.01}
+        friction={0.9975}
+        wallBounce={0.95}
+        followCursor={false}
+        colors={[0xff6118, 0x12110e, 0xffffff, 0xf15b20]}
+      />
+
+      {/* WebGL Ferrofluid background (Commented Out)
+      <Ferrofluid
+        className="fixed inset-0 w-screen h-screen pointer-events-none z-0 opacity-25"
+        colors={["#FF6118", "#12110E", "#F15B20"]}
+        speed={0.12}
+        scale={1.3}
+        turbulence={0.7}
+        fluidity={0.15}
+        rimWidth={0.25}
+        sharpness={2.2}
+        shimmer={0.7}
+        glow={1.6}
+        flowDirection="down"
+        opacity={0.8}
+        mouseInteraction={true}
+        mouseStrength={0.8}
+        mouseRadius={0.3}
+        mouseDampening={0.15}
+      />
+      */}
+
+      {/* Physics Canvas for falling mushrooms (Commented Out)
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none z-10"
       />
+      */}
 
       {/* Back Button - Absolute Top Right */}
       <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
