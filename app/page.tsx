@@ -39,25 +39,25 @@ async function getSanityData() {
     const limitedEditionsData = await client.fetch(`*[_type == "limitedEdition"]`);
     const incubatorsData = await client.fetch(`*[_type == "incubator"]`);
     
-    const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource }) => ({
+    const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource; _updatedAt: string }) => ({
       title: [item.titleLine1, item.titleLine2],
-      storyImg: urlFor(item.image).url(),
+      storyImg: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
     }));
 
-    const audiences: Audience[] = targetAudienceData.map((item: { title: string; image: SanityImageSource }) => ({
+    const audiences: Audience[] = targetAudienceData.map((item: { title: string; image: SanityImageSource; _updatedAt: string }) => ({
       title: item.title,
-      image: urlFor(item.image).url(),
+      image: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
     }));
 
-    const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { name: string; status: string; image: SanityImageSource }) => ({
+    const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { name: string; status: string; image: SanityImageSource; _updatedAt: string }) => ({
       name: item.name,
       status: item.status,
-      image: urlFor(item.image).url(),
+      image: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
     }));
 
-    const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource }) => ({
+    const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource; _updatedAt: string }) => ({
       name: item.name,
-      logo: urlFor(item.logo).url(),
+      logo: `${urlFor(item.logo).url()}?t=${item._updatedAt}`,
     }));
 
     return { stories, audiences, limitedEditions, incubators };

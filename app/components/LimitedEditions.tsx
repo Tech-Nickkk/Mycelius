@@ -180,6 +180,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
                 src={item.image}
                 alt={item.name}
                 fill
+                unoptimized
                 className="object-cover pointer-events-none"
                 sizes="(max-width: 768px) 230px, 280px"
                 priority
