@@ -731,78 +731,100 @@ interface CreateBallpitReturn {
   dispose: () => void;
 }
 
-function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallpitReturn {
-  const threeInstance = new X({
-    canvas,
-    size: 'parent',
-    rendererOptions: { antialias: true, alpha: true }
-  });
-  let spheres: Z;
-  threeInstance.renderer.toneMapping = ACESFilmicToneMapping;
-  threeInstance.camera.position.set(0, 0, 20);
-  threeInstance.camera.lookAt(0, 0, 0);
-  threeInstance.cameraMaxAspect = 1.5;
-  threeInstance.resize();
-  initialize(config);
-  const raycaster = new Raycaster();
-  const plane = new Plane(new Vector3(0, 0, 1), 0);
-  const intersectionPoint = new Vector3();
-  let isPaused = false;
+function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallpitReturn | null {
+  try {
+    const threeInstance = new X({
+      canvas,
+      size: 'parent',
+      rendererOptions: { antialias: true, alpha: true }
+    });
+    let spheres: Z;
+    threeInstance.renderer.toneMapping = ACESFilmicToneMapping;
+    threeInstance.camera.position.set(0, 0, 20);
+    threeInstance.camera.lookAt(0, 0, 0);
+    threeInstance.cameraMaxAspect = 1.5;
+    threeInstance.resize();
+    initialize(config);
+    const raycaster = new Raycaster();
+    const plane = new Plane(new Vector3(0, 0, 1), 0);
+    const intersectionPoint = new Vector3();
+    let isPaused = false;
 
-  canvas.style.touchAction = 'none';
-  canvas.style.userSelect = 'none';
-  (canvas.style as any).webkitUserSelect = 'none';
+    canvas.style.touchAction = 'none';
+    canvas.style.userSelect = 'none';
+    (canvas.style as any).webkitUserSelect = 'none';
 
-  const pointerData = createPointerData({
-    domElement: canvas,
-    onMove() {
-      raycaster.setFromCamera(pointerData.nPosition, threeInstance.camera);
-      threeInstance.camera.getWorldDirection(plane.normal);
-      raycaster.ray.intersectPlane(plane, intersectionPoint);
-      spheres.physics.center.copy(intersectionPoint);
-      spheres.config.controlSphere0 = true;
-    },
-    onLeave() {
-      spheres.config.controlSphere0 = false;
+    const pointerData = createPointerData({
+      domElement: canvas,
+      onMove() {
+        if (!spheres) return;
+        raycaster.setFromCamera(pointerData.nPosition, threeInstance.camera);
+        threeInstance.camera.getWorldDirection(plane.normal);
+        raycaster.ray.intersectPlane(plane, intersectionPoint);
+        spheres.physics.center.copy(intersectionPoint);
+        spheres.config.controlSphere0 = true;
+      },
+      onLeave() {
+        if (!spheres) return;
+        spheres.config.controlSphere0 = false;
+      }
+    });
+    function initialize(cfg: any) {
+      if (spheres) {
+        threeInstance.clear();
+        threeInstance.scene.remove(spheres);
+      }
+      spheres = new Z(threeInstance.renderer, cfg);
+      threeInstance.scene.add(spheres);
     }
-  });
-  function initialize(cfg: any) {
-    if (spheres) {
-      threeInstance.clear();
-      threeInstance.scene.remove(spheres);
-    }
-    spheres = new Z(threeInstance.renderer, cfg);
-    threeInstance.scene.add(spheres);
+    threeInstance.onBeforeRender = deltaInfo => {
+      if (!isPaused && spheres) spheres.update(deltaInfo);
+    };
+    threeInstance.onAfterResize = size => {
+      if (spheres) {
+        spheres.config.maxX = size.wWidth / 2;
+        spheres.config.maxY = size.wHeight / 2;
+      }
+    };
+    return {
+      three: threeInstance,
+      get spheres() {
+        return spheres;
+      },
+      setCount(count: number) {
+        if (spheres) initialize({ ...spheres.config, count });
+      },
+      togglePause() {
+        isPaused = !isPaused;
+      },
+      dispose() {
+        pointerData.dispose?.();
+        threeInstance.dispose();
+      }
+    };
+  } catch (err) {
+    console.error("WebGL Ballpit initialization failed:", err);
+    return null;
   }
-  threeInstance.onBeforeRender = deltaInfo => {
-    if (!isPaused) spheres.update(deltaInfo);
-  };
-  threeInstance.onAfterResize = size => {
-    spheres.config.maxX = size.wWidth / 2;
-    spheres.config.maxY = size.wHeight / 2;
-  };
-  return {
-    three: threeInstance,
-    get spheres() {
-      return spheres;
-    },
-    setCount(count: number) {
-      initialize({ ...spheres.config, count });
-    },
-    togglePause() {
-      isPaused = !isPaused;
-    },
-    dispose() {
-      pointerData.dispose?.();
-      threeInstance.dispose();
-    }
-  };
 }
 
 interface BallpitProps {
   className?: string;
   followCursor?: boolean;
   [key: string]: any;
+}
+
+function detectWebGL(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
 }
 
 const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, ...props }) => {
@@ -813,14 +835,28 @@ const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    spheresInstanceRef.current = createBallpit(canvas, {
-      followCursor,
-      ...props
-    });
+    let spheresInstance: CreateBallpitReturn | null = null;
+    const timerId = setTimeout(() => {
+      if (!canvas || !detectWebGL()) return;
+      
+      const instance = createBallpit(canvas, {
+        followCursor,
+        ...props
+      });
+      if (instance) {
+        spheresInstance = instance;
+        spheresInstanceRef.current = instance;
+      }
+    }, 150);
 
     return () => {
+      clearTimeout(timerId);
+      if (spheresInstance) {
+        spheresInstance.dispose();
+      }
       if (spheresInstanceRef.current) {
         spheresInstanceRef.current.dispose();
+        spheresInstanceRef.current = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
