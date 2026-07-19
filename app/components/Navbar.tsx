@@ -22,9 +22,59 @@ const MENU_LINKS = [
   { label: "Home", targetId: "#home" },
   { label: "About", targetId: "#about" },
   { label: "What We Do", targetId: "#what-we-do" },
-  { label: "Who We Work With", targetId: "#target-audience-scroll" },
+  { label: "Who we Grow for", targetId: "#target-audience-scroll" },
+  { label: "Who's Watching Us Grow", targetId: "#incubators" },
+  { label: "Limited Editions", targetId: "#limited-editions" },
   { label: "Contact", targetId: "#contact" },
 ];
+
+interface MenuLinkItemProps {
+  link: { label: string; targetId: string };
+  onClick: (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => void;
+}
+
+function MenuLinkItem({ link, onClick }: MenuLinkItemProps) {
+  const { isHovered, handlers } = useHoverInteraction();
+
+  return (
+    <div 
+      className="group relative pointer-events-auto select-none w-fit"
+      {...handlers}
+    >
+      {/* Text mask wrapper with animated gradient background clipped to text */}
+      <div className="menu-link overflow-hidden relative z-10">
+        <Link
+          href="/"
+          onClick={(e) => onClick(e, link.targetId)}
+          className="menu-anim-line block text-[2rem] xs:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] font-medium leading-[1.2] translate-y-[-110%] will-change-transform font-bricolage capitalize tracking-tight"
+          style={{
+            backgroundImage: isHovered
+              ? "linear-gradient(90deg, #ffffff 0%, #ffffff 25%, #F15B20 50%, #ffffff 75%, #ffffff 100%)"
+              : "linear-gradient(to right, #ffffff, #ffffff)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          {link.label}
+        </Link>
+      </div>
+
+      {/* CSS Keyframe Animation for dynamic liquid shimmer/shader flow */}
+      {isHovered && (
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes textShaderFlow {
+            0% { background-position: 150% 0; }
+            100% { background-position: -150% 0; }
+          }
+          .group:hover .menu-anim-line {
+            animation: textShaderFlow 2s linear infinite;
+          }
+        `}} />
+      )}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -329,25 +379,17 @@ export default function Navbar() {
           </div>
 
           {/* Content Links and Footer */}
-          <div className="menu-content-wrapper flex-3 max-[1000px]:flex-1 flex flex-col justify-between h-full pt-[16svh] pb-[14svh] px-8 md:px-16 lg:px-24">
+          <div className="menu-content-wrapper flex-3 max-[1000px]:flex-1 flex flex-col justify-between h-full pt-[8svh] pb-[15svh] md:pt-[10svh] md:pb-[16svh] px-8 md:px-16 lg:px-24 overflow-y-auto scrollbar-none">
             
             {/* Main Links */}
-            <div className="menu-col flex flex-col gap-2 my-auto w-full">
+            <div className="menu-col flex flex-col gap-1 md:gap-2 my-auto w-full">
               {MENU_LINKS.map((link) => (
-                <div key={link.label} className="menu-link overflow-hidden">
-                  <Link
-                    href="/"
-                    onClick={(e) => handleLinkClick(e, link.targetId)}
-                    className="menu-anim-line block text-[2rem] xs:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] font-medium leading-[1.2] translate-y-[-110%] will-change-transform text-white hover:text-[#F15B20] transition-colors duration-300 font-sans uppercase tracking-tight"
-                  >
-                    {link.label}
-                  </Link>
-                </div>
+                <MenuLinkItem key={link.label} link={link} onClick={handleLinkClick} />
               ))}
             </div>
 
              {/* Footer Row */}
-            <div className="menu-footer w-full flex flex-wrap items-end justify-between gap-8 mt-12 border-t border-white/10 pt-8">
+            <div className="menu-footer w-full flex flex-wrap items-end justify-between gap-8 mt-6 md:mt-10 border-t border-white/10 pt-4 md:pt-6">
               
               {/* Location */}
               <div className="menu-col flex flex-col gap-1 min-w-[200px]">

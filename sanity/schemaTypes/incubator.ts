@@ -22,5 +22,14 @@ export const incubator = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'link',
+      title: 'Website Link',
+      type: 'url',
+      description: 'The website URL for this incubator/partner (e.g. "https://biolabs.com")',
+      validation: (Rule) => Rule.uri({
+        scheme: ['http', 'https']
+      }),
+    }),
   ],
 })

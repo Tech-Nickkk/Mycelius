@@ -4,11 +4,16 @@ import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
 import localFont from "next/font/local";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Bricolage_Grotesque, Montserrat } from "next/font/google";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
 });
 
 const neueHaasDisplay = localFont({
@@ -30,6 +35,11 @@ const neueHaasDisplay = localFont({
     },
   ],
   variable: "--font-neue-haas",
+});
+
+const forta = localFont({
+  src: "./fonts/Forta.ttf",
+  variable: "--font-forta",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mycelius.com";
@@ -130,7 +140,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-[#ffffff] text-[#12110E] antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
         <PageTransition />

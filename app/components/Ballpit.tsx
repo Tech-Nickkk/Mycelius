@@ -6,6 +6,7 @@ import {
   ACESFilmicToneMapping,
   AmbientLight,
   Color,
+  Euler,
   InstancedMesh,
   MathUtils,
   MeshPhysicalMaterial,
@@ -25,6 +26,8 @@ import {
   WebGLRendererParameters
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 gsap.registerPlugin(Observer);
 
@@ -640,13 +643,15 @@ class Z extends InstancedMesh {
   physics: W;
   ambientLight: AmbientLight | undefined;
   light: PointLight | undefined;
+  rotations: Euler[];
 
   constructor(renderer: WebGLRenderer, params: Partial<typeof XConfig> = {}) {
     const config = { ...XConfig, ...params };
     const roomEnv = new RoomEnvironment();
     const pmrem = new PMREMGenerator(renderer);
     const envTexture = pmrem.fromScene(roomEnv).texture;
-    const geometry = new SphereGeometry();
+    // Start with a small placeholder sphere until the GLTF model loads
+    const geometry = new SphereGeometry(0.01);
     const material = new MeshPhysicalMaterial({ envMap: envTexture, ...config.materialParams });
     material.envMapRotation.x = -Math.PI / 2;
     super(geometry, material, config.count);
@@ -654,6 +659,52 @@ class Z extends InstancedMesh {
     this.physics = new W(config);
     this.#setupLights();
     this.setColors(config.colors);
+
+    // Initialize rotations for each instance
+    this.rotations = Array.from(
+      { length: config.count },
+      () => new Euler(
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2
+      )
+    );
+
+    // Load mushroom GLB model asynchronously
+    const loader = new GLTFLoader();
+    loader.load('/3d/mushroom_new.glb', (gltf) => {
+      const geometries: any[] = [];
+      gltf.scene.updateMatrixWorld(true);
+      gltf.scene.traverse((child: any) => {
+        if (child.isMesh) {
+          const clonedGeom = child.geometry.clone();
+          clonedGeom.applyMatrix4(child.matrixWorld);
+          geometries.push(clonedGeom);
+        }
+      });
+
+      if (geometries.length > 0) {
+        const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
+        mergedGeometry.center();
+
+        // Normalize geometry size and scale it up (e.g. by 1.6) so it matches the visual volume
+        // of the original balls, while aligning with the physics engine's bounds.
+        mergedGeometry.computeBoundingSphere();
+        const sphere = mergedGeometry.boundingSphere;
+        if (sphere) {
+          const radius = sphere.radius;
+          if (radius > 0) {
+            mergedGeometry.scale(1.6 / radius, 1.6 / radius, 1.6 / radius);
+          }
+        }
+
+        // Swap the geometry
+        this.geometry.dispose();
+        this.geometry = mergedGeometry;
+      }
+    }, undefined, (error) => {
+      console.error("Failed to load mushroom model for WebGL Ballpit:", error);
+    });
   }
 
   #setupLights() {
@@ -715,6 +766,14 @@ class Z extends InstancedMesh {
       } else {
         U.scale.setScalar(this.physics.sizeData[idx]);
       }
+
+      // Keep static random orientation to prevent constant/unnatural spinning
+      if (idx === 0) {
+        U.rotation.set(0, 0, 0);
+      } else {
+        U.rotation.copy(this.rotations[idx]);
+      }
+
       U.updateMatrix();
       this.setMatrixAt(idx, U.matrix);
       if (idx === 0) this.light!.position.copy(U.position);

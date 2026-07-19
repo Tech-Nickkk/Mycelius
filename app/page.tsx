@@ -55,9 +55,10 @@ async function getSanityData() {
       image: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
     }));
 
-    const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource; _updatedAt: string }) => ({
+    const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource; link?: string; _updatedAt: string }) => ({
       name: item.name,
       logo: `${urlFor(item.logo).url()}?t=${item._updatedAt}`,
+      link: item.link || "",
     }));
 
     return { stories, audiences, limitedEditions, incubators };

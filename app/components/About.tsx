@@ -18,7 +18,7 @@ interface MushroomInstanceProps {
 }
 
 function MushroomInstance({ side, scrollTriggerRef }: MushroomInstanceProps) {
-  const { scene } = useGLTF("/3d/mushroom.glb");
+  const { scene } = useGLTF("/3d/mushroom_new.glb");
   const { viewport } = useThree();
   const ref = useRef<THREE.Group>(null);
 
@@ -34,11 +34,11 @@ function MushroomInstance({ side, scrollTriggerRef }: MushroomInstanceProps) {
 
   // Horizontal edge placement based on dynamic viewport width
   const initialX = side === "left" 
-    ? -viewport.width / 2 + (isMobile ? -0.5 : 4) 
+    ? -viewport.width / 2 + (isMobile ? -0.5 : 3.5) 
     : viewport.width / 2 - margin;
 
-  const initialY = side === "left" ? -9 : -9;
-  const targetY = side === "left" ? 3 : 1;
+  const initialY = side === "left" ? -2 : -7;
+  const targetY = side === "left" ? 4 : 1;
   const zPosition = side === "left" ? 0 : -2;
 
   const initialRotation: [number, number, number] = side === "left" 
@@ -118,7 +118,7 @@ function Mushrooms({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | n
   );
 }
 
-useGLTF.preload("/3d/mushroom.glb");
+useGLTF.preload("/3d/mushroom_new.glb");
 
 const gradientTextFillStyle: React.CSSProperties = {
   backgroundImage:
@@ -184,7 +184,7 @@ export default function About() {
 
         {/* Animated Paragraph */}
         <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-normal leading-[1.35] tracking-[-0.015em] max-w-5xl text-center px-6 md:px-0 will-change-[background-position]" style={gradientTextFillStyle}>
-          Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and agricultural waste.
+          Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and regenerative biomass.
         </p>
       </div>
     </section>

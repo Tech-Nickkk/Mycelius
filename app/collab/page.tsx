@@ -319,7 +319,7 @@ export default function CollabPage() {
       {/* Ballpit Background from React Bits */}
       <Ballpit
         className="fixed inset-0 w-screen h-screen z-0 opacity-40 pointer-events-none"
-        count={100}
+        count={65}
         gravity={0.01}
         friction={0.9975}
         wallBounce={0.95}
@@ -355,16 +355,18 @@ export default function CollabPage() {
       />
       */}
 
-      {/* Back Button - Absolute Top Right */}
-      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
+      {/* Back Button - Absolute Top Left Corner */}
+      <div className="absolute top-0 left-0 z-50">
         <Link
           href="/"
           {...backHandlers}
-          className="group relative overflow-hidden text-[10px] md:text-xs uppercase tracking-widest px-4 py-2 border border-[#12110E] text-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center font-medium"
+          className="group relative overflow-hidden w-12 h-12 md:w-14 md:h-14 bg-transparent border-b border-r border-[#12110E] rounded-br-2xl md:rounded-br-3xl transition-all duration-300 flex items-center justify-center"
         >
-          <ButtonShader isHovered={isBackHovered} colorA="#ffffff" colorB="#12110E" />
-          <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-white">
-            &larr; Back
+          <ButtonShader isHovered={isBackHovered} colorB="#12110E" />
+          <span className={`relative z-10 transition-colors duration-300 text-xl md:text-2xl font-medium pr-1 pb-1 ${
+            isBackHovered ? 'text-white' : 'text-[#12110E]'
+          }`}>
+            &larr;
           </span>
         </Link>
       </div>
@@ -374,7 +376,7 @@ export default function CollabPage() {
         
         {/* Header Block */}
         <div className="text-center mb-10 md:mb-12">
-          <h1 className="text-3xl md:text-[2.6rem] font-medium tracking-tight text-[#12110E] leading-[1.15] mb-3">
+          <h1 className="text-2xl xs:text-3xl md:text-[2.6rem] font-medium tracking-tight text-[#12110E] leading-[1.15] mb-3 md:whitespace-nowrap">
             Start your <span className="text-[#F15B20]">Bioshift</span> journey today
           </h1>
         </div>
@@ -383,7 +385,10 @@ export default function CollabPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-7 font-normal">
           
           {/* Name */}
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
+            <label htmlFor="name" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+              YOUR NAME <span className="text-[#F15B20] font-normal">*</span>
+            </label>
             <input
               type="text"
               id="name"
@@ -391,13 +396,16 @@ export default function CollabPage() {
               required
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Your name*"
+              placeholder="The one who signs the emails"
               className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
             />
           </div>
 
           {/* Email */}
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
+            <label htmlFor="email" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+              EMAIL <span className="text-[#F15B20] font-normal">*</span>
+            </label>
             <input
               type="email"
               id="email"
@@ -405,13 +413,16 @@ export default function CollabPage() {
               required
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Email*"
+              placeholder="Where replies go to live"
               className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
             />
           </div>
 
           {/* Message */}
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
+            <label htmlFor="message" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+              MESSAGE <span className="text-[#F15B20] font-normal">*</span>
+            </label>
             <input
               type="text"
               id="message"
@@ -419,20 +430,23 @@ export default function CollabPage() {
               required
               value={formData.message}
               onChange={handleInputChange}
-              placeholder="Message*"
+              placeholder="Tell us what's growing in your mind"
               className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
             />
           </div>
 
           {/* Company's Website */}
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
+            <label htmlFor="website" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+              COMPANY WEBSITE
+            </label>
             <input
               type="url"
               id="website"
               name="website"
               value={formData.website}
               onChange={handleInputChange}
-              placeholder="Company website"
+              placeholder="Optional, but we'll look it up anyway"
               className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
             />
           </div>

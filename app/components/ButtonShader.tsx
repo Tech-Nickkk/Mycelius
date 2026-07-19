@@ -227,7 +227,7 @@ export default function ButtonShader({
   if (!webglAvailable) {
     return (
       <div
-        className="absolute inset-0 w-full h-full transition-opacity duration-500 rounded-full z-0"
+        className="absolute inset-0 w-full h-full transition-opacity duration-500 rounded-[inherit] z-0"
         style={{
           backgroundColor: colorB,
           opacity: isHovered ? 1 : 0,
@@ -239,7 +239,7 @@ export default function ButtonShader({
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none rounded-full z-0"
+      className="absolute inset-0 w-full h-full pointer-events-none rounded-[inherit] z-0"
     />
   );
 }

@@ -16,7 +16,9 @@ const ADVANTAGES_DATA: AdvantageItem[] = [
   { title: "Biodegradable", iconPath: "/biodegradable-icon.png", filter: "invert(1)" },
   { title: "Non-Toxic", iconPath: "/non-toxic-icon.png", filter: "invert(1)" },
   { title: "Fire Retardant", iconPath: "/fire-retardant-icon.png", filter: "invert(1)" },
-  { title: "Natural Insulation", iconPath: "/natural-insulation-icon.png", filter: "invert(1)" },
+  { title: "Thermal Insulation", iconPath: "/natural-insulation-icon.png", filter: "invert(1)" },
+  { title: "Acoustic Absorption", iconPath: "/acoustic_absorption_icon.png", filter: "invert(1)" },
+  { title: "Bespoke Design", iconPath: "/bespoke_design_icon.png", filter: "invert(1)" },
   { title: "Made in India", iconPath: "/made-in-india-icon.png", filter: "none" },
 ];
 
@@ -237,26 +239,26 @@ export default function ProductAdvantage() {
           headingRef.current = el;
           weWithRef.current = el;
         }}
-        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-0 px-6 md:px-0 pt-8 md:pt-0 md:absolute md:left-24 md:top-1/2 md:-translate-y-1/2 md:w-auto md:block"
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-8 md:mb-0 px-6 md:px-0 pt-8 md:pt-0 md:absolute md:left-24 md:top-1/2 md:-translate-y-1/2 md:w-auto md:block"
       >
         <h1 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-left">
           <span
             className="fill-line slide-left block text-left pl-[8vw] md:pl-0 will-change-[background-position,transform]"
             style={headingTextFillStyle}
           >
-            Our
+            Grown
           </span>
           <span
-            className="fill-line slide-right fast-line block text-left pl-[24vw] md:pl-[12vw] will-change-[background-position,transform]"
+            className="fill-line slide-right fast-line block text-left pl-[28vw] md:pl-[18vw] will-change-[background-position,transform]"
             style={headingTextFillStyle}
           >
-            Products
+            to
           </span>
           <span
             className="fill-line slide-left block text-left pl-[8vw] md:pl-0 will-change-[background-position,transform]"
             style={headingTextFillStyle}
           >
-            Are
+            Perform
           </span>
         </h1>
       </div>
@@ -264,7 +266,7 @@ export default function ProductAdvantage() {
       {/* Horizontal scroll track */}
       <div
         ref={trackRef}
-        className="md:absolute md:top-0 md:left-0 md:h-full flex flex-col md:flex-row items-center will-change-transform w-full md:w-auto md:pl-[58vw] md:pr-[4vw]"
+        className="md:absolute md:top-0 md:left-0 md:h-full flex flex-col md:flex-row items-center will-change-transform w-full md:w-auto md:pl-[46vw] md:pr-[4vw]"
       >
         {/* Cards row */}
         <div className="flex flex-col md:flex-row items-center gap-0 md:gap-6 h-full py-0 md:py-12 w-full px-6 md:px-0">

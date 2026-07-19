@@ -364,7 +364,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
             style={textFillStyle}
           >
-            who
+            Who
           </span>
           <span
             className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
@@ -376,13 +376,13 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
             style={textFillStyle}
           >
-            work
+            Grow
           </span>
           <span
             className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
             style={textFillStyle}
           >
-            with
+            for
           </span>
         </h2>
       </div>

@@ -193,7 +193,7 @@ export default function Hero() {
       {/* Background Video */}
       <div id="hero-video-wrapper" className="hero-img absolute inset-0 w-full h-[120vh] overflow-hidden origin-center will-change-transform z-1">
         <video
-          src="/hero-video-3.mp4"
+          src="/hero_bg_video.mp4"
           autoPlay
           loop
           muted
@@ -206,14 +206,14 @@ export default function Hero() {
       <HeroShader color="#ffffff" spread={0.5} speed={1.0} scrollTarget="#hero-video-wrapper" />
 
       {/* Hero Text Overlay */}
-      <div className="hero-content absolute inset-0 w-full h-svh px-6 sm:px-8 flex flex-col items-center justify-center text-center z-10">
-        <div className="hero-header w-full max-w-5xl flex flex-col items-center justify-center text-center">
-          <h1 className="text-white text-5xl sm:text-7xl md:text-[10vw] lg:text-[12svh] xl:text-[16svh] leading-[1.05] mb-6 text-center font-medium tracking-tight">
-            Luxury.<br />
+      <div className="hero-content absolute inset-0 w-full h-svh px-6 sm:px-16 lg:px-24 flex flex-col items-center justify-center z-10">
+        <div className="hero-header w-full max-w-5xl flex flex-col items-start justify-center text-left translate-x-4 translate-y-4 sm:translate-x-8 sm:translate-y-8 md:translate-x-12 md:translate-y-10 lg:translate-x-5 lg:translate-y-8">
+          <h1 className="text-white text-5xl sm:text-7xl md:text-[7vw] lg:text-[8.5svh] xl:text-[10.5svh] leading-[1.05] mb-[0.22em] text-left tracking-tight font-forta uppercase">
+            Luxury<br />
             Grown Slowly.
           </h1>
-          <p className="text-white/90 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl text-xs sm:text-lg md:text-xl lg:text-[2.2svh] xl:text-[2.8svh] tracking-wide font-normal text-center leading-relaxed">
-            Exclusive mycelium biomaterials for interiors, furniture and objects.
+          <p className="text-white/90 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl text-base sm:text-2xl md:text-[24px] lg:text-[2.6svh] xl:text-[3.2svh] tracking-wide font-normal text-left leading-relaxed font-montserrat">
+            Exclusive mycelium biomaterials for interiors,<br className="hidden md:inline" /> furniture and objects.
           </p>
         </div>
       </div>

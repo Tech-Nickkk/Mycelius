@@ -134,6 +134,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
   return (
     <section
       ref={spotlightRef}
+      id="limited-editions"
       className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-[980px] bg-[#12110E] text-white overflow-hidden flex flex-col justify-between py-14 md:py-16 z-10 select-none"
     >
       {/* Title block */}
@@ -141,7 +142,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
         ref={headingRef} 
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-6 px-6"
       >
-        <h2 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
+        <h2 className="text-[11vw] xs:text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[5.5vw] xl:text-[5vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
           <span 
             className="fill-line block text-center will-change-[background-position,transform]"
             style={headingTextFillStyle}
@@ -231,7 +232,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
         >
           <ButtonShader isHovered={isBtnHovered} colorA="#12110E" colorB="#ffffff" />
           <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-[#12110E] font-semibold flex items-center gap-2">
-            Get Yours Now &rarr;
+            grow me one &rarr;
           </span>
         </a>
       </div>

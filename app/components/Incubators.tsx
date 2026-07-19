@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, ReactNode } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -17,7 +17,13 @@ const headingTextFillStyle: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-const LOGOS = [
+interface LogoItem {
+  name: string;
+  icon: ReactNode;
+  link?: string;
+}
+
+const LOGOS: LogoItem[] = [
   // Row 1 (Top 5)
   {
     name: "DSV",
@@ -121,6 +127,7 @@ const LOGOS = [
 export interface IncubatorItem {
   name: string;
   logo: string;
+  link?: string;
 }
 
 export default function Incubators({ items }: { items?: IncubatorItem[] }) {
@@ -131,31 +138,43 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
   const glowGridRef2 = useRef<HTMLDivElement>(null);
 
   // Dynamically resolve logos: use items from Sanity if provided (overriding with matching static SVGs for optimal aesthetics), otherwise fall back to static defaults
-  const resolvedLogos = items && items.length > 0
+  const resolvedLogos: LogoItem[] = items && items.length > 0
     ? items.map(item => {
         const staticMatch = LOGOS.find(l => l.name.toLowerCase() === item.name.toLowerCase());
         if (staticMatch) {
-          return staticMatch;
+          return {
+            ...staticMatch,
+            link: item.link
+          };
         }
         return {
           name: item.name,
+          link: item.link,
           icon: (
             <Image 
               src={item.logo} 
               alt={item.name} 
-              width={150}
-              height={50}
+              width={300}
+              height={128}
               unoptimized
-              className="h-8 md:h-11 w-auto max-w-[80%] object-contain filter brightness-0 invert opacity-30 group-hover:opacity-100 transition-all duration-500" 
+              className="h-full w-auto max-w-[98%] p-2 object-contain filter brightness-0 invert opacity-45 group-hover:opacity-100 transition-all duration-500" 
             />
           )
         };
       })
     : LOGOS;
 
-  const half = Math.ceil(resolvedLogos.length / 2);
-  const row1Base = resolvedLogos.slice(0, half);
-  const row2Base = resolvedLogos.slice(half);
+  // Pad the list of logos if it's too short, ensuring both rows are filled and the marquee animation doesn't break
+  let paddedLogos = [...resolvedLogos];
+  if (paddedLogos.length > 0) {
+    while (paddedLogos.length < 10) {
+      paddedLogos = [...paddedLogos, ...resolvedLogos];
+    }
+  }
+
+  const half = Math.ceil(paddedLogos.length / 2);
+  const row1Base = paddedLogos.slice(0, half);
+  const row2Base = paddedLogos.slice(half);
 
   // Duplicate lists for seamless loop (repeated 4 times to ensure it covers wide screens without gaps)
   const row1Logos = [
@@ -243,6 +262,7 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
   return (
     <section
       ref={sectionRef}
+      id="incubators"
       className="relative w-full bg-[#12110E] py-20 md:py-36 overflow-hidden"
     >
       {/* Styles for seamless marquee loop */}
@@ -269,14 +289,17 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
           ref={headingRef}
           className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-24 px-6 md:px-0"
         >
-          <h2 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
+          <h2 className="text-[11vw] xs:text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[5.5vw] xl:text-[5vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
             <span
               className="fill-line block text-center will-change-[background-position,transform]"
               style={headingTextFillStyle}
             >
-              Incubators
+              {"Who's Watching Us Grow"}
             </span>
           </h2>
+          <p className="text-white/50 text-xs sm:text-sm font-normal tracking-widest text-center mt-4 font-montserrat uppercase">
+            The ones who believed first.
+          </p>
         </div>
 
         {/* Blueprint Layout Grid Container */}
@@ -292,20 +315,26 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
           <div className="scroll-row relative w-full overflow-hidden -mb-px">
             {/* Base Row (White) */}
             <div className="flex w-max animate-scroll-left">
-              {row1Logos.map((item, idx) => (
-                <div 
-                  key={`r1-base-${idx}`}
-                  className="group relative flex items-center justify-center w-40 md:w-60 h-20 md:h-32 border-t border-r border-white/8 shrink-0 cursor-pointer select-none"
-                >
-                  {/* Soft Orange Hover Background */}
-                  <div className="absolute inset-0 bg-[#F15B20]/4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  
-                  {/* Crosshair top-right */}
-                  <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
-                  
-                  {item.icon}
-                </div>
-              ))}
+              {row1Logos.map((item, idx) => {
+                const isLink = !!item.link;
+                const Component = isLink ? 'a' : 'div';
+                const linkProps = isLink ? { href: item.link, target: "_blank", rel: "noopener noreferrer" } : {};
+                return (
+                  <Component 
+                    key={`r1-base-${idx}`}
+                    {...linkProps}
+                    className="group relative flex items-center justify-center w-40 md:w-60 h-20 md:h-32 border-t border-r border-white/8 shrink-0 cursor-pointer select-none"
+                  >
+                    {/* Soft Orange Hover Background */}
+                    <div className="absolute inset-0 bg-[#F15B20]/4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    
+                    {/* Crosshair top-right */}
+                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
+                    
+                    {item.icon}
+                  </Component>
+                );
+              })}
             </div>
 
             {/* Glow Row Overlay (Orange, masked by mouse position) */}
@@ -333,23 +362,29 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
           <div className="scroll-row relative w-full overflow-hidden">
             {/* Base Row (White) */}
             <div className="flex w-max animate-scroll-right">
-              {row2Logos.map((item, idx) => (
-                <div 
-                  key={`r2-base-${idx}`}
-                  className="group relative flex items-center justify-center w-40 md:w-60 h-20 md:h-32 border-t border-b border-r border-white/8 shrink-0 cursor-pointer select-none"
-                >
-                  {/* Soft Orange Hover Background */}
-                  <div className="absolute inset-0 bg-[#F15B20]/4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  
-                  {/* Crosshair top-right */}
-                  <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
-                  
-                  {/* Crosshair bottom-right */}
-                  <div className="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
-                  
-                  {item.icon}
-                </div>
-              ))}
+              {row2Logos.map((item, idx) => {
+                const isLink = !!item.link;
+                const Component = isLink ? 'a' : 'div';
+                const linkProps = isLink ? { href: item.link, target: "_blank", rel: "noopener noreferrer" } : {};
+                return (
+                  <Component 
+                    key={`r2-base-${idx}`}
+                    {...linkProps}
+                    className="group relative flex items-center justify-center w-40 md:w-60 h-20 md:h-32 border-t border-b border-r border-white/8 shrink-0 cursor-pointer select-none"
+                  >
+                    {/* Soft Orange Hover Background */}
+                    <div className="absolute inset-0 bg-[#F15B20]/4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    
+                    {/* Crosshair top-right */}
+                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
+                    
+                    {/* Crosshair bottom-right */}
+                    <div className="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 text-white/20 font-light text-[10px] pointer-events-none select-none">+</div>
+                    
+                    {item.icon}
+                  </Component>
+                );
+              })}
             </div>
 
             {/* Glow Row Overlay (Orange, masked by mouse position) */}
