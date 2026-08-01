@@ -4,7 +4,7 @@ import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import PageTransition from "./components/PageTransition";
 import localFont from "next/font/local";
-import { Bricolage_Grotesque, Montserrat } from "next/font/google";
+import { Bricolage_Grotesque, Montserrat, Kodchasan } from "next/font/google";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -14,6 +14,12 @@ const bricolageGrotesque = Bricolage_Grotesque({
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
+});
+
+const kodchasan = Kodchasan({
+  subsets: ["latin"],
+  weight: ["200", "300", "400"],
+  variable: "--font-kodchasan",
 });
 
 const neueHaasDisplay = localFont({
@@ -40,6 +46,21 @@ const neueHaasDisplay = localFont({
 const forta = localFont({
   src: "./fonts/Forta.ttf",
   variable: "--font-forta",
+});
+
+const avenirNext = localFont({
+  src: "./fonts/Avenir Next Ultra Light.otf",
+  variable: "--font-avenir-next",
+});
+
+const zapfino = localFont({
+  src: "./fonts/Zapfino.ttf",
+  variable: "--font-zapfino",
+});
+
+const ardelaEdge = localFont({
+  src: "./fonts/ARDELA-EDGE-X02-Regular.ttf",
+  variable: "--font-ardela-edge",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mycelius.com";
@@ -140,7 +161,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable} ${kodchasan.variable} ${avenirNext.variable} ${zapfino.variable} ${ardelaEdge.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-[#ffffff] text-[#12110E] antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
         <PageTransition />

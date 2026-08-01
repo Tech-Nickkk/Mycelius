@@ -34,44 +34,28 @@ interface MenuLinkItemProps {
 }
 
 function MenuLinkItem({ link, onClick }: MenuLinkItemProps) {
-  const { isHovered, handlers } = useHoverInteraction();
-
   return (
-    <div 
-      className="group relative pointer-events-auto select-none w-fit"
-      {...handlers}
-    >
-      {/* Text mask wrapper with animated gradient background clipped to text */}
+    <div className="group relative pointer-events-auto select-none w-fit flex items-center">
+      {/* Glowing Brand Orange Bullet Dot indicator */}
+      <span className="w-2 h-2 rounded-full bg-[#F15B20] shadow-[0_0_12px_#F15B20] scale-0 group-hover:scale-100 transition-all duration-300 ease-out mr-3 -ml-5 opacity-0 group-hover:opacity-100 shrink-0" />
+
+      {/* Kinetic Roll-Up Text Wrapper */}
       <div className="menu-link overflow-hidden relative z-10">
         <Link
           href="/"
           onClick={(e) => onClick(e, link.targetId)}
-          className="menu-anim-line block text-[2rem] xs:text-[2.4rem] md:text-[2.8rem] lg:text-[3.2rem] font-medium leading-[1.2] translate-y-[-110%] will-change-transform font-bricolage capitalize tracking-tight"
-          style={{
-            backgroundImage: isHovered
-              ? "linear-gradient(90deg, #ffffff 0%, #ffffff 25%, #F15B20 50%, #ffffff 75%, #ffffff 100%)"
-              : "linear-gradient(to right, #ffffff, #ffffff)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
+          className="menu-anim-line relative block text-[1.8rem] xs:text-[2.2rem] md:text-[2.5rem] lg:text-[2.85rem] font-extralight font-kodchasan leading-[1.25] pb-0.5 translate-y-[-110%] will-change-transform capitalize tracking-tight"
         >
-          {link.label}
+          {/* White text (slides up and out on hover) */}
+          <span className="block text-white transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full group-hover:opacity-0">
+            {link.label}
+          </span>
+          {/* Brand Orange text (rolls up from below on hover only) */}
+          <span className="absolute inset-0 block text-[#F15B20] opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-full group-hover:translate-y-0">
+            {link.label}
+          </span>
         </Link>
       </div>
-
-      {/* CSS Keyframe Animation for dynamic liquid shimmer/shader flow */}
-      {isHovered && (
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes textShaderFlow {
-            0% { background-position: 150% 0; }
-            100% { background-position: -150% 0; }
-          }
-          .group:hover .menu-anim-line {
-            animation: textShaderFlow 2s linear infinite;
-          }
-        `}} />
-      )}
     </div>
   );
 }
@@ -370,7 +354,7 @@ export default function Navbar() {
           {/* Media Section (Hidden on mobile) */}
           <div className="menu-media-wrapper flex-2 opacity-0 will-change-opacity max-[1000px]:hidden h-full relative">
             <Image
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"
+              src="/Menu_Image.png"
               alt="Menu media"
               fill
               priority
@@ -379,32 +363,32 @@ export default function Navbar() {
           </div>
 
           {/* Content Links and Footer */}
-          <div className="menu-content-wrapper flex-3 max-[1000px]:flex-1 flex flex-col justify-between h-full pt-[8svh] pb-[15svh] md:pt-[10svh] md:pb-[16svh] px-8 md:px-16 lg:px-24 overflow-y-auto scrollbar-none">
+          <div className="menu-content-wrapper flex-3 max-[1000px]:flex-1 flex flex-col justify-between h-full pt-16 md:pt-20 pb-8 md:pb-12 px-8 md:px-16 lg:px-24 overflow-y-auto scrollbar-none">
             
             {/* Main Links */}
-            <div className="menu-col flex flex-col gap-1 md:gap-2 my-auto w-full">
+            <div className="menu-col flex flex-col gap-1.5 md:gap-2.5 my-auto w-full">
               {MENU_LINKS.map((link) => (
                 <MenuLinkItem key={link.label} link={link} onClick={handleLinkClick} />
               ))}
             </div>
 
              {/* Footer Row */}
-            <div className="menu-footer w-full flex flex-wrap items-end justify-between gap-8 mt-6 md:mt-10 border-t border-white/10 pt-4 md:pt-6">
+            <div className="menu-footer w-full flex flex-wrap items-end justify-between gap-6 md:gap-8 mt-4 md:mt-6 border-t border-white/10 pt-3 md:pt-4">
               
               {/* Location */}
               <div className="menu-col flex flex-col gap-1 min-w-[200px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-sans">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
                     Location
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-sans">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
                     Delhi NCR, India
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-sans">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
                     +91 9354097886
                   </p>
                 </div>
@@ -413,17 +397,17 @@ export default function Navbar() {
               {/* Contact details */}
               <div className="menu-col flex flex-col gap-1 min-w-[200px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-sans">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
                     Contact
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-sans">
+                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
                     bioshift@myceliuslab.com
                   </a>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-sans">
+                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
                     www.myceliuslab.com
                   </a>
                 </div>
@@ -432,7 +416,7 @@ export default function Navbar() {
               {/* Socials */}
               <div className="menu-col flex flex-col gap-1 min-w-[120px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-sans">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
                     Follow
                   </p>
                 </div>

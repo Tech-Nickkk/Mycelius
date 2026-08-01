@@ -8,7 +8,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const textFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
+const textFillStyleOrange: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #F15B20 49.8%, rgba(241, 91, 32, 0.25) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -128,19 +139,41 @@ export default function Collaborations() {
 
       {/* Core Typography Statement */}
       <div ref={headingRef} className="max-w-6xl w-full relative z-20">
-        <h2 className="text-[5vw] xs:text-[4.5vw] sm:text-[4vw] md:text-[3.6vw] lg:text-[3.3vw] xl:text-[44px] 2xl:text-[50px] font-normal leading-[1.25] tracking-tight text-center">
-          <span
-            className="fill-line block text-center will-change-[background-position] md:whitespace-nowrap"
-            style={textFillStyle}
-          >
-            Strictly for designers allergic to déjà vu.
-          </span>
-          <span
-            className="fill-line block text-center will-change-[background-position] md:whitespace-nowrap"
-            style={textFillStyle}
-          >
-            Custom biomaterial pieces, grown for interiors.
-          </span>
+        <h2 className="text-[6.2vw] xs:text-[5.5vw] sm:text-[4vw] md:text-[3.6vw] lg:text-[3.3vw] xl:text-[44px] 2xl:text-[50px] font-extralight font-kodchasan leading-[1.35] tracking-tight text-center">
+          <div className="block text-center md:whitespace-nowrap">
+            <span
+              className="fill-line block sm:inline-block will-change-[background-position]"
+              style={textFillStyle}
+            >
+              Strictly for designers&nbsp;
+            </span>
+            <span
+              className="fill-line inline-block will-change-[background-position]"
+              style={textFillStyle}
+            >
+              allergic to&nbsp;
+            </span>
+            <span
+              className="fill-line inline-block will-change-[background-position]"
+              style={textFillStyleOrange}
+            >
+              déjà vu.
+            </span>
+          </div>
+          <div className="block text-center md:whitespace-nowrap mt-1 sm:mt-0">
+            <span
+              className="fill-line block sm:inline-block will-change-[background-position]"
+              style={textFillStyle}
+            >
+              Custom biomaterial pieces,&nbsp;
+            </span>
+            <span
+              className="fill-line inline-block will-change-[background-position]"
+              style={textFillStyle}
+            >
+              grown for interiors.
+            </span>
+          </div>
         </h2>
       </div>
     </section>

@@ -8,7 +8,18 @@ import Image from "next/image";
 
 const headingTextFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
+const headingTextFillStyleOrange: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #F15B20 49.8%, rgba(241, 91, 32, 0.25) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -289,15 +300,29 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
           ref={headingRef}
           className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-24 px-6 md:px-0"
         >
-          <h2 className="text-[11vw] xs:text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[5.5vw] xl:text-[5vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
+          <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] w-fit text-center">
             <span
-              className="fill-line block text-center will-change-[background-position,transform]"
+              className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
               style={headingTextFillStyle}
             >
-              {"Who's Watching Us Grow"}
+              Who&rsquo;s Watching&nbsp;
+            </span>
+            <span className="whitespace-nowrap inline-block">
+              <span
+                className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
+                style={headingTextFillStyle}
+              >
+                Us&nbsp;
+              </span>
+              <span
+                className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
+                style={headingTextFillStyleOrange}
+              >
+                Grow
+              </span>
             </span>
           </h2>
-          <p className="text-white/50 text-xs sm:text-sm font-normal tracking-widest text-center mt-4 font-montserrat uppercase">
+          <p className="text-white/50 text-xs sm:text-sm font-extralight font-avenir-next tracking-[0.25em] text-center mt-1.5 uppercase">
             The ones who believed first.
           </p>
         </div>

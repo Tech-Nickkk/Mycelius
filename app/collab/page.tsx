@@ -372,21 +372,21 @@ export default function CollabPage() {
       </div>
 
       {/* Main Container mirroring the visual layout */}
-      <div className="w-full max-w-[580px] bg-transparent flex flex-col justify-center h-full max-h-[92vh] py-4 relative z-20">
+      <div className="w-full max-w-[680px] bg-transparent flex flex-col justify-center h-full max-h-[92vh] py-4 relative z-20 mx-auto px-4 sm:px-0">
         
         {/* Header Block */}
-        <div className="text-center mb-10 md:mb-12">
-          <h1 className="text-2xl xs:text-3xl md:text-[2.6rem] font-medium tracking-tight text-[#12110E] leading-[1.15] mb-3 md:whitespace-nowrap">
-            Start your <span className="text-[#F15B20]">Bioshift</span> journey today
+        <div className="text-center mb-12 md:mb-16 w-full flex justify-center">
+          <h1 className="text-2xl xs:text-3xl md:text-[2.35rem] lg:text-[2.6rem] font-normal font-ardela-edge tracking-tight uppercase text-[#12110E] text-center leading-[1.15] mb-1 whitespace-normal md:whitespace-nowrap">
+            START YOUR <span className="text-[#F15B20]">BIOSHIFT</span> JOURNEY TODAY
           </h1>
         </div>
 
         {/* Minimal Underlined Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-7 font-normal">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-7 md:gap-8 font-extralight font-avenir-next max-w-[580px] w-full mx-auto">
           
           {/* Name */}
           <div className="flex flex-col text-left">
-            <label htmlFor="name" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+            <label htmlFor="name" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
               YOUR NAME <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -397,13 +397,13 @@ export default function CollabPage() {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="The one who signs the emails"
-              className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Email */}
           <div className="flex flex-col text-left">
-            <label htmlFor="email" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+            <label htmlFor="email" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
               EMAIL <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -414,13 +414,13 @@ export default function CollabPage() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder="Where replies go to live"
-              className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Message */}
           <div className="flex flex-col text-left">
-            <label htmlFor="message" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+            <label htmlFor="message" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
               MESSAGE <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -431,13 +431,13 @@ export default function CollabPage() {
               value={formData.message}
               onChange={handleInputChange}
               placeholder="Tell us what's growing in your mind"
-              className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Company's Website */}
           <div className="flex flex-col text-left">
-            <label htmlFor="website" className="text-[10px] md:text-xs font-medium tracking-widest text-[#12110E]/50 uppercase mb-1.5">
+            <label htmlFor="website" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
               COMPANY WEBSITE
             </label>
             <input
@@ -447,16 +447,16 @@ export default function CollabPage() {
               value={formData.website}
               onChange={handleInputChange}
               placeholder="Optional, but we'll look it up anyway"
-              className="w-full pb-3 bg-transparent text-xl md:text-2xl font-normal text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/40 transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Submit Button */}
-          <div className="mt-6 flex justify-center">
+          <div className="mt-8 md:mt-10 flex justify-center">
             <button
               type="submit"
               {...submitHandlers}
-              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-semibold tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
+              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-extralight font-avenir-next tracking-[0.15em] flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
             >
               <ButtonShader isHovered={isSubmitHovered} />
               <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black">

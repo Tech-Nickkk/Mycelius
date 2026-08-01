@@ -18,13 +18,13 @@ interface MushroomInstanceProps {
 }
 
 function MushroomInstance({ side, scrollTriggerRef }: MushroomInstanceProps) {
-  const { scene } = useGLTF("/3d/mushroom_new.glb");
+  const { scene } = useGLTF("/3d/mushroom.glb");
   const { viewport } = useThree();
   const ref = useRef<THREE.Group>(null);
-
+  
   // Clone scene so multiple instances don't share the same exact object reference
   const clone = useMemo(() => scene.clone(), [scene]);
-
+  
   // Viewport-based responsive scaling and position calculations
   const isMobile = viewport.width < 12;
   const scale = isMobile ? Math.max(1.5, viewport.width * 0.26) : 3.8;
@@ -37,8 +37,8 @@ function MushroomInstance({ side, scrollTriggerRef }: MushroomInstanceProps) {
     ? -viewport.width / 2 + (isMobile ? -0.5 : 3.5) 
     : viewport.width / 2 - margin;
 
-  const initialY = side === "left" ? -2 : -7;
-  const targetY = side === "left" ? 4 : 1;
+  const initialY = side === "left" ? -6 : -9.5;
+  const targetY = side === "left" ? 1 : -1.5;
   const zPosition = side === "left" ? 0 : -2;
 
   const initialRotation: [number, number, number] = side === "left" 
@@ -118,13 +118,13 @@ function Mushrooms({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | n
   );
 }
 
-useGLTF.preload("/3d/mushroom_new.glb");
+useGLTF.preload("/3d/mushroom.glb");
 
 const gradientTextFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to bottom, #12110E 50%, rgba(18, 17, 14, 0.15) 50%)",
+    "linear-gradient(to bottom, #12110E 49.8%, rgba(18, 17, 14, 0.15) 50.2%)",
   backgroundSize: "100% 200%",
-  backgroundPosition: "0% 100%",
+  backgroundPosition: "0% 99.5%",
   backgroundClip: "text",
   WebkitBackgroundClip: "text",
   color: "transparent",
@@ -154,14 +154,14 @@ export default function About() {
 
     // Sequence the heading line reveals with stagger, starting first
     tl.to(headingLines, {
-      backgroundPosition: "0% 0%",
+      backgroundPosition: "0% 0.5%",
       stagger: 0.1,
       ease: "power1.out",
     }, 0);
 
     // Sequence the paragraph reveal, starting slightly later (time 0.12)
     tl.to(textRef.current, {
-      backgroundPosition: "0% 0%",
+      backgroundPosition: "0% 0.5%",
       ease: "power1.out",
     }, 0.12);
   }, { scope: containerRef, dependencies: [] });
@@ -176,14 +176,14 @@ export default function About() {
 
       <div className="max-w-6xl mx-auto relative z-10 flex flex-col items-center text-center -translate-y-4 md:-translate-y-8">
         {/* Heading */}
-        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] leading-[1.1] tracking-tight mb-8 text-center px-4 md:px-0">
-          <span className="fill-line inline-block will-change-[background-position]" style={gradientTextFillStyle}>
+        <h2 ref={headingRef} className="text-4xl md:text-6xl lg:text-[4.5rem] font-normal leading-[1.1] tracking-tight mb-8 text-center px-4 md:px-0">
+          <span className="fill-line inline-block pb-2 will-change-[background-position]" style={gradientTextFillStyle}>
             Designed Without Compromise.
           </span>
         </h2>
 
         {/* Animated Paragraph */}
-        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.3rem] font-normal leading-[1.35] tracking-[-0.015em] max-w-5xl text-center px-6 md:px-0 will-change-[background-position]" style={gradientTextFillStyle}>
+        <p ref={textRef} className="text-xl md:text-3xl lg:text-[2.2rem] font-normal leading-[1.38] tracking-[-0.015em] max-w-5xl text-center px-6 md:px-0 will-change-[background-position]" style={gradientTextFillStyle}>
           Architects shouldn&rsquo;t have to choose between aesthetics, performance and responsibility. We grow biomaterials that deliver all three, building a new material culture from fungi and regenerative biomass.
         </p>
       </div>

@@ -14,7 +14,18 @@ export interface Audience {
 
 const textFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
+const textFillStyleOrange: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #F15B20 49.8%, rgba(241, 91, 32, 0.25) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -359,27 +370,27 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
         }}
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-0 px-6 md:px-0 pt-8 md:pt-0 md:absolute md:left-24 md:top-1/2 md:-translate-y-1/2 md:w-auto md:block"
       >
-        <h2 className="text-[15vw] xs:text-[14vw] sm:text-[13vw] md:text-[8vw] font-normal tracking-tight leading-[1.05] w-fit text-left">
+        <h2 className="text-[11.5vw] xs:text-[10.5vw] sm:text-[9.2vw] md:text-[6vw] font-extralight font-kodchasan tracking-tight uppercase leading-[1.15] w-fit text-left">
           <span
-            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
+            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 pb-[0.15em] will-change-[background-position,transform]"
             style={textFillStyle}
           >
             Who
           </span>
           <span
-            className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
+            className="fill-line slide-right fast-line block text-left pl-[14vw] md:pl-[9vw] pb-[0.15em] will-change-[background-position,transform]"
             style={textFillStyle}
           >
             we
           </span>
           <span
-            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 will-change-[background-position,transform]"
-            style={textFillStyle}
+            className="fill-line slide-left block text-left pl-[2vw] md:pl-0 pb-[0.15em] will-change-[background-position,transform]"
+            style={textFillStyleOrange}
           >
             Grow
           </span>
           <span
-            className="fill-line slide-right fast-line block text-left pl-[20vw] md:pl-[12vw] will-change-[background-position,transform]"
+            className="fill-line slide-right fast-line block text-left pl-[14vw] md:pl-[9vw] pb-[0.15em] will-change-[background-position,transform]"
             style={textFillStyle}
           >
             for
@@ -390,14 +401,14 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
       {/* Track — horizontal scroll on desktop, vertical stack on mobile */}
       <div
         ref={trackRef}
-        className="md:absolute md:top-0 md:left-0 md:h-full flex flex-col md:flex-row items-center will-change-transform w-full md:w-auto md:pl-[42vw] md:pr-[4vw]"
+        className="md:absolute md:top-0 md:left-0 md:h-full flex flex-col md:flex-row items-center will-change-transform w-full md:w-auto md:pl-[36vw] md:pr-[4vw]"
       >
         {/* Cards container */}
         <div className="flex flex-col md:flex-row items-center gap-20 md:gap-24 h-full py-0 md:py-12 w-full px-6 md:px-0">
           {audiences.map((item, i) => (
             <div
               key={i}
-              className="shrink-0 w-full md:w-[35vw] flex flex-col gap-4 group"
+              className="shrink-0 w-full md:w-[35vw] flex flex-col gap-5 md:gap-6 group"
             >
               {/* Image Wrapper */}
               <div 
@@ -418,7 +429,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
               </div>
               {/* Title below image */}
               <div className="text-center w-full">
-                <span className="text-white text-[5.5vw] md:text-[1.8vw] font-normal tracking-tight leading-[1.1]">
+                <span className="text-white/60 text-[4.3vw] md:text-[1.4vw] font-extralight font-avenir-next tracking-[0.25em] leading-[1.1]">
                   {item.title}
                 </span>
               </div>

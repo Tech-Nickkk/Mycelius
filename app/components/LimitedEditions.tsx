@@ -51,7 +51,7 @@ const formatStatus = (status: string) => {
 
 const headingTextFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 50%, rgba(255, 255, 255, 0.15) 50%)",
+    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -93,8 +93,8 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
         ease: "none",
         scrollTrigger: {
           trigger: line,
-          start: "top 85%",
-          end: "bottom 45%",
+          start: "top 95%",
+          end: "top 50%",
           scrub: true,
         },
       });
@@ -135,22 +135,27 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
     <section
       ref={spotlightRef}
       id="limited-editions"
-      className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-[980px] bg-[#12110E] text-white overflow-hidden flex flex-col justify-between py-14 md:py-16 z-10 select-none"
+      className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-[980px] bg-[#12110E] text-white overflow-hidden flex flex-col justify-between pt-16 sm:pt-24 md:pt-36 pb-14 md:pb-16 z-10 select-none"
     >
       {/* Title block */}
       <div 
         ref={headingRef} 
-        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-6 px-6"
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-4 px-6 pt-0 md:pt-6"
       >
-        <h2 className="text-[11vw] xs:text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[5.5vw] xl:text-[5vw] font-normal tracking-tight leading-[1.05] w-fit text-center">
+        <h2 className="text-[10.5vw] xs:text-[9vw] sm:text-[7.5vw] md:text-[5.5vw] lg:text-[4.5vw] font-normal font-zapfino w-fit text-center overflow-visible">
           <span 
-            className="fill-line block text-center will-change-[background-position,transform]"
-            style={headingTextFillStyle}
+            className="fill-line inline-block text-center px-8 will-change-[background-position,transform]"
+            style={{
+              ...headingTextFillStyle,
+              lineHeight: "2.5",
+              paddingTop: "0.6em",
+              paddingBottom: "0.3em",
+            }}
           >
             Limited Editions
           </span>
         </h2>
-        <p className="text-white/50 max-w-2xl mx-auto text-sm md:text-base lg:text-lg leading-relaxed mt-5 text-center">
+        <p className="text-white/60 max-w-2xl mx-auto text-xs sm:text-sm md:text-base font-extralight font-avenir-next tracking-[0.05em] leading-relaxed -mt-14 sm:-mt-22 md:-mt-26 text-center">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
       </div>
@@ -205,14 +210,14 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
                   <circle cx="15" cy="78" r="2" />
                   <circle cx="82" cy="20" r="3.5" />
                 </svg>
-                <div className="relative text-black text-center select-none font-bold">
+                <div className="relative text-black text-center select-none font-extralight font-avenir-next tracking-[0.05em]">
                   {formatStatus(item.status)}
                 </div>
               </div>
 
               {/* Content Overlays inside the card */}
-              <div className="absolute bottom-0 left-0 w-full p-5 md:p-6 text-center pointer-events-none z-10">
-                <h3 className="text-white text-base md:text-lg font-semibold leading-tight capitalize tracking-wide">
+              <div className="absolute bottom-0 left-0 w-full p-4 md:p-5 text-center pointer-events-none z-10">
+                <h3 className="text-white/95 text-xs sm:text-sm md:text-base font-extralight font-avenir-next leading-tight capitalize tracking-[0.03em] whitespace-nowrap">
                   {item.name}
                 </h3>
               </div>

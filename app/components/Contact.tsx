@@ -10,7 +10,7 @@ import Link from "next/link";
 
 const textFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #12110E 50%, rgba(18, 17, 14, 0.15) 50%)",
+    "linear-gradient(to top, #12110E 49.8%, rgba(18, 17, 14, 0.15) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",

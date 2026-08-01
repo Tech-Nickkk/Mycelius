@@ -5,6 +5,10 @@
     --font-neue-haas: var(--font-neue-haas), sans-serif;
     --font-forta: var(--font-forta), sans-serif;
     --font-montserrat: var(--font-montserrat), sans-serif;
+    --font-kodchasan: var(--font-kodchasan), sans-serif;
+    --font-avenir-next: var(--font-avenir-next), sans-serif;
+    --font-zapfino: var(--font-zapfino), cursive, sans-serif;
+    --font-ardela-edge: var(--font-ardela-edge), sans-serif;
     --animate-scroll-line: scroll-line 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
     --color-orange-500: #F15B20;
     --color-brand-orange: #F15B20;
