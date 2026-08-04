@@ -263,6 +263,7 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
             start: "top 85%",
             end: "bottom 45%",
             scrub: true,
+            invalidateOnRefresh: true,
           },
         });
       });

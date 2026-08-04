@@ -429,7 +429,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
               </div>
               {/* Title below image */}
               <div className="text-center w-full">
-                <span className="text-white/60 text-[4.3vw] md:text-[1.4vw] font-extralight font-avenir-next tracking-[0.25em] leading-[1.1]">
+                <span className="text-white text-[4.3vw] md:text-[1.4vw] font-extralight font-avenir-next tracking-[0.25em] leading-[1.1]">
                   {item.title}
                 </span>
               </div>

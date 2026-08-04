@@ -386,7 +386,7 @@ export default function CollabPage() {
           
           {/* Name */}
           <div className="flex flex-col text-left">
-            <label htmlFor="name" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
+            <label htmlFor="name" className="text-[10px] md:text-xs font-bold font-avenir-next tracking-[0.25em] text-[#12110E] uppercase mb-1.5">
               YOUR NAME <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -397,13 +397,13 @@ export default function CollabPage() {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="The one who signs the emails"
-              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Email */}
           <div className="flex flex-col text-left">
-            <label htmlFor="email" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
+            <label htmlFor="email" className="text-[10px] md:text-xs font-bold font-avenir-next tracking-[0.25em] text-[#12110E] uppercase mb-1.5">
               EMAIL <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -414,13 +414,13 @@ export default function CollabPage() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder="Where replies go to live"
-              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Message */}
           <div className="flex flex-col text-left">
-            <label htmlFor="message" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
+            <label htmlFor="message" className="text-[10px] md:text-xs font-bold font-avenir-next tracking-[0.25em] text-[#12110E] uppercase mb-1.5">
               MESSAGE <span className="text-[#F15B20] font-normal">*</span>
             </label>
             <input
@@ -431,13 +431,13 @@ export default function CollabPage() {
               value={formData.message}
               onChange={handleInputChange}
               placeholder="Tell us what's growing in your mind"
-              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
           {/* Company's Website */}
           <div className="flex flex-col text-left">
-            <label htmlFor="website" className="text-[10px] md:text-xs font-extralight font-avenir-next tracking-[0.25em] text-[#12110E]/75 uppercase mb-1.5">
+            <label htmlFor="website" className="text-[10px] md:text-xs font-bold font-avenir-next tracking-[0.25em] text-[#12110E] uppercase mb-1.5">
               COMPANY WEBSITE
             </label>
             <input
@@ -447,7 +447,7 @@ export default function CollabPage() {
               value={formData.website}
               onChange={handleInputChange}
               placeholder="Optional, but we'll look it up anyway"
-              className="w-full pb-3 bg-transparent text-lg md:text-xl font-extralight font-avenir-next tracking-[0.05em] text-[#12110E] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
+              className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300"
             />
           </div>
 
@@ -456,7 +456,7 @@ export default function CollabPage() {
             <button
               type="submit"
               {...submitHandlers}
-              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-extralight font-avenir-next tracking-[0.15em] flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
+              className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-sans font-medium tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer"
             >
               <ButtonShader isHovered={isSubmitHovered} />
               <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black">

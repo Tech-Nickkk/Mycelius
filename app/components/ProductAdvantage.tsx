@@ -143,7 +143,7 @@ export default function ProductAdvantage() {
           tl.to(
             headingRef.current,
             {
-              x: -window.innerWidth * 0.6,
+              x: -window.innerWidth * 0.7,
               ease: "none",
               duration: 0.4,
             },
@@ -303,7 +303,7 @@ export default function ProductAdvantage() {
                 </div>
 
                 {/* Text below logo */}
-                <span className="text-white/60 text-[4.8vw] md:text-[1.55vw] font-extralight font-avenir-next tracking-[0.25em] leading-[1.1] text-center whitespace-nowrap">
+                <span className="text-white text-[4.8vw] md:text-[1.55vw] font-extralight font-avenir-next tracking-[0.25em] leading-[1.1] text-center whitespace-nowrap">
                   {item.title}
                 </span>
               </div>

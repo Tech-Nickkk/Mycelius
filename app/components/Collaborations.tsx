@@ -48,10 +48,11 @@ export default function Collaborations() {
         stagger: 0.12,
         ease: "power2.out",
         scrollTrigger: {
-          trigger: headingRef.current,
-          start: "top 85%",
-          end: "bottom 45%",
+          trigger: sectionRef.current,
+          start: "top 80%",
+          end: "bottom 35%",
           scrub: 0.5,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -76,6 +77,7 @@ export default function Collaborations() {
               start: "top bottom",
               end: "bottom top",
               scrub: true,
+              invalidateOnRefresh: true,
             },
           }
         );
@@ -94,6 +96,7 @@ export default function Collaborations() {
               start: "top bottom",
               end: "bottom top",
               scrub: true,
+              invalidateOnRefresh: true,
             },
           }
         );

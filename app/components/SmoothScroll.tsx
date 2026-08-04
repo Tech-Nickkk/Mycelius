@@ -46,8 +46,19 @@ export default function SmoothScroll({
     // Disable lagSmoothing so ticker stays in sync with browser paint cycles
     gsap.ticker.lagSmoothing(0);
 
+    // Handle window resize and load to keep Lenis and GSAP ScrollTrigger perfectly in sync across screen size changes
+    const handleResize = () => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("load", handleResize);
+
     // Clean up event listeners and destroy instances on component unmount
     return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("load", handleResize);
       gsap.ticker.remove(tick);
       lenis.destroy();
       

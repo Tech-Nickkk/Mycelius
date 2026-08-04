@@ -51,7 +51,18 @@ const formatStatus = (status: string) => {
 
 const headingTextFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
+    "linear-gradient(to top, #ffffff 85%, rgba(255, 255, 255, 0.15) 85.1%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 0%",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
+
+const headingTextFillStyleOrange: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to top, #FF5500 85%, rgba(255, 85, 0, 0.25) 85.1%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -93,9 +104,10 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
         ease: "none",
         scrollTrigger: {
           trigger: line,
-          start: "top 95%",
-          end: "top 50%",
+          start: "top 85%",
+          end: "bottom 45%",
           scrub: true,
+          invalidateOnRefresh: true,
         },
       });
       if (anim.scrollTrigger) triggers.push(anim.scrollTrigger);
@@ -120,6 +132,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
             start: "top 75%", // starts later, when the section is further in view
             end: "top -30%",  // ends much later, allowing the animation to continue longer
             scrub: 2.2,       // slower, smoother catch-up lag
+            invalidateOnRefresh: true,
           },
         }
       );
@@ -135,27 +148,38 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
     <section
       ref={spotlightRef}
       id="limited-editions"
-      className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-[980px] bg-[#12110E] text-white overflow-hidden flex flex-col justify-between pt-16 sm:pt-24 md:pt-36 pb-14 md:pb-16 z-10 select-none"
+      className="spotlight relative w-full md:h-[110vh] min-h-fit md:min-h-245 bg-[#12110E] text-white overflow-hidden flex flex-col justify-between pb-14 md:pb-16 z-10 select-none"
     >
       {/* Title block */}
       <div 
         ref={headingRef} 
-        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-4 px-6 pt-0 md:pt-6"
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-4 px-4 pt-4 md:pt-8"
       >
-        <h2 className="text-[10.5vw] xs:text-[9vw] sm:text-[7.5vw] md:text-[5.5vw] lg:text-[4.5vw] font-normal font-zapfino w-fit text-center overflow-visible">
+        <h2 className="text-[7.2vw] min-[400px]:text-[7.5vw] sm:text-[6.5vw] md:text-[5.5vw] lg:text-[4.5vw] font-normal font-zapfino w-fit text-center whitespace-nowrap overflow-visible">
           <span 
-            className="fill-line inline-block text-center px-8 will-change-[background-position,transform]"
+            className="fill-line inline-block text-center will-change-[background-position,transform]"
             style={{
               ...headingTextFillStyle,
-              lineHeight: "2.5",
-              paddingTop: "0.6em",
-              paddingBottom: "0.3em",
+              lineHeight: "2.8",
+              paddingTop: "0.8em",
+              paddingBottom: "0.7em",
             }}
           >
-            Limited Editions
+            Limited&nbsp;
+          </span>
+          <span 
+            className="fill-line inline-block text-center will-change-[background-position,transform]"
+            style={{
+              ...headingTextFillStyleOrange,
+              lineHeight: "2.8",
+              paddingTop: "0.8em",
+              paddingBottom: "0.7em",
+            }}
+          >
+            Editions
           </span>
         </h2>
-        <p className="text-white/60 max-w-2xl mx-auto text-xs sm:text-sm md:text-base font-extralight font-avenir-next tracking-[0.05em] leading-relaxed -mt-14 sm:-mt-22 md:-mt-26 text-center">
+        <p className="text-white/50 text-xs sm:text-sm max-w-2xl mx-auto font-extralight font-avenir-next tracking-[0.05em] leading-relaxed text-center -mt-10 sm:-mt-16 md:-mt-22 lg:-mt-26 xl:-mt-32">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
       </div>
@@ -210,14 +234,14 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
                   <circle cx="15" cy="78" r="2" />
                   <circle cx="82" cy="20" r="3.5" />
                 </svg>
-                <div className="relative text-black text-center select-none font-extralight font-avenir-next tracking-[0.05em]">
+                <div className="relative text-black text-center select-none font-avenir-next tracking-[0.05em]">
                   {formatStatus(item.status)}
                 </div>
               </div>
 
               {/* Content Overlays inside the card */}
               <div className="absolute bottom-0 left-0 w-full p-4 md:p-5 text-center pointer-events-none z-10">
-                <h3 className="text-white/95 text-xs sm:text-sm md:text-base font-extralight font-avenir-next leading-tight capitalize tracking-[0.03em] whitespace-nowrap">
+                <h3 className="text-white text-xs sm:text-sm md:text-base font-extralight font-avenir-next leading-tight capitalize tracking-[0.03em] whitespace-nowrap">
                   {item.name}
                 </h3>
               </div>
