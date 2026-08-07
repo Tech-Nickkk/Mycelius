@@ -412,7 +412,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             >
               {/* Image Wrapper */}
               <div 
-                className={`audience-card audience-card-clip-${i} relative w-full h-[55vh] md:h-[50vh] p-px bg-white/10 skeleton-shimmer-dark transition-all duration-700 ease-in-out group-hover:bg-white/20 group-hover:scale-[1.01]`}
+                className={`audience-card audience-card-clip-${i} relative w-full h-[55vh] md:h-[50vh] p-px bg-white/10 skeleton-shimmer-dark`}
               >
                 <div 
                   className={`audience-card-clip-${i} relative w-full h-full overflow-hidden bg-[#12110E]`}

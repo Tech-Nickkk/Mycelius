@@ -51,7 +51,7 @@ const formatStatus = (status: string) => {
 
 const headingTextFillStyle: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #ffffff 85%, rgba(255, 255, 255, 0.15) 85.1%)",
+    "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -62,7 +62,7 @@ const headingTextFillStyle: React.CSSProperties = {
 
 const headingTextFillStyleOrange: React.CSSProperties = {
   backgroundImage:
-    "linear-gradient(to top, #FF5500 85%, rgba(255, 85, 0, 0.25) 85.1%)",
+    "linear-gradient(to top, #FF5500 49.8%, rgba(255, 85, 0, 0.25) 50.2%)",
   backgroundSize: "100% 200%",
   backgroundPosition: "0% 0%",
   backgroundClip: "text",
@@ -155,31 +155,21 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
         ref={headingRef} 
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-4 px-4 pt-4 md:pt-8"
       >
-        <h2 className="text-[7.2vw] min-[400px]:text-[7.5vw] sm:text-[6.5vw] md:text-[5.5vw] lg:text-[4.5vw] font-normal font-zapfino w-fit text-center whitespace-nowrap overflow-visible">
+        <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] w-fit text-center">
           <span 
-            className="fill-line inline-block text-center will-change-[background-position,transform]"
-            style={{
-              ...headingTextFillStyle,
-              lineHeight: "2.8",
-              paddingTop: "0.8em",
-              paddingBottom: "0.7em",
-            }}
+            className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
+            style={headingTextFillStyle}
           >
             Limited&nbsp;
           </span>
           <span 
-            className="fill-line inline-block text-center will-change-[background-position,transform]"
-            style={{
-              ...headingTextFillStyleOrange,
-              lineHeight: "2.8",
-              paddingTop: "0.8em",
-              paddingBottom: "0.7em",
-            }}
+            className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
+            style={headingTextFillStyleOrange}
           >
             Editions
           </span>
         </h2>
-        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center -mt-[9.5vw] min-[400px]:-mt-[9.5vw] sm:-mt-[8.8vw] md:-mt-[8.2vw] lg:-mt-[7.8vw]">
+        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center mt-1.5 sm:mt-2">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
       </div>

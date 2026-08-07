@@ -32,6 +32,19 @@ const defaultAudiences: Audience[] = [
   { title: "Sustainable Commercial", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" },
 ];
 
+const getSanityImageUrl = (source: SanityImageSource, updatedAt?: string) => {
+  if (!source) return "";
+  try {
+    const url = urlFor(source).url();
+    if (!url) return "";
+    if (!updatedAt) return url;
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}t=${updatedAt}`;
+  } catch (e) {
+    return "";
+  }
+};
+
 async function getSanityData() {
   try {
     const whatWeDoData = await client.fetch(`*[_type == "whatWeDo"]`);
@@ -41,23 +54,23 @@ async function getSanityData() {
     
     const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource; _updatedAt: string }) => ({
       title: [item.titleLine1, item.titleLine2],
-      storyImg: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
+      storyImg: getSanityImageUrl(item.image, item._updatedAt),
     }));
 
     const audiences: Audience[] = targetAudienceData.map((item: { title: string; image: SanityImageSource; _updatedAt: string }) => ({
       title: item.title,
-      image: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
+      image: getSanityImageUrl(item.image, item._updatedAt),
     }));
 
     const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { name: string; status: string; image: SanityImageSource; _updatedAt: string }) => ({
       name: item.name,
       status: item.status,
-      image: `${urlFor(item.image).url()}?t=${item._updatedAt}`,
+      image: getSanityImageUrl(item.image, item._updatedAt),
     }));
 
     const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource; link?: string; _updatedAt: string }) => ({
       name: item.name,
-      logo: `${urlFor(item.logo).url()}?t=${item._updatedAt}`,
+      logo: getSanityImageUrl(item.logo, item._updatedAt),
       link: item.link || "",
     }));
 

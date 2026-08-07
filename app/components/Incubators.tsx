@@ -260,8 +260,8 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
           ease: "none",
           scrollTrigger: {
             trigger: line,
-            start: "top 85%",
-            end: "bottom 45%",
+            start: "top 60%",
+            end: "top 30%",
             scrub: true,
             invalidateOnRefresh: true,
           },
