@@ -116,4 +116,6 @@ html {
 
 body {
     font-family: var(--font-bricolage), sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }

@@ -323,7 +323,7 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
               </span>
             </span>
           </h2>
-          <p className="text-white/50 text-xs sm:text-sm font-extralight font-avenir-next tracking-[0.25em] text-center mt-1.5 uppercase">
+          <p className="text-[#D4D0C9] text-xs sm:text-sm font-light font-avenir-next tracking-[0.25em] text-center mt-1.5 uppercase">
             The ones who believed first.
           </p>
         </div>

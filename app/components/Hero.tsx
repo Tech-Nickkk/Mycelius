@@ -208,13 +208,13 @@ export default function Hero() {
       {/* Hero Text Overlay */}
       <div className="hero-content absolute inset-0 w-full h-svh px-6 sm:px-16 lg:px-24 flex flex-col items-center justify-center z-10">
         <div className="hero-header w-full max-w-5xl flex flex-col items-start justify-center text-left translate-x-4 translate-y-4 sm:translate-x-8 sm:translate-y-8 md:translate-x-12 md:translate-y-10 lg:translate-x-5 lg:translate-y-8">
-          <h1 className="text-white text-[8vw] min-[400px]:text-[8.5vw] sm:text-[4.2rem] md:text-[6.6vw] lg:text-[8svh] xl:text-[9.8svh] leading-[1.05] mb-[0.1em] text-left tracking-[0.0155em] font-forta uppercase">
-            <span className="block whitespace-nowrap">Luxury</span>
-            <span className="block whitespace-nowrap">Grown Slowly.</span>
+          <h1 className="text-white text-[9vw] min-[400px]:text-[9.5vw] sm:text-[4.8rem] md:text-[7.5vw] lg:text-[9.5svh] xl:text-[11.5svh] leading-[1.05] mb-[0.1em] text-left tracking-tight font-extralight font-kodchasan uppercase">
+            <span className="block whitespace-nowrap">Grown</span>
+            <span className="block whitespace-nowrap">To Imperfection.</span>
           </h1>
-          <p className="text-white max-w-none text-[3.2vw] sm:text-[2.6vw] md:text-[2.3vw] lg:text-[2.8svh] xl:text-[3.4svh] tracking-wide font-thin text-left leading-[1.35] font-montserrat">
-            <span className="block whitespace-nowrap">Exclusive mycelium biomaterials for interiors,</span>
-            <span className="block whitespace-nowrap">furniture and objects.</span>
+          <p className="text-white/80 max-w-none text-[2.6vw] sm:text-[2vw] md:text-[1.7vw] lg:text-[2.2svh] xl:text-[2.6svh] tracking-[0.03em] font-extralight font-kodchasan text-left leading-[1.35] ml-[0.8em]">
+            <span className="block whitespace-nowrap">Design x Biotech</span>
+            <span className="block whitespace-nowrap">Mycelium-Biomaterials, for interiors.</span>
           </p>
         </div>
       </div>

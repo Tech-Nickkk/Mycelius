@@ -179,7 +179,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
             Editions
           </span>
         </h2>
-        <p className="text-white/50 text-xs sm:text-sm max-w-2xl mx-auto font-extralight font-avenir-next tracking-[0.05em] leading-relaxed text-center -mt-10 sm:-mt-16 md:-mt-22 lg:-mt-26 xl:-mt-32">
+        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center -mt-[9.5vw] min-[400px]:-mt-[9.5vw] sm:-mt-[8.8vw] md:-mt-[8.2vw] lg:-mt-[7.8vw]">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
       </div>

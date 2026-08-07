@@ -378,17 +378,17 @@ export default function Navbar() {
               {/* Location */}
               <div className="menu-col flex flex-col gap-1 min-w-[200px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Location
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
                     Delhi NCR, India
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
                     +91 9354097886
                   </p>
                 </div>
@@ -397,17 +397,17 @@ export default function Navbar() {
               {/* Contact details */}
               <div className="menu-col flex flex-col gap-1 min-w-[200px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Contact
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
+                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
                     bioshift@myceliuslab.com
                   </a>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-extralight font-avenir-next tracking-[0.05em]">
+                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
                     www.myceliuslab.com
                   </a>
                 </div>
@@ -416,7 +416,7 @@ export default function Navbar() {
               {/* Socials */}
               <div className="menu-col flex flex-col gap-1 min-w-[120px]">
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-white/40 translate-y-[-110%] will-change-transform font-extralight font-avenir-next">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Follow
                   </p>
                 </div>
