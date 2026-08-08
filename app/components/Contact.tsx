@@ -128,9 +128,14 @@ export default function Contact() {
 
           {/* Legal Info Row */}
           <div className="flex justify-between items-center border-t border-white/10 pt-4 pb-4 md:pb-0 text-[10px] md:text-xs font-light text-white/40">
-            <Link href="/terms" className="hover:text-white transition-colors duration-300">
+            <a
+              href="/docx/Mycelius_Terms_and_Conditions.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors duration-300"
+            >
               Terms & Conditions
-            </Link>
+            </a>
             {/* Social Icons */}
             <div className="flex gap-4 items-center justify-center">
               <a
@@ -152,13 +157,18 @@ export default function Contact() {
                 aria-label="LinkedIn"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75-1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
               </a>
             </div>
-            <Link href="/privacy" className="hover:text-white transition-colors duration-300">
+            <a
+              href="/docx/Mycelius_Privacy_Policy.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors duration-300"
+            >
               Privacy Policy
-            </Link>
+            </a>
           </div>
 
         </div>

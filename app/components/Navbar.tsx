@@ -64,6 +64,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const { isHovered: isLimitedHovered, handlers: limitedHandlers } = useHoverInteraction();
   const { isHovered: isCollabHovered, handlers: collabHandlers } = useHoverInteraction();
   const { isHovered: isMenuHovered, handlers: menuHandlers } = useHoverInteraction();
   const isAnimating = useRef(false);
@@ -241,18 +242,14 @@ export default function Navbar() {
     if (pathname !== "/") {
       e.preventDefault();
       sessionStorage.setItem("scrollToSection", targetId);
-      closeMenu();
+      if (isOpen) closeMenu();
       router.push("/");
       return;
     }
 
     e.preventDefault();
 
-    // Close the menu first
-    closeMenu();
-
-    // Smooth scroll to the target section after the push-up finishes
-    setTimeout(() => {
+    const doScroll = () => {
       if (typeof window !== "undefined") {
         const lenis = getLenis();
         if (lenis) {
@@ -268,7 +265,14 @@ export default function Navbar() {
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: "smooth" });
       }
-    }, 1400);
+    };
+
+    if (isOpen) {
+      closeMenu();
+      setTimeout(doScroll, 1400);
+    } else {
+      doScroll();
+    }
   };
 
   return (
@@ -294,15 +298,27 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Centered Collab Button */}
-        <div className="menu-collab-btn pointer-events-auto flex items-center justify-center will-change-[opacity,transform] h-12 md:h-14">
+        {/* Centered Limited Edition & Collab Buttons */}
+        <div className="menu-collab-btn pointer-events-auto flex items-center justify-center gap-2 md:gap-3 will-change-[opacity,transform] h-12 md:h-14">
+          <Link
+            href="/"
+            onClick={(e) => handleLinkClick(e, "#limited-editions")}
+            {...limitedHandlers}
+            className="hidden min-[350px]:flex group relative overflow-hidden font-sans text-[10px] md:text-xs uppercase tracking-wider px-3.5 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full transition-all duration-300 items-center justify-center whitespace-nowrap"
+          >
+            <ButtonShader isHovered={isLimitedHovered} colorA="#12110E" colorB="#ffffff" />
+            <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black font-semibold">
+              Limited Edition
+            </span>
+          </Link>
+
           <Link
             href="/collab"
             onClick={() => {
               if (isOpen) closeMenu();
             }}
             {...collabHandlers}
-            className="group relative overflow-hidden font-sans text-xs uppercase tracking-wider px-6 py-2.5 border border-white text-white rounded-full transition-all duration-300 flex items-center justify-center"
+            className="group relative overflow-hidden font-sans text-[10px] md:text-xs uppercase tracking-wider px-3.5 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full transition-all duration-300 flex items-center justify-center whitespace-nowrap"
           >
             <ButtonShader isHovered={isCollabHovered} colorA="#12110E" colorB="#ffffff" />
             <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black font-semibold">
@@ -409,6 +425,35 @@ export default function Navbar() {
                 <div className="menu-footer-line overflow-hidden">
                   <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
                     www.myceliuslab.com
+                  </a>
+                </div>
+              </div>
+
+              {/* Legal */}
+              <div className="menu-col flex flex-col gap-1 min-w-[140px]">
+                <div className="menu-footer-line overflow-hidden">
+                  <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
+                    Legal
+                  </p>
+                </div>
+                <div className="menu-footer-line overflow-hidden">
+                  <a
+                    href="/docx/Mycelius_Terms_and_Conditions.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]"
+                  >
+                    Terms & Conditions
+                  </a>
+                </div>
+                <div className="menu-footer-line overflow-hidden">
+                  <a
+                    href="/docx/Mycelius_Privacy_Policy.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]"
+                  >
+                    Privacy Policy
                   </a>
                 </div>
               </div>
