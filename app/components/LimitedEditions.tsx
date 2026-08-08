@@ -6,12 +6,14 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ButtonShader, { useHoverInteraction } from "./ButtonShader";
 import MagneticCards from "./MagneticCards";
+import CountdownTimer, { CountdownTimerProps } from "./CountdownTimer";
 
 export interface LimitedEditionItem {
   name: string;
   status: string;
   image: string;
 }
+
 
 const DEFAULT_ITEMS: LimitedEditionItem[] = [
   {
@@ -71,7 +73,13 @@ const headingTextFillStyleOrange: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-export default function LimitedEditions({ items }: { items?: LimitedEditionItem[] }) {
+export default function LimitedEditions({
+  items,
+  timerSettings,
+}: {
+  items?: LimitedEditionItem[];
+  timerSettings?: CountdownTimerProps;
+}) {
   const spotlightRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
 
@@ -153,7 +161,7 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
       {/* Title block */}
       <div 
         ref={headingRef} 
-        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-4 px-4 pt-4 md:pt-8"
+        className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-6 sm:mb-8 px-4 pt-4 md:pt-8"
       >
         <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] w-fit text-center">
           <span 
@@ -169,9 +177,12 @@ export default function LimitedEditions({ items }: { items?: LimitedEditionItem[
             Editions
           </span>
         </h2>
-        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center mt-1.5 sm:mt-2">
+        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center mt-2.5 sm:mt-3.5">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
+
+        {/* Dynamic Sanity Countdown Timer */}
+        <CountdownTimer {...timerSettings} />
       </div>
 
       {/* Reusable Magnetic Cards container */}

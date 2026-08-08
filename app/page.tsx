@@ -50,6 +50,7 @@ async function getSanityData() {
     const whatWeDoData = await client.fetch(`*[_type == "whatWeDo"]`);
     const targetAudienceData = await client.fetch(`*[_type == "targetAudience"]`);
     const limitedEditionsData = await client.fetch(`*[_type == "limitedEdition"]`);
+    const limitedEditionSettingsData = await client.fetch(`*[_type == "limitedEditionSettings"][0]`);
     const incubatorsData = await client.fetch(`*[_type == "incubator"]`);
     
     const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource; _updatedAt: string }) => ({
@@ -68,21 +69,30 @@ async function getSanityData() {
       image: getSanityImageUrl(item.image, item._updatedAt),
     }));
 
+    const limitedEditionTimerSettings = limitedEditionSettingsData
+      ? {
+          launchDate: limitedEditionSettingsData.launchDate,
+          timerTitle: limitedEditionSettingsData.timerTitle,
+          showTimer: limitedEditionSettingsData.showTimer,
+          expiredMessage: limitedEditionSettingsData.expiredMessage,
+        }
+      : undefined;
+
     const incubators: IncubatorItem[] = incubatorsData.map((item: { name: string; logo: SanityImageSource; link?: string; _updatedAt: string }) => ({
       name: item.name,
       logo: getSanityImageUrl(item.logo, item._updatedAt),
       link: item.link || "",
     }));
 
-    return { stories, audiences, limitedEditions, incubators };
+    return { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators };
   } catch (error) {
     console.error("Failed to fetch Sanity data:", error);
-    return { stories: [], audiences: [], limitedEditions: [], incubators: [] };
+    return { stories: [], audiences: [], limitedEditions: [], limitedEditionTimerSettings: undefined, incubators: [] };
   }
 }
 
 export default async function Home() {
-  const { stories, audiences, limitedEditions, incubators } = await getSanityData();
+  const { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators } = await getSanityData();
 
   const finalStories = stories.length > 0 ? stories : defaultStories;
   const finalAudiences = audiences.length > 0 ? audiences : defaultAudiences;
@@ -100,7 +110,7 @@ export default async function Home() {
           <ProductAdvantage />
           <Collaborations />
           <Incubators items={incubators} />
-          <LimitedEditions items={limitedEditions} />
+          <LimitedEditions items={limitedEditions} timerSettings={limitedEditionTimerSettings} />
           <Contact />
         </div>
       </div>
