@@ -501,16 +501,16 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.addEventListener('click', onPointerClick as EventListener);
 
       document.body.addEventListener('touchstart', onTouchStart as EventListener, {
-        passive: false
+        passive: true
       });
       document.body.addEventListener('touchmove', onTouchMove as EventListener, {
-        passive: false
+        passive: true
       });
       document.body.addEventListener('touchend', onTouchEnd as EventListener, {
-        passive: false
+        passive: true
       });
       document.body.addEventListener('touchcancel', onTouchEnd as EventListener, {
-        passive: false
+        passive: true
       });
       globalPointerActive = true;
     }
@@ -556,7 +556,6 @@ function processPointerInteraction() {
 
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
@@ -575,7 +574,6 @@ function onTouchStart(e: TouchEvent) {
 
 function onTouchMove(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();

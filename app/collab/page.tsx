@@ -116,11 +116,12 @@ export default function CollabPage() {
       />
 
       {/* Back Button - Absolute Top Left Corner */}
-      <div className="absolute top-0 left-0 z-50">
+      <div className="absolute top-0 left-0 z-50 pointer-events-auto">
         <Link
           href="/"
           {...backHandlers}
-          className="group relative overflow-hidden w-12 h-12 md:w-14 md:h-14 bg-transparent border-b border-r border-[#12110E] rounded-br-2xl md:rounded-br-3xl transition-all duration-300 flex items-center justify-center"
+          aria-label="Back to home"
+          className="group relative overflow-hidden w-12 h-12 md:w-14 md:h-14 bg-transparent border-b border-r border-[#12110E] rounded-br-2xl md:rounded-br-3xl transition-all duration-300 flex items-center justify-center cursor-pointer pointer-events-auto touch-manipulation"
         >
           <ButtonShader isHovered={isBackHovered} colorB="#12110E" />
           <span className={`relative z-10 transition-colors duration-300 text-xl md:text-2xl font-medium pr-1 pb-1 ${
@@ -215,7 +216,7 @@ export default function CollabPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="The one who signs the emails"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -233,7 +234,7 @@ export default function CollabPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Where replies go to live"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -251,7 +252,7 @@ export default function CollabPage() {
                 value={formData.message}
                 onChange={handleInputChange}
                 placeholder="Tell us what's growing in your mind"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -268,7 +269,7 @@ export default function CollabPage() {
                 value={formData.website}
                 onChange={handleInputChange}
                 placeholder="Optional, but we'll look it up anyway"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
