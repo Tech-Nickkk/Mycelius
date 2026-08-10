@@ -261,7 +261,7 @@ export default function LimitedEditions({
           className="group relative overflow-hidden text-xs uppercase tracking-wider px-8 py-3.5 border border-white hover:border-white text-white rounded-full transition-all duration-300 flex items-center justify-center pointer-events-auto"
         >
           <ButtonShader isHovered={isBtnHovered} colorA="#12110E" colorB="#ffffff" />
-          <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-[#12110E] font-semibold flex items-center gap-2">
+          <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 font-semibold flex items-center gap-2 ${isBtnHovered ? "text-[#12110E]" : "text-white"}`}>
             grow me one &rarr;
           </span>
         </a>

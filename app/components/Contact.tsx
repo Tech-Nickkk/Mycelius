@@ -90,8 +90,8 @@ export default function Contact() {
           className="group relative px-8 py-4 rounded-full bg-[#12110E] text-white font-sans text-sm md:text-base font-medium tracking-wide flex items-center gap-3 overflow-hidden select-none transition-all duration-300 shadow-md"
         >
           <ButtonShader isHovered={isButtonHovered} />
-          <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black">Collaborate with us</span>
-          <span className="relative z-10 transition-all duration-700 group-hover:duration-200 group-hover:translate-x-1.5 group-hover:text-black">
+          <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 ${isButtonHovered ? "text-black" : "text-white"}`}>Collaborate with us</span>
+          <span className={`relative z-10 transition-all duration-700 group-hover:duration-200 group-hover:translate-x-1.5 ${isButtonHovered ? "text-black" : "text-white"}`}>
             &rarr;
           </span>
         </Link>

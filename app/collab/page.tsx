@@ -296,7 +296,7 @@ export default function CollabPage() {
                 className="submit-button group relative h-12 px-8 rounded-full bg-[#000000] text-white text-xs md:text-sm font-sans font-medium tracking-wide flex items-center justify-between gap-3 overflow-hidden select-none transition-all duration-300 shadow-md cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
               >
                 <ButtonShader isHovered={isSubmitHovered && status !== "submitting"} />
-                <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black flex items-center gap-2">
+                <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 flex items-center gap-2 ${isSubmitHovered && status !== "submitting" ? "text-black" : "text-white"}`}>
                   {status === "submitting" ? (
                     <>
                       <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

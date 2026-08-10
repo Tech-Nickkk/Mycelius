@@ -12,6 +12,7 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
+  precision highp float;
   uniform float uProgress;
   uniform vec2 uResolution;
   uniform vec3 uColorA;
@@ -20,8 +21,9 @@ const fragmentShader = `
   varying vec2 vUv;
 
   float Hash(vec2 p) {
-    vec3 p2 = vec3(p.xy, 1.0);
-    return fract(sin(dot(p2, vec3(37.1, 61.7, 12.4))) * 3758.5453123);
+    vec2 k = vec2(0.3183099, 0.3678794);
+    p = p * k + vec2(p.y, p.x);
+    return fract(16.0 * sin(p.x * p.y * (p.x + p.y)));
   }
 
   float noise(in vec2 p) {
@@ -49,11 +51,9 @@ const fragmentShader = `
     vec2 centeredUv = (uv - 0.5) * vec2(aspect, 1.0);
 
     // Get organic noise value (range [0.0, 0.875])
-    float noiseValue = fbm(centeredUv * 2.0); // Reduced density (multiplier 2.0) for much broader, minimal organic blobs
+    float noiseValue = fbm(centeredUv * 2.0); // Reduced density for minimal organic blobs
 
     // Transition threshold moves from 0.0 to 1.15 based on uProgress.
-    // At uProgress = 0, d is positive everywhere (ColorA).
-    // At uProgress = 1.0, d is negative everywhere (ColorB).
     float threshold = uProgress * 1.15;
     float d = (noiseValue + 0.1) - threshold;
 
@@ -82,6 +82,15 @@ interface ButtonShaderProps {
   spread?: number;
 }
 
+const checkTouchDevice = () => {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
+};
+
 export function useHoverInteraction() {
   const [isHovered, setIsHovered] = useState(false);
   const isTouch = useRef(false);
@@ -95,19 +104,18 @@ export function useHoverInteraction() {
     },
     onTouchStart: () => {
       isTouch.current = true;
-      setIsHovered(true);
     },
     onTouchEnd: () => {
       setIsHovered(false);
       setTimeout(() => {
         isTouch.current = false;
-      }, 500);
+      }, 300);
     },
     onTouchCancel: () => {
       setIsHovered(false);
       setTimeout(() => {
         isTouch.current = false;
-      }, 500);
+      }, 300);
     },
   };
 
@@ -115,7 +123,7 @@ export function useHoverInteraction() {
 }
 
 const detectWebGL = () => {
-  if (typeof window === "undefined") return true;
+  if (typeof window === "undefined") return false;
   try {
     const canvas = document.createElement("canvas");
     return !!(
@@ -135,7 +143,13 @@ export default function ButtonShader({
 }: ButtonShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverRef = useRef(isHovered);
-  const [webglAvailable] = useState(() => detectWebGL());
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [webglAvailable, setWebglAvailable] = useState(true);
+
+  useEffect(() => {
+    setIsTouchDevice(checkTouchDevice());
+    setWebglAvailable(detectWebGL());
+  }, []);
 
   // Sync hover state ref without tearing down WebGL context
   useEffect(() => {
@@ -143,7 +157,7 @@ export default function ButtonShader({
   }, [isHovered]);
 
   useEffect(() => {
-    if (!webglAvailable) return;
+    if (isTouchDevice || !webglAvailable) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -151,83 +165,95 @@ export default function ButtonShader({
     const parent = canvas.parentElement;
     if (!parent) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-    });
-
-    const rgbA = hexToRgb(colorA);
-    const rgbB = hexToRgb(colorB);
-    const geometry = new THREE.PlaneGeometry(2, 2);
-
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        uProgress: { value: 0 },
-        uResolution: {
-          value: new THREE.Vector2(parent.offsetWidth, parent.offsetHeight),
-        },
-        uColorA: { value: new THREE.Vector3(rgbA.r, rgbA.g, rgbA.b) },
-        uColorB: { value: new THREE.Vector3(rgbB.r, rgbB.g, rgbB.b) },
-        uSpread: { value: spread },
-      },
-      transparent: true,
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const resize = () => {
-      if (!parent || !renderer || !material) return;
-      const width = parent.offsetWidth;
-      const height = parent.offsetHeight;
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      material.uniforms.uResolution.value.set(width, height);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-
+    let scene: THREE.Scene;
+    let camera: THREE.OrthographicCamera;
+    let renderer: THREE.WebGLRenderer;
+    let material: THREE.ShaderMaterial;
+    let geometry: THREE.BufferGeometry;
     let animationFrameId: number;
-    let targetProgress = 0;
 
-    const animate = () => {
-      if (!material || !renderer) return;
+    try {
+      scene = new THREE.Scene();
+      camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: false,
+        powerPreference: "low-power",
+      });
 
-      targetProgress = hoverRef.current ? 1.25 : 0.0;
-      const diff = targetProgress - material.uniforms.uProgress.value;
+      const rgbA = hexToRgb(colorA);
+      const rgbB = hexToRgb(colorB);
+      geometry = new THREE.PlaneGeometry(2, 2);
 
-      if (Math.abs(diff) > 0.001) {
-        material.uniforms.uProgress.value += diff * 0.02; // Moderate transition speed for responsive organic growth
-        renderer.render(scene, camera);
-      } else if (material.uniforms.uProgress.value !== targetProgress) {
-        material.uniforms.uProgress.value = targetProgress;
-        renderer.render(scene, camera);
-      }
+      material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          uProgress: { value: 0 },
+          uResolution: {
+            value: new THREE.Vector2(parent.offsetWidth, parent.offsetHeight),
+          },
+          uColorA: { value: new THREE.Vector3(rgbA.r, rgbA.g, rgbA.b) },
+          uColorB: { value: new THREE.Vector3(rgbB.r, rgbB.g, rgbB.b) },
+          uSpread: { value: spread },
+        },
+        transparent: true,
+      });
 
-      animationFrameId = requestAnimationFrame(animate);
-    };
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
 
-    animate();
+      const resize = () => {
+        if (!parent || !renderer || !material) return;
+        const width = parent.offsetWidth;
+        const height = parent.offsetHeight;
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        material.uniforms.uResolution.value.set(width, height);
+      };
 
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrameId);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-    };
-  }, [colorA, colorB, spread, webglAvailable]);
+      resize();
+      window.addEventListener("resize", resize);
 
-  if (!webglAvailable) {
+      let targetProgress = 0;
+
+      const animate = () => {
+        if (!material || !renderer) return;
+
+        targetProgress = hoverRef.current ? 1.25 : 0.0;
+        const diff = targetProgress - material.uniforms.uProgress.value;
+
+        if (Math.abs(diff) > 0.001) {
+          material.uniforms.uProgress.value += diff * 0.02;
+          renderer.render(scene, camera);
+        } else if (material.uniforms.uProgress.value !== targetProgress) {
+          material.uniforms.uProgress.value = targetProgress;
+          renderer.render(scene, camera);
+        }
+
+        animationFrameId = requestAnimationFrame(animate);
+      };
+
+      animate();
+
+      return () => {
+        window.removeEventListener("resize", resize);
+        cancelAnimationFrame(animationFrameId);
+        renderer.dispose();
+        geometry.dispose();
+        material.dispose();
+      };
+    } catch (e) {
+      console.warn("WebGL initialization failed for ButtonShader, falling back to CSS:", e);
+      setWebglAvailable(false);
+    }
+  }, [colorA, colorB, spread, webglAvailable, isTouchDevice]);
+
+  if (isTouchDevice || !webglAvailable) {
     return (
       <div
-        className="absolute inset-0 w-full h-full transition-opacity duration-500 rounded-[inherit] z-0"
+        className="absolute inset-0 w-full h-full transition-opacity duration-300 rounded-[inherit] z-0"
         style={{
           backgroundColor: colorB,
           opacity: isHovered ? 1 : 0,
@@ -243,3 +269,4 @@ export default function ButtonShader({
     />
   );
 }
+

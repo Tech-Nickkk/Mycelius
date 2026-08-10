@@ -307,7 +307,7 @@ export default function Navbar() {
             className="hidden min-[350px]:flex group relative overflow-hidden font-sans text-[10px] md:text-xs uppercase tracking-wider px-3.5 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full transition-all duration-300 items-center justify-center whitespace-nowrap"
           >
             <ButtonShader isHovered={isLimitedHovered} colorA="#12110E" colorB="#ffffff" />
-            <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black font-semibold">
+            <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 font-semibold ${isLimitedHovered ? "text-black" : "text-white"}`}>
               Limited Edition
             </span>
           </Link>
@@ -321,7 +321,7 @@ export default function Navbar() {
             className="group relative overflow-hidden font-sans text-[10px] md:text-xs uppercase tracking-wider px-3.5 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full transition-all duration-300 flex items-center justify-center whitespace-nowrap"
           >
             <ButtonShader isHovered={isCollabHovered} colorA="#12110E" colorB="#ffffff" />
-            <span className="relative z-10 transition-colors duration-700 group-hover:duration-200 group-hover:text-black font-semibold">
+            <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 font-semibold ${isCollabHovered ? "text-black" : "text-white"}`}>
               Collab
             </span>
           </Link>
@@ -349,12 +349,16 @@ export default function Navbar() {
           <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative overflow-hidden transition-colors duration-300 group-hover:border-white">
             <ButtonShader isHovered={isMenuHovered} colorA="#12110E" colorB="#ffffff" />
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+              className={`absolute w-[15px] h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+                isMenuHovered ? "bg-black" : "bg-white"
+              } ${
                 isOpen ? "translate-y-0 rotate-45 scale-x-[1.05]" : "translate-y-[-3px]"
               }`}
             />
             <span
-              className={`absolute w-[15px] h-[1.25px] bg-white group-hover:bg-black transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+              className={`absolute w-[15px] h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+                isMenuHovered ? "bg-black" : "bg-white"
+              } ${
                 isOpen ? "translate-y-0 -rotate-45 scale-x-[1.05]" : "translate-y-[3px]"
               }`}
             />

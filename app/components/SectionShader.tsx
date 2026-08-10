@@ -12,6 +12,7 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
+  precision highp float;
   uniform float uProgress;
   uniform vec2 uResolution;
   uniform vec3 uColor;
@@ -20,8 +21,9 @@ const fragmentShader = `
   varying vec2 vUv;
 
   float Hash(vec2 p) {
-    vec3 p2 = vec3(p.xy, 1.0);
-    return fract(sin(dot(p2, vec3(37.1, 61.7, 12.4))) * 3758.5453123);
+    vec2 k = vec2(0.3183099, 0.3678794);
+    p = p * k + vec2(p.y, p.x);
+    return fract(16.0 * sin(p.x * p.y * (p.x + p.y)));
   }
 
   float noise(in vec2 p) {
