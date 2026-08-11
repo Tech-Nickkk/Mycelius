@@ -44,15 +44,34 @@ const headingTextFillStyleOrange: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-const horizontalTextFillStyle: React.CSSProperties = {
+const mobileArrowMaskStyle: React.CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to bottom, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
+  backgroundSize: "100% 200%",
+  backgroundPosition: "0% 100%",
+  maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 56' fill='none'%3E%3Cline x1='12' y1='4' x2='12' y2='48' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpolyline points='5,40 12,48 19,40' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+  WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 56' fill='none'%3E%3Cline x1='12' y1='4' x2='12' y2='48' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpolyline points='5,40 12,48 19,40' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+  maskSize: "contain",
+  WebkitMaskSize: "contain",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+  maskPosition: "center",
+  WebkitMaskPosition: "center",
+};
+
+const desktopArrowMaskStyle: React.CSSProperties = {
   backgroundImage:
     "linear-gradient(to right, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
   backgroundSize: "200% 100%",
   backgroundPosition: "100% 0%",
-  backgroundClip: "text",
-  WebkitBackgroundClip: "text",
-  color: "transparent",
-  WebkitTextFillColor: "transparent",
+  maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 24' fill='none'%3E%3Cline x1='4' y1='12' x2='48' y2='12' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpolyline points='40,5 48,12 40,19' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+  WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 24' fill='none'%3E%3Cline x1='4' y1='12' x2='48' y2='12' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpolyline points='40,5 48,12 40,19' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+  maskSize: "contain",
+  WebkitMaskSize: "contain",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+  maskPosition: "center",
+  WebkitMaskPosition: "center",
 };
 
 export default function ProductAdvantage() {
@@ -114,7 +133,7 @@ export default function ProductAdvantage() {
         });
 
         // Animate each arrow exactly as it enters the viewport
-        const arrows = trackRef.current!.querySelectorAll(".reveal-arrow");
+        const arrows = trackRef.current!.querySelectorAll(".reveal-arrow-desktop");
         arrows.forEach((arrow) => {
           const arrowEl = arrow as HTMLElement;
           const trackRect = trackRef.current!.getBoundingClientRect();
@@ -218,7 +237,7 @@ export default function ProductAdvantage() {
         }
 
         // Mobile Arrows reveal (pointing down)
-        const arrows = trackRef.current?.querySelectorAll(".reveal-arrow");
+        const arrows = trackRef.current?.querySelectorAll(".reveal-arrow-mobile");
         arrows?.forEach((arrow) => {
           gsap.to(arrow, {
             backgroundPosition: "0% 0%",
@@ -310,13 +329,18 @@ export default function ProductAdvantage() {
 
               {/* Arrow pointing to next (except after last card) */}
               {idx < ADVANTAGES_DATA.length - 1 && (
-                <div className="shrink-0 flex items-center justify-center w-[20vw] h-[20vw] md:w-auto md:h-auto my-4 md:my-0">
-                  <span
-                    className="reveal-arrow text-[15vw] md:text-[5vw] font-light leading-none will-change-[background-position] rotate-90 md:rotate-0 inline-block origin-center"
-                    style={horizontalTextFillStyle}
-                  >
-                    &rarr;
-                  </span>
+                <div className="shrink-0 flex items-center justify-center w-full md:w-auto my-8 md:my-0">
+                  {/* Mobile Down Arrow (Sleek vector SVG mask) */}
+                  <div
+                    className="reveal-arrow-mobile md:hidden w-7 h-16 will-change-[background-position]"
+                    style={mobileArrowMaskStyle}
+                  />
+
+                  {/* Desktop Right Arrow (Sleek vector SVG mask) */}
+                  <div
+                    className="reveal-arrow-desktop hidden md:block w-20 h-8 will-change-[background-position]"
+                    style={desktopArrowMaskStyle}
+                  />
                 </div>
               )}
             </Fragment>
