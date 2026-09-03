@@ -21,6 +21,27 @@ const subscribe = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
 
+function getInitialTimeLeft(launchDate?: string): TimeLeft {
+  if (!launchDate) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+  }
+  const targetTimeMs = new Date(launchDate).getTime();
+  if (isNaN(targetTimeMs)) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+  }
+  const diff = targetTimeMs - Date.now();
+  if (diff <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+  }
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+    isExpired: false,
+  };
+}
+
 export default function CountdownTimer({
   launchDate,
   timerTitle = "NEXT DROP RELEASES IN",
@@ -28,46 +49,20 @@ export default function CountdownTimer({
   showTimer = true,
 }: CountdownTimerProps) {
   const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isExpired: false,
-  });
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => getInitialTimeLeft(launchDate));
+  const [prevLaunchDate, setPrevLaunchDate] = useState(launchDate);
+
+  if (launchDate !== prevLaunchDate) {
+    setPrevLaunchDate(launchDate);
+    setTimeLeft(getInitialTimeLeft(launchDate));
+  }
 
   useEffect(() => {
-    let targetTimeMs: number;
-    if (launchDate) {
-      const parsed = new Date(launchDate).getTime();
-      targetTimeMs = !isNaN(parsed) ? parsed : Date.now() + 7 * 24 * 60 * 60 * 1000;
-    } else {
-      targetTimeMs = Date.now() + 7 * 24 * 60 * 60 * 1000;
-    }
-
-    const calculateTimeLeft = (): TimeLeft => {
-      const now = Date.now();
-      const diff = targetTimeMs - now;
-
-      if (diff <= 0) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
-      }
-
-      return {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-        isExpired: false,
-      };
-    };
-
-    const animId = requestAnimationFrame(() => {
-      setTimeLeft(calculateTimeLeft());
-    });
+    const initial = getInitialTimeLeft(launchDate);
+    if (initial.isExpired) return;
 
     const timer = setInterval(() => {
-      const updated = calculateTimeLeft();
+      const updated = getInitialTimeLeft(launchDate);
       setTimeLeft(updated);
       if (updated.isExpired) {
         clearInterval(timer);
@@ -75,7 +70,6 @@ export default function CountdownTimer({
     }, 1000);
 
     return () => {
-      cancelAnimationFrame(animId);
       clearInterval(timer);
     };
   }, [launchDate]);
@@ -87,7 +81,7 @@ export default function CountdownTimer({
   return (
     <div className="w-full flex flex-col items-center justify-center mt-8 sm:mt-12 md:mt-14 mb-1 z-20 pointer-events-auto select-none px-4">
       {/* Outer Pill Container with Continuous Animated Border Beam */}
-      <div className="relative group p-[1px] rounded-full overflow-hidden max-w-fit w-full shadow-[0_10px_35px_rgba(0,0,0,0.6)]">
+      <div className="relative group p-px rounded-full overflow-hidden max-w-fit w-full">
         {/* Infinite rotating glowing beam */}
         <div className="absolute inset-[-150%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0_240deg,#F15B20_310deg,transparent_360deg)] opacity-90" />
 
@@ -95,22 +89,26 @@ export default function CountdownTimer({
         <div className="absolute inset-0 rounded-full border border-white/10 pointer-events-none" />
 
         {/* Inner Content Box */}
-        <div className="relative bg-[#171512]/95 backdrop-blur-2xl rounded-full px-5 py-3 sm:px-8 sm:py-3.5 flex flex-col items-center gap-1.5 sm:gap-2 transition-all duration-500">
-          {/* Title Header with pulse dot */}
-          <div className="flex items-center gap-1.5">
+        <div className="relative bg-[#12110E] rounded-full px-4 py-3 sm:px-6 sm:py-3.5 flex flex-col items-center transition-all duration-500">
+          {/* Title Header with pulse dot on both sides */}
+          <div className="flex items-center gap-1.5 mb-1.5">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F15B20] opacity-75"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F15B20] opacity-75 [animation-delay:0s]"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F15B20]"></span>
             </span>
             <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.2em] text-[#D4D0C9] uppercase font-avenir-next">
               {timeLeft.isExpired ? "DROP STATUS" : timerTitle}
             </span>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F15B20] opacity-75 [animation-delay:0s]"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F15B20]"></span>
+            </span>
           </div>
 
           {/* Countdown display or Live message */}
           {mounted && timeLeft.isExpired ? (
-            <div className="flex items-center gap-1.5 py-1 px-4 rounded-full bg-[#F15B20]/15 border border-[#F15B20]/40 text-[#F15B20]">
-              <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase font-avenir-next">
+            <div className="flex items-center gap-1.5 py-1 px-4 rounded-full text-[#F15B20]">
+              <span className="text-[10px] sm:text-xs font-extrabold tracking-widest uppercase font-avenir-next">
                 {expiredMessage}
               </span>
             </div>

@@ -8,6 +8,7 @@ import Ballpit from "../components/Ballpit";
 export default function CollabPage() {
   const { isHovered: isSubmitHovered, handlers: submitHandlers } = useHoverInteraction();
   const { isHovered: isBackHovered, handlers: backHandlers } = useHoverInteraction();
+  const { isHovered: isLimitedHovered, handlers: limitedHandlers } = useHoverInteraction();
   const { isHovered: isResetHovered, handlers: resetHandlers } = useHoverInteraction();
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -115,39 +116,37 @@ export default function CollabPage() {
         colors={[0xff6118, 0x12110e, 0xffffff, 0xf15b20]}
       />
 
-      {/* Back Button - Absolute Top Left Corner */}
-      <div className="absolute top-0 left-0 z-50 pointer-events-auto">
-        <Link
-          href="/"
-          {...backHandlers}
-          aria-label="Back to home"
-          className="group relative overflow-hidden w-12 h-12 md:w-14 md:h-14 bg-transparent border-b border-r border-[#12110E] rounded-br-2xl md:rounded-br-3xl transition-all duration-300 flex items-center justify-center cursor-pointer pointer-events-auto touch-manipulation"
-        >
-          <ButtonShader isHovered={isBackHovered} colorB="#12110E" />
-          <span className={`relative z-10 transition-colors duration-300 text-xl md:text-2xl font-medium pr-1 pb-1 ${
-            isBackHovered ? 'text-white' : 'text-[#12110E]'
-          }`}>
-            &larr;
-          </span>
-        </Link>
-      </div>
-
-      {/* Testing Mode Indicator & Quick Error Simulator Toggle */}
-      {!web3FormsAccessKey && (
-        <div className="absolute top-4 right-6 z-50 flex items-center gap-3 bg-[#12110E]/10 backdrop-blur-md border border-[#12110E]/15 rounded-full px-4 py-1.5 text-[11px] font-avenir-next text-[#12110E]">
-          <span className="inline-block w-2 h-2 rounded-full bg-[#F15B20] animate-pulse" />
-          <span className="font-semibold">Test Mode (Fake Submit)</span>
-          <label className="flex items-center gap-1.5 cursor-pointer ml-2 border-l border-[#12110E]/20 pl-3">
-            <input
-              type="checkbox"
-              checked={testSimulateError}
-              onChange={(e) => setTestSimulateError(e.target.checked)}
-              className="accent-[#F15B20] rounded cursor-pointer"
-            />
-            <span className="text-[10px] text-[#12110E]/70 select-none">Simulate Error</span>
-          </label>
+      {/* Top Header Bar */}
+      <header className="fixed top-0 left-0 w-full p-5 sm:p-6 md:p-8 flex justify-between items-center z-50 pointer-events-none bg-transparent">
+        {/* Back Button */}
+        <div className="pointer-events-auto">
+          <Link
+            href="/"
+            {...backHandlers}
+            aria-label="Back to home"
+            className="group relative overflow-hidden w-11 h-11 md:w-12 md:h-12 border border-[#12110E]/20 hover:border-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer pointer-events-auto"
+          >
+            <ButtonShader isHovered={isBackHovered} colorA="#F6F6F6" colorB="#12110E" />
+            <span className={`relative z-10 transition-colors duration-500 text-lg md:text-xl font-medium ${isBackHovered ? "text-white" : "text-[#12110E]"}`}>
+              &larr;
+            </span>
+          </Link>
         </div>
-      )}
+
+        {/* Action Button: Limited Edition */}
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/limited-editions"
+            {...limitedHandlers}
+            className="group relative overflow-hidden font-sans text-[10px] sm:text-xs uppercase tracking-wider px-4 py-2 sm:px-5 sm:py-2.5 border border-[#12110E] text-[#12110E] rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer pointer-events-auto whitespace-nowrap"
+          >
+            <ButtonShader isHovered={isLimitedHovered} colorA="#F6F6F6" colorB="#12110E" />
+            <span className={`relative z-10 transition-colors duration-700 group-hover:duration-200 font-semibold ${isLimitedHovered ? "text-white" : "text-[#12110E]"}`}>
+              Limited Edition
+            </span>
+          </Link>
+        </div>
+      </header>
 
       {/* Main Container mirroring the visual layout */}
       <div className="w-full max-w-[680px] bg-transparent flex flex-col justify-center h-full max-h-[92vh] py-4 relative z-20 mx-auto px-4 sm:px-0">

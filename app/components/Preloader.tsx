@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import SplitText from "gsap/SplitText";
@@ -14,6 +15,7 @@ declare global {
 
 export default function Preloader() {
   const preloaderRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   
   // Safe state initialization checking if preloader has already run in the current session
   const [shouldRender, setShouldRender] = useState(() => {
@@ -24,7 +26,10 @@ export default function Preloader() {
   });
 
   useGSAP(() => {
-    if (typeof window !== "undefined" && window.__hasPlayedPreloader) {
+    if ((typeof window !== "undefined" && window.__hasPlayedPreloader) || pathname?.startsWith('/studio')) {
+      if (typeof window !== "undefined") {
+         window.__hasPlayedPreloader = true;
+      }
       setShouldRender(false);
       return;
     }
@@ -32,20 +37,28 @@ export default function Preloader() {
     gsap.registerPlugin(CustomEase, SplitText);
     CustomEase.create("hop", "0.9, 0, 0.1, 1");
 
-    // Split hero text into animation layers using 'new' instance for better memory management
-    new SplitText(".hero-header h1, .hero-header p", {
-      type: "lines",
-      linesClass: "line-item",
-      mask: "lines",
-      autoSplit: true,
-    });
-
-    gsap.set(".line-item", { y: "125%" });
+    const heroElements = document.querySelectorAll(".hero-header h1, .hero-header p");
+    if (heroElements.length > 0) {
+      new SplitText(".hero-header h1, .hero-header p", {
+        type: "lines",
+        linesClass: "line-item",
+        mask: "lines",
+        autoSplit: true,
+      });
+      gsap.set(".line-item", { y: "125%" });
+    }
 
     // --- GSAP PRELOADER + REVEAL TIMELINE ---
     const tl = gsap.timeline({
-      delay: 0.3,
+      delay: 0.2,
       defaults: { ease: "hop" },
+      onComplete: () => {
+        gsap.set(".loader", { display: "none" });
+        if (typeof window !== "undefined") {
+          window.__hasPlayedPreloader = true;
+        }
+        setShouldRender(false);
+      },
     });
 
     // 1. Word logo reveal
@@ -64,28 +77,26 @@ export default function Preloader() {
     tl.to("#word-1 h1", { y: "105%", duration: 1, delay: 0.3 });
     tl.to("#word-2 h1", { y: "-105%", duration: 1 }, "<");
 
-    // 3. Dual blocks overlay reveal + hero video zoom
+    // 3. Dual blocks overlay reveal
     tl.to(".loader .block", {
       clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
       duration: 1,
       stagger: 0.1,
     });
 
-    // 4. Hero text slide in
-    tl.to(".hero-header .line-item", {
-      y: "0%",
-      duration: 1.25,
-      stagger: 0.1,
-      ease: "power3.out",
-      onComplete: () => {
-        // Remove preloader from rendering entirely
-        gsap.set(".loader", { display: "none" });
-        if (typeof window !== "undefined") {
-          window.__hasPlayedPreloader = true;
-        }
-        setShouldRender(false);
-      },
-    }, "<0.2");
+    // 4. Hero text slide in (if on page with .hero-header)
+    if (heroElements.length > 0) {
+      tl.to(
+        ".hero-header .line-item",
+        {
+          y: "0%",
+          duration: 1.25,
+          stagger: 0.1,
+          ease: "power3.out",
+        },
+        "<0.2"
+      );
+    }
   }, { dependencies: [] }); // Empty array ensures this only runs once on mount, omitting scope allows global query
 
   if (typeof window !== "undefined" && window.__hasPlayedPreloader) {

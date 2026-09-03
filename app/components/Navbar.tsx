@@ -24,7 +24,7 @@ const MENU_LINKS = [
   { label: "What We Do", targetId: "#what-we-do" },
   { label: "Who we Grow for", targetId: "#target-audience-scroll" },
   { label: "Who's Watching Us Grow", targetId: "#incubators" },
-  { label: "Limited Editions", targetId: "#limited-editions" },
+  { label: "Limited Editions", targetId: "/limited-editions" },
   { label: "Contact", targetId: "#contact" },
 ];
 
@@ -42,7 +42,7 @@ function MenuLinkItem({ link, onClick }: MenuLinkItemProps) {
       {/* Kinetic Roll-Up Text Wrapper */}
       <div className="menu-link overflow-hidden relative z-10">
         <Link
-          href="/"
+          href={link.targetId.startsWith("/") ? link.targetId : "/"}
           onClick={(e) => onClick(e, link.targetId)}
           className="menu-anim-line relative block text-[1.8rem] xs:text-[2.2rem] md:text-[2.5rem] lg:text-[2.85rem] font-extralight font-kodchasan leading-[1.25] pb-0.5 translate-y-[-110%] will-change-transform capitalize tracking-tight"
         >
@@ -239,6 +239,14 @@ export default function Navbar() {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     if (isAnimating.current) return;
 
+    if (targetId.startsWith("/")) {
+      if (isOpen) closeMenu();
+      if (pathname !== targetId) {
+        router.push(targetId);
+      }
+      return;
+    }
+
     if (pathname !== "/") {
       e.preventDefault();
       sessionStorage.setItem("scrollToSection", targetId);
@@ -301,8 +309,10 @@ export default function Navbar() {
         {/* Centered Limited Edition & Collab Buttons */}
         <div className="menu-collab-btn pointer-events-auto flex items-center justify-center gap-2 md:gap-3 will-change-[opacity,transform] h-12 md:h-14">
           <Link
-            href="/"
-            onClick={(e) => handleLinkClick(e, "#limited-editions")}
+            href="/limited-editions"
+            onClick={() => {
+              if (isOpen) closeMenu();
+            }}
             {...limitedHandlers}
             className="hidden min-[350px]:flex group relative overflow-hidden font-sans text-[10px] md:text-xs uppercase tracking-wider px-3.5 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full transition-all duration-300 items-center justify-center whitespace-nowrap"
           >

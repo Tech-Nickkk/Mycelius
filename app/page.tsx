@@ -1,4 +1,3 @@
-import Preloader from "./components/Preloader";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -8,6 +7,7 @@ import Incubators, { IncubatorItem } from "./components/Incubators";
 import ProductAdvantage from "./components/ProductAdvantage";
 import Collaborations from "./components/Collaborations";
 import LimitedEditions, { LimitedEditionItem } from "./components/LimitedEditions";
+import Gallery, { GalleryItem } from "./components/Gallery";
 import Contact from "./components/Contact";
 
 import { client } from "../sanity/lib/client";
@@ -52,6 +52,7 @@ async function getSanityData() {
     const limitedEditionsData = await client.fetch(`*[_type == "limitedEdition"]`);
     const limitedEditionSettingsData = await client.fetch(`*[_type == "limitedEditionSettings"][0]`);
     const incubatorsData = await client.fetch(`*[_type == "incubator"]`);
+    const galleryItemsData = await client.fetch(`*[_type == "galleryItem"]`);
     
     const stories: Story[] = whatWeDoData.map((item: { titleLine1: string; titleLine2: string; image: SanityImageSource; _updatedAt: string }) => ({
       title: [item.titleLine1, item.titleLine2],
@@ -63,11 +64,31 @@ async function getSanityData() {
       image: getSanityImageUrl(item.image, item._updatedAt),
     }));
 
-    const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { name: string; status: string; image: SanityImageSource; _updatedAt: string }) => ({
-      name: item.name,
-      status: item.status,
-      image: getSanityImageUrl(item.image, item._updatedAt),
-    }));
+    const limitedEditions: LimitedEditionItem[] = limitedEditionsData.map((item: { 
+      name: string; 
+      isUpcoming?: boolean; 
+      availableStock?: number; 
+      image: SanityImageSource; 
+      _updatedAt: string 
+    }) => {
+      let derivedStatus = "Growing";
+      if (item.isUpcoming) {
+        derivedStatus = "Growing";
+      } else if (item.availableStock !== undefined && item.availableStock !== null) {
+        if (item.availableStock <= 0) {
+          derivedStatus = "Sold Out";
+        } else {
+          derivedStatus = `${item.availableStock} Left`;
+        }
+      } else {
+        derivedStatus = "Growing";
+      }
+      return {
+        name: item.name,
+        status: derivedStatus,
+        image: getSanityImageUrl(item.image, item._updatedAt),
+      };
+    });
 
     const limitedEditionTimerSettings = limitedEditionSettingsData
       ? {
@@ -84,15 +105,22 @@ async function getSanityData() {
       link: item.link || "",
     }));
 
-    return { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators };
+    const galleryItems: GalleryItem[] = galleryItemsData.map((item: { _id?: string; title?: string; description?: string; image: SanityImageSource; _updatedAt: string }) => ({
+      id: item._id,
+      title: item.title,
+      description: item.description,
+      image: getSanityImageUrl(item.image, item._updatedAt),
+    }));
+
+    return { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators, galleryItems };
   } catch (error) {
     console.error("Failed to fetch Sanity data:", error);
-    return { stories: [], audiences: [], limitedEditions: [], limitedEditionTimerSettings: undefined, incubators: [] };
+    return { stories: [], audiences: [], limitedEditions: [], limitedEditionTimerSettings: undefined, incubators: [], galleryItems: [] };
   }
 }
 
 export default async function Home() {
-  const { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators } = await getSanityData();
+  const { stories, audiences, limitedEditions, limitedEditionTimerSettings, incubators, galleryItems } = await getSanityData();
 
   const finalStories = stories.length > 0 ? stories : defaultStories;
   const finalAudiences = audiences.length > 0 ? audiences : defaultAudiences;
@@ -101,7 +129,6 @@ export default async function Home() {
     <>
       <Navbar />
       <div className="main-content-container relative bg-[#ffffff] text-[#12110E] overflow-x-hidden selection:bg-[#FF6118] selection:text-black">
-        <Preloader />
         <Hero />
         <About />
         <WhatWeDo stories={finalStories} />
@@ -111,6 +138,7 @@ export default async function Home() {
           <Collaborations />
           <Incubators items={incubators} />
           <LimitedEditions items={limitedEditions} timerSettings={limitedEditionTimerSettings} />
+          <Gallery items={galleryItems} />
           <Contact />
         </div>
       </div>

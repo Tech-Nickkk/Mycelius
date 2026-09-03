@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Viewport } from "next";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import Preloader from "./components/Preloader";
 import PageTransition from "./components/PageTransition";
 import localFont from "next/font/local";
 import { Bricolage_Grotesque, Montserrat, Kodchasan } from "next/font/google";
@@ -161,9 +162,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable} ${kodchasan.variable} ${avenirNext.variable} ${zapfino.variable} ${ardelaEdge.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-[#ffffff] text-[#12110E] antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
+    <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable} ${kodchasan.variable} ${avenirNext.variable} ${zapfino.variable} ${ardelaEdge.variable} bg-[#12110E]`} suppressHydrationWarning>
+      <body className="min-h-screen bg-[#12110E] text-white antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
+        <Preloader />
         <PageTransition />
       </body>
     </html>

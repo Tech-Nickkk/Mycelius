@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect, @typescript-eslint/no-unused-vars */
+
 import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 
@@ -47,17 +49,17 @@ const fragmentShader = `
 
   void main() {
     vec2 uv = vUv;
-    float aspect = uResolution.x / uResolution.y;
+    float aspect = uResolution.x / max(uResolution.y, 1.0);
     vec2 centeredUv = (uv - 0.5) * vec2(aspect, 1.0);
 
     // Get organic noise value (range [0.0, 0.875])
-    float noiseValue = fbm(centeredUv * 2.0); // Reduced density for minimal organic blobs
+    float noiseValue = fbm(centeredUv * 2.0);
 
     // Transition threshold moves from 0.0 to 1.15 based on uProgress.
     float threshold = uProgress * 1.15;
     float d = (noiseValue + 0.1) - threshold;
 
-    float pixelSize = 1.0 / uResolution.y;
+    float pixelSize = 1.0 / max(uResolution.y, 1.0);
     float alpha = smoothstep(-pixelSize * 1.5, pixelSize * 1.5, d);
 
     gl_FragColor = vec4(uColorB, 1.0 - alpha);
@@ -117,23 +119,13 @@ export function useHoverInteraction() {
         isTouch.current = false;
       }, 300);
     },
+    onBlur: () => {
+      setIsHovered(false);
+    },
   };
 
-  return { isHovered, handlers };
+  return { isHovered, handlers, reset: () => setIsHovered(false) };
 }
-
-const detectWebGL = () => {
-  if (typeof window === "undefined") return false;
-  try {
-    const canvas = document.createElement("canvas");
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
-    );
-  } catch (e) {
-    return false;
-  }
-};
 
 export default function ButtonShader({
   isHovered,
@@ -148,16 +140,14 @@ export default function ButtonShader({
 
   useEffect(() => {
     setIsTouchDevice(checkTouchDevice());
-    setWebglAvailable(detectWebGL());
   }, []);
 
-  // Sync hover state ref without tearing down WebGL context
   useEffect(() => {
     hoverRef.current = isHovered;
   }, [isHovered]);
 
   useEffect(() => {
-    if (isTouchDevice || !webglAvailable) return;
+    if (isTouchDevice) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -170,7 +160,8 @@ export default function ButtonShader({
     let renderer: THREE.WebGLRenderer;
     let material: THREE.ShaderMaterial;
     let geometry: THREE.BufferGeometry;
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
+    let isRunning = false;
 
     try {
       scene = new THREE.Scene();
@@ -190,9 +181,12 @@ export default function ButtonShader({
         vertexShader,
         fragmentShader,
         uniforms: {
-          uProgress: { value: 0 },
+          uProgress: { value: hoverRef.current ? 1.25 : 0 },
           uResolution: {
-            value: new THREE.Vector2(parent.offsetWidth, parent.offsetHeight),
+            value: new THREE.Vector2(
+              Math.max(parent.offsetWidth, 40),
+              Math.max(parent.offsetHeight, 40)
+            ),
           },
           uColorA: { value: new THREE.Vector3(rgbA.r, rgbA.g, rgbA.b) },
           uColorB: { value: new THREE.Vector3(rgbB.r, rgbB.g, rgbB.b) },
@@ -206,40 +200,75 @@ export default function ButtonShader({
 
       const resize = () => {
         if (!parent || !renderer || !material) return;
-        const width = parent.offsetWidth;
-        const height = parent.offsetHeight;
+        const width = Math.max(parent.offsetWidth, 32);
+        const height = Math.max(parent.offsetHeight, 32);
         renderer.setSize(width, height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         material.uniforms.uResolution.value.set(width, height);
+        if (!isRunning) {
+          renderer.render(scene, camera);
+        }
       };
 
       resize();
+
+      const resizeObserver = new ResizeObserver(() => {
+        resize();
+      });
+      resizeObserver.observe(parent);
       window.addEventListener("resize", resize);
 
-      let targetProgress = 0;
+      const startAnimationLoop = () => {
+        if (isRunning) return;
+        isRunning = true;
 
-      const animate = () => {
-        if (!material || !renderer) return;
+        const loop = () => {
+          if (!material || !renderer) {
+            isRunning = false;
+            return;
+          }
 
-        targetProgress = hoverRef.current ? 1.25 : 0.0;
-        const diff = targetProgress - material.uniforms.uProgress.value;
+          const targetProgress = hoverRef.current ? 1.25 : 0.0;
+          const diff = targetProgress - material.uniforms.uProgress.value;
 
-        if (Math.abs(diff) > 0.001) {
-          material.uniforms.uProgress.value += diff * 0.02;
-          renderer.render(scene, camera);
-        } else if (material.uniforms.uProgress.value !== targetProgress) {
-          material.uniforms.uProgress.value = targetProgress;
-          renderer.render(scene, camera);
-        }
+          if (Math.abs(diff) > 0.002) {
+            material.uniforms.uProgress.value += diff * 0.04;
+            renderer.render(scene, camera);
+            animationFrameId = requestAnimationFrame(loop);
+          } else {
+            material.uniforms.uProgress.value = targetProgress;
+            renderer.render(scene, camera);
+            isRunning = false;
+            animationFrameId = null;
+          }
+        };
 
-        animationFrameId = requestAnimationFrame(animate);
+        loop();
       };
 
-      animate();
+      const handleContextLost = (event: Event) => {
+        event.preventDefault();
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        isRunning = false;
+      };
+
+      canvas.addEventListener("webglcontextlost", handleContextLost, false);
+
+      renderer.render(scene, camera);
+
+      const checkInterval = setInterval(() => {
+        const target = hoverRef.current ? 1.25 : 0.0;
+        if (material && Math.abs(target - material.uniforms.uProgress.value) > 0.002) {
+          startAnimationLoop();
+        }
+      }, 40);
 
       return () => {
+        clearInterval(checkInterval);
+        canvas.removeEventListener("webglcontextlost", handleContextLost);
+        resizeObserver.disconnect();
         window.removeEventListener("resize", resize);
-        cancelAnimationFrame(animationFrameId);
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
         renderer.dispose();
         geometry.dispose();
         material.dispose();
@@ -248,7 +277,7 @@ export default function ButtonShader({
       console.warn("WebGL initialization failed for ButtonShader, falling back to CSS:", e);
       setWebglAvailable(false);
     }
-  }, [colorA, colorB, spread, webglAvailable, isTouchDevice]);
+  }, [colorA, colorB, spread, isTouchDevice]);
 
   if (isTouchDevice || !webglAvailable) {
     return (
@@ -269,4 +298,3 @@ export default function ButtonShader({
     />
   );
 }
-

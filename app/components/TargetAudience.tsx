@@ -334,7 +334,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
     <section
       id="target-audience-scroll"
       ref={sectionRef}
-      className="relative w-full md:h-screen bg-[#12110E] md:overflow-hidden pt-36 pb-16 md:py-0"
+      className="relative w-full md:h-screen md:overflow-hidden pt-36 pb-16 md:py-0"
     >
       {/* Responsive Clip Path Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
