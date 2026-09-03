@@ -4,8 +4,11 @@ import { serverClient } from "@/sanity/lib/serverClient";
 
 export async function POST(req: Request) {
   try {
-    const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+    const rawKeyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const rawKeySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    const key_id = rawKeyId?.trim();
+    const key_secret = rawKeySecret?.trim();
 
     if (!key_id || !key_secret) {
       return NextResponse.json(

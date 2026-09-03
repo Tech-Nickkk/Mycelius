@@ -4,7 +4,8 @@ import { serverClient } from "@/sanity/lib/serverClient";
 
 export async function POST(req: Request) {
   try {
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+    const rawKeySecret = process.env.RAZORPAY_KEY_SECRET;
+    const key_secret = rawKeySecret?.trim();
     if (!key_secret) {
       return NextResponse.json(
         { error: "Razorpay secret key is not configured on the server." },
