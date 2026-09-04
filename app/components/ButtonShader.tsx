@@ -1,80 +1,59 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect, @typescript-eslint/no-unused-vars */
+import { useRef, useEffect, useState, useSyncExternalStore } from "react";
 
-import { useRef, useEffect, useState } from "react";
-import * as THREE from "three";
+function fract(x: number): number {
+  return x - Math.floor(x);
+}
 
-const vertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
+function hash(px: number, py: number): number {
+  const kx = 0.3183099;
+  const ky = 0.3678794;
+  const x = px * kx + py;
+  const y = py * ky + px;
+  return fract(16.0 * Math.sin(x * y * (x + y)));
+}
 
-const fragmentShader = `
-  precision highp float;
-  uniform float uProgress;
-  uniform vec2 uResolution;
-  uniform vec3 uColorA;
-  uniform vec3 uColorB;
-  uniform float uSpread;
-  varying vec2 vUv;
+function noise(px: number, py: number): number {
+  const ix = Math.floor(px);
+  const iy = Math.floor(py);
+  const fx = px - ix;
+  const fy = py - iy;
+  const sx = fx * fx * (3.0 - 2.0 * fx);
+  const sy = fy * fy * (3.0 - 2.0 * fy);
 
-  float Hash(vec2 p) {
-    vec2 k = vec2(0.3183099, 0.3678794);
-    p = p * k + vec2(p.y, p.x);
-    return fract(16.0 * sin(p.x * p.y * (p.x + p.y)));
-  }
+  const h00 = hash(ix, iy);
+  const h10 = hash(ix + 1, iy);
+  const h01 = hash(ix, iy + 1);
+  const h11 = hash(ix + 1, iy + 1);
 
-  float noise(in vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(
-      mix(Hash(i + vec2(0.0, 0.0)), Hash(i + vec2(1.0, 0.0)), f.x),
-      mix(Hash(i + vec2(0.0, 1.0)), Hash(i + vec2(1.0, 1.0)), f.x),
-      f.y
-    );
-  }
+  const nx0 = h00 + (h10 - h00) * sx;
+  const nx1 = h01 + (h11 - h01) * sx;
+  return nx0 + (nx1 - nx0) * sy;
+}
 
-  float fbm(vec2 p) {
-    float v = 0.0;
-    v += noise(p * 1.0) * 0.5;
-    v += noise(p * 2.0) * 0.25;
-    v += noise(p * 4.0) * 0.125;
-    return v;
-  }
+function fbm(px: number, py: number): number {
+  let v = 0.0;
+  v += noise(px * 1.0, py * 1.0) * 0.5;
+  v += noise(px * 2.0, py * 2.0) * 0.25;
+  v += noise(px * 4.0, py * 4.0) * 0.125;
+  return v;
+}
 
-  void main() {
-    vec2 uv = vUv;
-    float aspect = uResolution.x / max(uResolution.y, 1.0);
-    vec2 centeredUv = (uv - 0.5) * vec2(aspect, 1.0);
-
-    // Get organic noise value (range [0.0, 0.875])
-    float noiseValue = fbm(centeredUv * 2.0);
-
-    // Transition threshold moves from 0.0 to 1.15 based on uProgress.
-    float threshold = uProgress * 1.15;
-    float d = (noiseValue + 0.1) - threshold;
-
-    float pixelSize = 1.0 / max(uResolution.y, 1.0);
-    float alpha = smoothstep(-pixelSize * 1.5, pixelSize * 1.5, d);
-
-    gl_FragColor = vec4(uColorB, 1.0 - alpha);
-  }
-`;
+function smoothstep(min: number, max: number, value: number): number {
+  const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  return x * x * (3 - 2 * x);
+}
 
 function hexToRgb(hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-        r: parseInt(result[1], 16) / 255,
-        g: parseInt(result[2], 16) / 255,
-        b: parseInt(result[3], 16) / 255,
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
       }
-    : { r: 0.07, g: 0.07, b: 0.05 };
+    : { r: 255, g: 255, b: 255 };
 }
 
 interface ButtonShaderProps {
@@ -84,14 +63,21 @@ interface ButtonShaderProps {
   spread?: number;
 }
 
-const checkTouchDevice = () => {
+let isTouchCached: boolean | null = null;
+const checkTouchDevice = (): boolean => {
   if (typeof window === "undefined") return false;
-  return (
+  if (isTouchCached !== null) return isTouchCached;
+  isTouchCached = (
     "ontouchstart" in window ||
     navigator.maxTouchPoints > 0 ||
     window.matchMedia("(pointer: coarse)").matches
   );
+  return isTouchCached;
 };
+
+const subscribeSync = () => () => {};
+const getTouchSnapshot = () => checkTouchDevice();
+const getTouchServerSnapshot = () => false;
 
 export function useHoverInteraction() {
   const [isHovered, setIsHovered] = useState(false);
@@ -129,18 +115,11 @@ export function useHoverInteraction() {
 
 export default function ButtonShader({
   isHovered,
-  colorA = "#12110E",
   colorB = "#F15B20",
-  spread = 0.3,
 }: ButtonShaderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverRef = useRef(isHovered);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [webglAvailable, setWebglAvailable] = useState(true);
-
-  useEffect(() => {
-    setIsTouchDevice(checkTouchDevice());
-  }, []);
+  const isTouchDevice = useSyncExternalStore(subscribeSync, getTouchSnapshot, getTouchServerSnapshot);
 
   useEffect(() => {
     hoverRef.current = isHovered;
@@ -152,134 +131,106 @@ export default function ButtonShader({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const parent = canvas.parentElement;
-    if (!parent) return;
+    const ctx = canvas.getContext("2d", { willReadFrequently: false });
+    if (!ctx) return;
 
-    let scene: THREE.Scene;
-    let camera: THREE.OrthographicCamera;
-    let renderer: THREE.WebGLRenderer;
-    let material: THREE.ShaderMaterial;
-    let geometry: THREE.BufferGeometry;
-    let animationFrameId: number | null = null;
+    const rgbB = hexToRgb(colorB);
+    const { r: rB, g: gB, b: bB } = rgbB;
+
+    let animId: number | null = null;
+    let currentProgress = hoverRef.current ? 1.25 : 0.0;
     let isRunning = false;
 
-    try {
-      scene = new THREE.Scene();
-      camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: false,
-        powerPreference: "low-power",
-      });
+    const bufferWidth = 84;
+    const bufferHeight = 36;
+    canvas.width = bufferWidth;
+    canvas.height = bufferHeight;
 
-      const rgbA = hexToRgb(colorA);
-      const rgbB = hexToRgb(colorB);
-      geometry = new THREE.PlaneGeometry(2, 2);
+    const imgData = ctx.createImageData(bufferWidth, bufferHeight);
+    const data = imgData.data;
 
-      material = new THREE.ShaderMaterial({
-        vertexShader,
-        fragmentShader,
-        uniforms: {
-          uProgress: { value: hoverRef.current ? 1.25 : 0 },
-          uResolution: {
-            value: new THREE.Vector2(
-              Math.max(parent.offsetWidth, 40),
-              Math.max(parent.offsetHeight, 40)
-            ),
-          },
-          uColorA: { value: new THREE.Vector3(rgbA.r, rgbA.g, rgbA.b) },
-          uColorB: { value: new THREE.Vector3(rgbB.r, rgbB.g, rgbB.b) },
-          uSpread: { value: spread },
-        },
-        transparent: true,
-      });
+    // Precalculate noise grid for this aspect ratio
+    const aspect = bufferWidth / bufferHeight;
+    const noiseGrid = new Float32Array(bufferWidth * bufferHeight);
 
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-
-      const resize = () => {
-        if (!parent || !renderer || !material) return;
-        const width = Math.max(parent.offsetWidth, 32);
-        const height = Math.max(parent.offsetHeight, 32);
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        material.uniforms.uResolution.value.set(width, height);
-        if (!isRunning) {
-          renderer.render(scene, camera);
-        }
-      };
-
-      resize();
-
-      const resizeObserver = new ResizeObserver(() => {
-        resize();
-      });
-      resizeObserver.observe(parent);
-      window.addEventListener("resize", resize);
-
-      const startAnimationLoop = () => {
-        if (isRunning) return;
-        isRunning = true;
-
-        const loop = () => {
-          if (!material || !renderer) {
-            isRunning = false;
-            return;
-          }
-
-          const targetProgress = hoverRef.current ? 1.25 : 0.0;
-          const diff = targetProgress - material.uniforms.uProgress.value;
-
-          if (Math.abs(diff) > 0.002) {
-            material.uniforms.uProgress.value += diff * 0.04;
-            renderer.render(scene, camera);
-            animationFrameId = requestAnimationFrame(loop);
-          } else {
-            material.uniforms.uProgress.value = targetProgress;
-            renderer.render(scene, camera);
-            isRunning = false;
-            animationFrameId = null;
-          }
-        };
-
-        loop();
-      };
-
-      const handleContextLost = (event: Event) => {
-        event.preventDefault();
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        isRunning = false;
-      };
-
-      canvas.addEventListener("webglcontextlost", handleContextLost, false);
-
-      renderer.render(scene, camera);
-
-      const checkInterval = setInterval(() => {
-        const target = hoverRef.current ? 1.25 : 0.0;
-        if (material && Math.abs(target - material.uniforms.uProgress.value) > 0.002) {
-          startAnimationLoop();
-        }
-      }, 40);
-
-      return () => {
-        clearInterval(checkInterval);
-        canvas.removeEventListener("webglcontextlost", handleContextLost);
-        resizeObserver.disconnect();
-        window.removeEventListener("resize", resize);
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        renderer.dispose();
-        geometry.dispose();
-        material.dispose();
-      };
-    } catch (e) {
-      console.warn("WebGL initialization failed for ButtonShader, falling back to CSS:", e);
-      setWebglAvailable(false);
+    for (let y = 0; y < bufferHeight; y++) {
+      const uvY = 1.0 - y / bufferHeight; // Match WebGL UV orientation
+      const centeredY = uvY - 0.5;
+      for (let x = 0; x < bufferWidth; x++) {
+        const uvX = x / bufferWidth;
+        const centeredX = (uvX - 0.5) * aspect;
+        noiseGrid[y * bufferWidth + x] = fbm(centeredX * 2.0, centeredY * 2.0);
+      }
     }
-  }, [colorA, colorB, spread, isTouchDevice]);
 
-  if (isTouchDevice || !webglAvailable) {
+    const render = (progress: number) => {
+      if (progress <= 0.001) {
+        ctx.clearRect(0, 0, bufferWidth, bufferHeight);
+        return;
+      }
+
+      if (progress >= 1.2) {
+        ctx.fillStyle = colorB;
+        ctx.fillRect(0, 0, bufferWidth, bufferHeight);
+        return;
+      }
+
+      const threshold = progress * 1.15;
+      const pixelSize = 1.0 / bufferHeight;
+      const smoothRange = pixelSize * 1.5;
+
+      for (let i = 0; i < noiseGrid.length; i++) {
+        const noiseValue = noiseGrid[i];
+        const d = (noiseValue + 0.1) - threshold;
+        const alpha = smoothstep(-smoothRange, smoothRange, d);
+        const invAlpha = 1.0 - alpha;
+
+        const idx = i * 4;
+        data[idx] = rB;
+        data[idx + 1] = gB;
+        data[idx + 2] = bB;
+        data[idx + 3] = Math.round(invAlpha * 255);
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+    };
+
+    // Initial render
+    render(currentProgress);
+
+    const loop = () => {
+      const target = hoverRef.current ? 1.25 : 0.0;
+      const diff = target - currentProgress;
+
+      if (Math.abs(diff) > 0.002) {
+        currentProgress += diff * 0.06;
+        render(currentProgress);
+        animId = requestAnimationFrame(loop);
+      } else {
+        currentProgress = target;
+        render(currentProgress);
+        isRunning = false;
+        animId = null;
+      }
+    };
+
+    const checkInterval = setInterval(() => {
+      const target = hoverRef.current ? 1.25 : 0.0;
+      if (Math.abs(target - currentProgress) > 0.002 && !isRunning) {
+        isRunning = true;
+        animId = requestAnimationFrame(loop);
+      }
+    }, 30);
+
+    return () => {
+      clearInterval(checkInterval);
+      if (animId !== null) {
+        cancelAnimationFrame(animId);
+      }
+    };
+  }, [colorB, isTouchDevice]);
+
+  if (isTouchDevice) {
     return (
       <div
         className="absolute inset-0 w-full h-full transition-opacity duration-300 rounded-[inherit] z-0"
@@ -295,6 +246,7 @@ export default function ButtonShader({
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none rounded-[inherit] z-0"
+      style={{ imageRendering: "auto" }}
     />
   );
 }

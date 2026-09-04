@@ -295,13 +295,13 @@ export default function Incubators({ items }: { items?: IncubatorItem[] }) {
         }
       `}} />
 
-      <div className="max-w-[1400px] mx-auto flex flex-col items-center justify-center">
+      <div className="max-w-350 mx-auto flex flex-col items-center justify-center">
         {/* Animated heading */}
         <div
           ref={headingRef}
           className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-16 md:mb-24 px-6 md:px-0"
         >
-          <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] w-fit text-center">
+          <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-tight w-fit text-center">
             <span
               className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
               style={headingTextFillStyle}

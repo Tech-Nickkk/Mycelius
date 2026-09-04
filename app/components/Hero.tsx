@@ -91,92 +91,135 @@ function HeroShader({
     const heroElement = document.querySelector(scrollTarget) as HTMLElement;
     if (!heroElement) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: false,
-    });
-
-    const rgb = hexToRgb(color);
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        uProgress: { value: 0 },
-        uResolution: {
-          value: new THREE.Vector2(heroElement.offsetWidth, heroElement.offsetHeight),
-        },
-        uColor: { value: new THREE.Vector3(rgb.r, rgb.g, rgb.b) },
-        uSpread: { value: spread },
-      },
-      transparent: true,
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const resizeWebGL = () => {
-      if (!heroElement || !renderer || !material) return;
-      const width = heroElement.offsetWidth;
-      const height = heroElement.offsetHeight;
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      material.uniforms.uResolution.value.set(width, height);
-    };
-
-    resizeWebGL();
-    window.addEventListener("resize", resizeWebGL);
-
+    let scene: THREE.Scene;
+    let camera: THREE.OrthographicCamera;
+    let renderer: THREE.WebGLRenderer;
+    let material: THREE.ShaderMaterial;
+    let geometry: THREE.BufferGeometry;
+    let animationFrameId: number | null = null;
+    let isRunning = false;
+    let isVisible = true;
     let targetProgress = 0;
-    const handleScroll = () => {
-      if (!heroElement) return;
-      const scroll = window.scrollY;
-      const maxScroll = heroElement.offsetHeight;
-      if (maxScroll > 0) {
-        targetProgress = Math.min((scroll / maxScroll) * speed, 1.1);
-      }
-    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    try {
+      scene = new THREE.Scene();
+      camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: false,
+      });
 
-    let animationFrameId: number;
-    let lastRenderedProgress = -1;
-
-    const animateWebGL = () => {
-      if (!material || !renderer) return;
+      const rgb = hexToRgb(color);
+      geometry = new THREE.PlaneGeometry(2, 2);
       
-      const diff = targetProgress - material.uniforms.uProgress.value;
-      
-      // If the difference is meaningful, continue interpolating and rendering
-      if (Math.abs(diff) > 0.001) {
-        material.uniforms.uProgress.value += diff * 0.08;
-        renderer.render(scene, camera);
-        lastRenderedProgress = material.uniforms.uProgress.value;
-      } 
-      // If we just reached the target, do one final exact render and then sleep
-      else if (lastRenderedProgress !== targetProgress) {
-        material.uniforms.uProgress.value = targetProgress;
-        renderer.render(scene, camera);
-        lastRenderedProgress = targetProgress;
-      }
-      
-      animationFrameId = requestAnimationFrame(animateWebGL);
-    };
-    animateWebGL();
+      material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          uProgress: { value: 0 },
+          uResolution: {
+            value: new THREE.Vector2(heroElement.offsetWidth, heroElement.offsetHeight),
+          },
+          uColor: { value: new THREE.Vector3(rgb.r, rgb.g, rgb.b) },
+          uSpread: { value: spread },
+        },
+        transparent: true,
+      });
 
-    return () => {
-      window.removeEventListener("resize", resizeWebGL);
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(animationFrameId);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-    };
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      const resizeWebGL = () => {
+        if (!heroElement || !renderer || !material) return;
+        const width = heroElement.offsetWidth;
+        const height = heroElement.offsetHeight;
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        material.uniforms.uResolution.value.set(width, height);
+      };
+
+      resizeWebGL();
+      window.addEventListener("resize", resizeWebGL);
+
+      const requestRender = () => {
+        if (!isRunning && isVisible) {
+          isRunning = true;
+          animationFrameId = requestAnimationFrame(animateWebGL);
+        }
+      };
+
+      const handleScroll = () => {
+        if (!heroElement || !isVisible) return;
+        const scroll = window.scrollY;
+        const maxScroll = heroElement.offsetHeight;
+        if (maxScroll > 0) {
+          targetProgress = Math.min((scroll / maxScroll) * speed, 1.1);
+        }
+        requestRender();
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            handleScroll();
+            requestRender();
+          }
+        },
+        { rootMargin: "100px 0px 100px 0px" }
+      );
+
+      observer.observe(heroElement);
+      window.addEventListener("scroll", handleScroll, { passive: true });
+
+      const animateWebGL = () => {
+        if (!material || !renderer) {
+          isRunning = false;
+          return;
+        }
+        
+        const diff = targetProgress - material.uniforms.uProgress.value;
+        
+        if (Math.abs(diff) > 0.0008) {
+          material.uniforms.uProgress.value += diff * 0.08;
+          renderer.render(scene, camera);
+          animationFrameId = requestAnimationFrame(animateWebGL);
+        } else {
+          material.uniforms.uProgress.value = targetProgress;
+          renderer.render(scene, camera);
+          isRunning = false;
+          animationFrameId = null;
+        }
+      };
+
+      const handleContextLost = (event: Event) => {
+        event.preventDefault();
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        isRunning = false;
+      };
+
+      canvas.addEventListener("webglcontextlost", handleContextLost, false);
+
+      return () => {
+        canvas.removeEventListener("webglcontextlost", handleContextLost);
+        observer.disconnect();
+        window.removeEventListener("resize", resizeWebGL);
+        window.removeEventListener("scroll", handleScroll);
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        renderer.dispose();
+        geometry.dispose();
+        material.dispose();
+      };
+    } catch (err) {
+      console.warn("WebGL initialization failed for HeroShader:", err);
+    }
   }, [color, spread, speed, scrollTarget]);
 
   return (

@@ -194,6 +194,8 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
 
   }, { dependencies: [activeStory], scope: containerRef });
 
+  const isSectionInView = useRef(false);
+
   // Perform slide change logic
   // forceAutoplay=true → always advance forward regardless of directionRef
   const changeStory = (targetIndex?: number, forceAutoplay = false) => {
@@ -223,28 +225,16 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
     setPrevStory(previousStory);
     setActiveStory(nextStory);
 
-    // Always resume autoplay going forward after any interaction
+    // Only queue the next autoplay if the section is actively in view
     if (storyTimeoutRef.current) {
       clearTimeout(storyTimeoutRef.current);
     }
-    storyTimeoutRef.current = setTimeout(() => {
-      changeStory(undefined, true); // autoplay — always next
-    }, 4000);
+    if (isSectionInView.current) {
+      storyTimeoutRef.current = setTimeout(() => {
+        changeStory(undefined, true);
+      }, 4000);
+    }
   };
-
-  // Hook for initial mount auto-advance (always goes forward)
-  useEffect(() => {
-    storyTimeoutRef.current = setTimeout(() => {
-      changeStory(undefined, true);
-    }, 4000);
-
-    return () => {
-      if (storyTimeoutRef.current) {
-        clearTimeout(storyTimeoutRef.current);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Quick setters for highly performant GSAP cursor tracking
   const xTo = useRef<gsap.QuickToFunc | null>(null);
@@ -252,38 +242,10 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
 
   useGSAP(() => {
     if (cursorRef.current) {
-      xTo.current = gsap.quickTo(cursorRef.current, "x", { duration: 0.3, ease: "power2.out" });
-      yTo.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.3, ease: "power2.out" });
+      xTo.current = gsap.quickTo(cursorRef.current, "x", { duration: 0.2, ease: "power2.out" });
+      yTo.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.2, ease: "power2.out" });
     }
   }, { scope: containerRef });
-
-  // Handle custom cursor coordinate updates
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (typeof window === "undefined" || !cursorRef.current) return;
-    
-    const { clientX, clientY } = event;
-    mousePositionRef.current = { x: clientX, y: clientY };
-
-    // If the cursor was hidden by a scroll event, reveal it the moment they move the mouse
-    if (!isCursorVisible.current) {
-      handleMouseEnter(event);
-    }
-
-    if (xTo.current && yTo.current) {
-      xTo.current(clientX - 50);
-      yTo.current(clientY - 50);
-    }
-
-    // Only update React state if the direction actually changes!
-    // This prevents the ENTIRE component from re-rendering on EVERY single mouse movement
-    const isLeft = clientX < window.innerWidth / 2;
-    const newDirection = isLeft ? "prev" : "next";
-    
-    if (directionRef.current !== newDirection) {
-      directionRef.current = newDirection;
-      setCursorText(isLeft ? "Prev" : "Next");
-    }
-  };
 
   const handleMouseEnter = (event?: React.MouseEvent | { clientX: number; clientY: number }) => {
     if (cursorRef.current && !isCursorVisible.current) {
@@ -299,7 +261,7 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
       gsap.to(cursorRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.3,
+        duration: 0.25,
         ease: "power2.out",
       });
     }
@@ -311,51 +273,75 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
       gsap.to(cursorRef.current, {
         opacity: 0,
         scale: 0.75,
-        duration: 0.3,
+        duration: 0.25,
         ease: "power2.out",
       });
     }
   };
 
-  // Track global mouse position and handle visibility boundaries on move and scroll
-  useEffect(() => {
-    const updateGlobalMouse = (e: MouseEvent) => {
-      mousePositionRef.current = { x: e.clientX, y: e.clientY };
-    };
+  // Handle custom cursor coordinate updates
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (typeof window === "undefined" || !cursorRef.current) return;
+    
+    const { clientX, clientY } = event;
+    mousePositionRef.current = { x: clientX, y: clientY };
 
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      
-      const { x, y } = mousePositionRef.current;
-      if (x < 0 || y < 0) return; // Not initialized yet
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      const isOverContainer = (
-        x >= rect.left &&
-        x <= rect.right &&
-        y >= rect.top &&
-        y <= rect.bottom
-      );
-      
-      if (isOverContainer) {
-        if (!isCursorVisible.current) {
-          handleMouseEnter({ clientX: x, clientY: y });
+    if (!isCursorVisible.current) {
+      handleMouseEnter(event);
+    }
+
+    if (xTo.current && yTo.current) {
+      xTo.current(clientX - 50);
+      yTo.current(clientY - 50);
+    }
+
+    // Only update React state if the direction actually changes!
+    const isLeft = clientX < window.innerWidth / 2;
+    const newDirection = isLeft ? "prev" : "next";
+    
+    if (directionRef.current !== newDirection) {
+      directionRef.current = newDirection;
+      setCursorText(isLeft ? "Prev" : "Next");
+    }
+  };
+
+  // IntersectionObserver to start/pause autoplay only when WhatWeDo is visible
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        isSectionInView.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          if (storyTimeoutRef.current) clearTimeout(storyTimeoutRef.current);
+          storyTimeoutRef.current = setTimeout(() => {
+            changeStory(undefined, true);
+          }, 4000);
+        } else {
+          if (storyTimeoutRef.current) {
+            clearTimeout(storyTimeoutRef.current);
+            storyTimeoutRef.current = null;
+          }
+          if (isCursorVisible.current) {
+            handleMouseLeave();
+          }
         }
-      } else {
-        if (isCursorVisible.current) {
-          handleMouseLeave();
-        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      if (storyTimeoutRef.current) {
+        clearTimeout(storyTimeoutRef.current);
       }
     };
-
-    window.addEventListener("mousemove", updateGlobalMouse, { passive: true });
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener("mousemove", updateGlobalMouse);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stories.length]);
 
   // Handle screen taps/clicks for navigation
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -410,13 +396,13 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
       {/* Custom Mouse Cursor — solid orange everywhere, glass effect on image */}
       <div
         ref={cursorRef}
-        className={`cursor fixed top-0 left-0 w-[100px] h-[100px] hidden md:flex justify-center items-center rounded-full pointer-events-none z-100 opacity-0 scale-75 transition-[backdrop-filter,background-color,border] duration-300 ${isOnImage ? 'backdrop-blur-[20px] border border-[#FF6118]/40' : ''}`}
+        className={`cursor fixed top-0 left-0 w-25 h-25 hidden md:flex justify-center items-center rounded-full pointer-events-none z-100 opacity-0 scale-75 transition-[background-color,border] duration-300 transform-gpu will-change-transform ${isOnImage ? 'backdrop-blur-sm border border-[#FF6118]/60' : ''}`}
         style={{ 
-          backgroundColor: isOnImage ? 'rgba(255, 97, 24, 0.35)' : '#FF6118',
+          backgroundColor: isOnImage ? 'rgba(255, 97, 24, 0.45)' : '#FF6118',
           transform: 'translate3d(-1000px, -1000px, 0)'
         }}
       >
-        <p className="text-[12px] uppercase text-white font-normal tracking-wider select-none">
+        <p className="text-xs uppercase text-white font-normal tracking-wider select-none">
           {cursorText}
         </p>
       </div>
@@ -426,7 +412,6 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
       <div className="relative w-[90vw] md:w-[75vw] lg:w-[60vw] h-[55vh] md:h-[65vh] lg:h-[75vh]">
         
         {/* LAYER 1: BLACK TEXT (Behind the image, overflows naturally over the white background) */}
-        {/* Line 0: Overlapping below top left corner */}
         {/* Line 0: Overlapping below top left corner */}
         <div className="absolute max-md:top-[calc(100%+16px)] max-md:bottom-auto max-md:left-0 max-md:w-full md:top-[4%] md:left-[-25%] xl:left-[-30%] w-[90vw] md:w-[80vw] overflow-hidden pointer-events-none z-10 grid">
           {prevStory !== null && stories[prevStory].title[0] && (
@@ -453,17 +438,30 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
 
         {/* LAYER 2: STORY IMAGES CANVAS (Opaque, completely hides the black text beneath it) */}
         <div
-          className="story-img absolute inset-0 w-full h-full overflow-hidden bg-[#ffffff] z-20"
+          className="story-img absolute inset-0 w-full h-full overflow-hidden bg-[#ffffff] z-20 will-change-transform transform-gpu"
           onMouseEnter={() => setIsOnImage(true)}
           onMouseLeave={() => setIsOnImage(false)}
         >
           {prevStory !== null && (
-            <div className="img absolute inset-0 w-full h-full old-img-container skeleton-shimmer">
-              <Image src={stories[prevStory].storyImg} alt="" fill unoptimized className="object-cover old-story-img" />
+            <div className="img absolute inset-0 w-full h-full old-img-container">
+              <Image 
+                src={stories[prevStory].storyImg} 
+                alt={`Mycelius crafted ${stories[prevStory].title.join(" ")}`} 
+                fill 
+                unoptimized 
+                className="object-cover old-story-img will-change-transform transform-gpu" 
+              />
             </div>
           )}
-          <div className="img absolute inset-0 w-full h-full new-img-container skeleton-shimmer">
-            <Image src={stories[activeStory].storyImg} alt="mycelium asset" fill priority unoptimized className="object-cover new-story-img" />
+          <div className="img absolute inset-0 w-full h-full new-img-container">
+            <Image 
+              src={stories[activeStory].storyImg} 
+              alt={`Mycelius crafted ${stories[activeStory].title.join(" ")}`} 
+              fill 
+              priority 
+              unoptimized 
+              className="object-cover new-story-img will-change-transform transform-gpu" 
+            />
           </div>
 
           {/* LAYER 3: WHITE TEXT (Inside image container, physically clipped by overflow-hidden at the exact image boundary) */}
@@ -494,11 +492,19 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
 
         {/* LAYER 4: Segmented Progress indicators */}
         <div className="absolute max-md:-top-10 max-md:bottom-auto -bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto w-[80%] md:w-[40%] mx-auto px-1 z-40">
-          <div className="indices w-full h-[10px] flex justify-between items-center gap-[0.25em]">
-            {stories.map((_, idx) => (
-              <div
+          <div 
+            className="indices w-full h-2.5 flex justify-between items-center gap-[0.25em]"
+            role="tablist"
+            aria-label="What we do story slides"
+          >
+            {stories.map((story, idx) => (
+              <button
                 key={idx}
-                className="relative w-full py-3 cursor-pointer flex items-center group"
+                type="button"
+                role="tab"
+                aria-selected={idx === activeStory}
+                aria-label={`View slide ${idx + 1} of ${stories.length}: ${story.title.join(" ")}`}
+                className="relative w-full py-3 cursor-pointer flex items-center group bg-transparent border-0 p-0 focus:outline-none focus-visible:ring-1 focus-visible:ring-black"
                 onClick={() => {
                   if (!isTransitioning.current && idx !== activeStoryRef.current) {
                     if (storyTimeoutRef.current) {
@@ -519,17 +525,10 @@ export default function WhatWeDo({ stories }: { stories: Story[] }) {
                     }
                   />
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Hidden elements for caching and preloading all high-res story slides */}
-      <div className="hidden" aria-hidden="true">
-        {stories.map((story, idx) => (
-          <Image key={idx} src={story.storyImg} alt="preload" width={10} height={10} loading="eager" unoptimized />
-        ))}
       </div>
     </section>
   );

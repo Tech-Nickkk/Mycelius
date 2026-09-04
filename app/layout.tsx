@@ -10,17 +10,20 @@ import { Bricolage_Grotesque, Montserrat, Kodchasan } from "next/font/google";
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
+  display: "swap",
 });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
+  display: "swap",
 });
 
 const kodchasan = Kodchasan({
   subsets: ["latin"],
   weight: ["200", "300", "400"],
   variable: "--font-kodchasan",
+  display: "swap",
 });
 
 const neueHaasDisplay = localFont({
@@ -42,26 +45,31 @@ const neueHaasDisplay = localFont({
     },
   ],
   variable: "--font-neue-haas",
+  display: "swap",
 });
 
 const forta = localFont({
   src: "./fonts/Forta.ttf",
   variable: "--font-forta",
+  display: "swap",
 });
 
 const avenirNext = localFont({
   src: "./fonts/Avenir Next Ultra Light.otf",
   variable: "--font-avenir-next",
+  display: "swap",
 });
 
 const zapfino = localFont({
   src: "./fonts/Zapfino.ttf",
   variable: "--font-zapfino",
+  display: "swap",
 });
 
 const ardelaEdge = localFont({
   src: "./fonts/ARDELA-EDGE-X02-Regular.ttf",
   variable: "--font-ardela-edge",
+  display: "swap",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mycelius.com";
@@ -147,6 +155,10 @@ export const metadata: Metadata = {
       "Premium biomaterials grown from mycelium. Biodegradable, fire-retardant, non-toxic — designed without compromise.",
     images: ["/mycelius-gemini-Photoroom.png"],
   },
+  // ── Canonical & Alternates ──
+  alternates: {
+    canonical: siteUrl,
+  },
 };
 
 // ── Viewport (separated from metadata per Next.js 14+ convention) ──
@@ -156,6 +168,39 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const jsonLdOrg = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Mycelius",
+  url: siteUrl,
+  logo: `${siteUrl}/logo.avif`,
+  description:
+    "Mycelius develops premium biomaterials grown from mycelium and agricultural waste for architects, interior designers, and luxury spaces.",
+  sameAs: [
+    "https://www.instagram.com/mycelius.lab",
+    "https://www.linkedin.com/company/mycelius/",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+91-9354097886",
+    contactType: "customer service",
+    areaServed: "IN",
+    availableLanguage: ["English", "Hindi"],
+  },
+};
+
+const jsonLdWebSite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Mycelius",
+  url: siteUrl,
+  description: "Biomaterials Grown from Fungi",
+  publisher: {
+    "@type": "Organization",
+    name: "Mycelius",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -163,6 +208,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bricolageGrotesque.variable} ${neueHaasDisplay.variable} ${forta.variable} ${montserrat.variable} ${kodchasan.variable} ${avenirNext.variable} ${zapfino.variable} ${ardelaEdge.variable} bg-[#12110E]`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body className="min-h-screen bg-[#12110E] text-white antialiased selection:bg-[#FF6118] selection:text-black" suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
         <Preloader />

@@ -109,7 +109,7 @@ const formatStatus = (status: string) => {
     const isNum = !isNaN(Number(parts[0]));
     return (
       <div className="flex flex-col items-center justify-center font-black text-black">
-        <span className={isNum ? "text-[12px] sm:text-[14px] leading-none font-black" : "text-[9.5px] sm:text-[11px] leading-tight tracking-wider font-black"}>
+        <span className={isNum ? "text-xs sm:text-sm leading-none font-black" : "text-[9.5px] sm:text-[11px] leading-tight tracking-wider font-black"}>
           {parts[0]}
         </span>
         <span className="text-[7.5px] sm:text-[9px] tracking-wider leading-none uppercase mt-0.5 font-black">
@@ -121,25 +121,7 @@ const formatStatus = (status: string) => {
   return <span className="text-[9.5px] sm:text-[11.5px] font-black leading-tight tracking-wider capitalize text-black">{status}</span>;
 };
 
-const headingTextFillStyle: React.CSSProperties = {
-  backgroundImage: "linear-gradient(to top, #ffffff 49.8%, rgba(255, 255, 255, 0.15) 50.2%)",
-  backgroundSize: "100% 200%",
-  backgroundPosition: "0% 0%",
-  backgroundClip: "text",
-  WebkitBackgroundClip: "text",
-  color: "transparent",
-  WebkitTextFillColor: "transparent",
-};
 
-const headingTextFillStyleOrange: React.CSSProperties = {
-  backgroundImage: "linear-gradient(to top, #FF5500 49.8%, rgba(255, 85, 0, 0.25) 50.2%)",
-  backgroundSize: "100% 200%",
-  backgroundPosition: "0% 0%",
-  backgroundClip: "text",
-  WebkitBackgroundClip: "text",
-  color: "transparent",
-  WebkitTextFillColor: "transparent",
-};
 
 function ShaderLinkButton({
   href,
@@ -300,15 +282,65 @@ function SuccessCloseButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+function ImageLightboxModal({
+  item,
+  onClose,
+}: {
+  item: LimitedEditionItem;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${item.name} specimen preview`}
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 cursor-pointer select-none animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      {/* Top Right Fixed Close Button */}
+      <div 
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 pointer-events-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <ModalCloseButton onClick={onClose} />
+      </div>
+
+      {/* Pure High-Res Specimen Image (No extra background / no clutter) */}
+      <div
+        className="relative w-full max-w-4xl h-[80vh] flex items-center justify-center pointer-events-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Image
+          src={item.image}
+          alt={item.name}
+          fill
+          unoptimized
+          className="object-contain drop-shadow-[0_20px_60px_rgba(0,0,0,0.9)] rounded-xl sm:rounded-2xl"
+          sizes="(max-width: 1200px) 100vw, 1200px"
+          priority
+        />
+      </div>
+    </div>
+  );
+}
+
 function ProductCard({
   item,
-  index,
   onAcquire,
+  onPreviewImage,
   isProcessing = false,
 }: {
   item: LimitedEditionItem;
-  index: number;
   onAcquire: (item: LimitedEditionItem, quantity: number) => void;
+  onPreviewImage?: (item: LimitedEditionItem) => void;
   isProcessing?: boolean;
 }) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -316,25 +348,25 @@ function ProductCard({
   const isSoldOut = item.status.toLowerCase().includes("sold");
   const isUpcoming = item.status.toLowerCase().includes("upcoming") || item.status.toLowerCase().includes("growing") || !!item.isUpcoming;
 
-  const whatsappMsg = encodeURIComponent(
-    `Hi Mycelius Team, I am interested in inquiring about ${quantity} unit${quantity > 1 ? "s" : ""} of the Limited Edition piece "${item.name}". Please let me know current availability and acquisition details.`
-  );
-
   return (
     <div className="group relative bg-[#181613] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:border-white/25">
-      {/* Top Image Box */}
-      <div className="relative w-full aspect-[4/3] bg-[#0d0c0a] overflow-hidden">
+      {/* Top Image Box (Click to enlarge / zoom) */}
+      <div 
+        onClick={() => onPreviewImage?.(item)}
+        className="relative w-full aspect-4/3 bg-[#0d0c0a] overflow-hidden cursor-zoom-in group/img"
+        title="Click to view specimen image"
+      >
         <Image
           src={item.image}
           alt={item.name}
           fill
           unoptimized
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 will-change-transform"
+          className="object-cover transition-transform duration-700 ease-out group-hover/img:scale-105 will-change-transform"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
         {/* Gradient shadow overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
         {/* Exclusivity Splat Badge */}
         <div className="absolute top-3 right-3 z-10 w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] rotate-12">
@@ -429,7 +461,7 @@ function ProductCard({
 
           {isSoldOut ? (
             <div
-              className="text-[11px] sm:text-xs uppercase tracking-wider px-4 sm:px-5 py-2.5 border border-white/20 text-white/50 rounded-full bg-white/[0.03] select-none flex items-center justify-center shrink-0 cursor-default"
+              className="text-[11px] sm:text-xs uppercase tracking-wider px-4 sm:px-5 py-2.5 border border-white/20 text-white/50 rounded-full bg-white/3 select-none flex items-center justify-center shrink-0 cursor-default"
             >
               <span className="font-semibold flex items-center gap-1.5 text-white/60">
                 Sold Out
@@ -437,7 +469,7 @@ function ProductCard({
             </div>
           ) : isUpcoming ? (
             <div
-              className="text-[11px] sm:text-xs uppercase tracking-wider px-4 sm:px-5 py-2.5 border border-white/20 text-white/60 rounded-full bg-white/[0.03] select-none flex items-center justify-center shrink-0 cursor-default"
+              className="text-[11px] sm:text-xs uppercase tracking-wider px-4 sm:px-5 py-2.5 border border-white/20 text-white/60 rounded-full bg-white/3 select-none flex items-center justify-center shrink-0 cursor-default"
             >
               <span className="font-semibold flex items-center gap-1.5 text-[#D4D0C9]">
                 Growing...
@@ -469,6 +501,7 @@ export default function LimitedEditionsPage() {
   const [items, setItems] = useState<LimitedEditionItem[]>(DEFAULT_ITEMS);
   const [timerSettings, setTimerSettings] = useState<CountdownTimerProps | undefined>(undefined);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [previewImageItem, setPreviewImageItem] = useState<LimitedEditionItem | null>(null);
   
   // Checkout & Customer Data States
   const [checkoutItem, setCheckoutItem] = useState<{ item: LimitedEditionItem; quantity: number } | null>(null);
@@ -483,7 +516,6 @@ export default function LimitedEditionsPage() {
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [orderSuccess, setOrderSuccess] = useState<OrderSuccessData | null>(null);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const [activeTabStyle, setActiveTabStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -639,8 +671,23 @@ const loadRazorpaySDK = (): Promise<boolean> => {
 
   const handleAcquirePiece = async (item: LimitedEditionItem, quantity: number = 1, customer: CustomerDetails) => {
     try {
-      setCheckoutError(null);
       setProcessingId(item.id || item.name);
+
+      // Validate Indian phone number (10 digits starting with 6-9)
+      const cleanPhone = customer.phone.replace(/\D/g, "");
+      if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        alert("Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).");
+        setProcessingId(null);
+        return;
+      }
+
+      // Validate Indian PIN code (6 digits, first digit 1-9)
+      const cleanPostal = customer.postalCode.replace(/\D/g, "");
+      if (cleanPostal.length !== 6 || !/^[1-9]\d{5}$/.test(cleanPostal)) {
+        alert("Acquisitions are currently restricted to Indian delivery addresses. Please enter a valid 6-digit Indian PIN code (e.g. 110001).");
+        setProcessingId(null);
+        return;
+      }
 
       const isSDKLoaded = await loadRazorpaySDK();
       if (!isSDKLoaded || typeof window === "undefined" || !(window as unknown as { Razorpay?: unknown }).Razorpay) {
@@ -657,7 +704,11 @@ const loadRazorpaySDK = (): Promise<boolean> => {
           productId: item.id,
           quantity,
           amount: item.price,
-          customer,
+          customer: {
+            ...customer,
+            phone: cleanPhone,
+            postalCode: cleanPostal,
+          },
         }),
       });
 
@@ -726,7 +777,7 @@ const loadRazorpaySDK = (): Promise<boolean> => {
         prefill: {
           name: customer.name,
           email: customer.email,
-          contact: customer.phone,
+          contact: cleanPhone,
         },
         notes: {
           productId: item.id || "custom",
@@ -734,10 +785,10 @@ const loadRazorpaySDK = (): Promise<boolean> => {
           quantity: quantity.toString(),
           customerName: customer.name,
           customerEmail: customer.email,
-          customerPhone: customer.phone,
+          customerPhone: cleanPhone,
           shippingAddress: customer.address,
           city: customer.city,
-          postalCode: customer.postalCode,
+          postalCode: cleanPostal,
         },
         theme: {
           color: "#FF5500",
@@ -761,7 +812,6 @@ const loadRazorpaySDK = (): Promise<boolean> => {
       rzpInstance.open();
     } catch (err: unknown) {
       const errorMsg = (err as { message?: string })?.message || "Could not complete request.";
-      setCheckoutError(errorMsg);
       alert(errorMsg);
       setProcessingId(null);
     }
@@ -822,7 +872,7 @@ const loadRazorpaySDK = (): Promise<boolean> => {
         </h1>
 
         <p className="text-[#D4D0C9] text-xs sm:text-sm md:text-base max-w-2xl mx-auto font-light font-avenir-next tracking-[0.04em] leading-relaxed text-center">
-          A small, serialized collection of bio-crafted artifacts sculpted from active living fungi. Produced in strictly limited quantities and released in micro-drops when cultivation completes.
+          A small collection, grown one piece at a time. Which one will only ever belong to you?
         </p>
 
         {/* Drop Countdown Timer */}
@@ -868,8 +918,8 @@ const loadRazorpaySDK = (): Promise<boolean> => {
             <ProductCard
               key={item.id || index}
               item={item}
-              index={index}
               onAcquire={(prod, qty) => handleStartCheckout(prod, qty)}
+              onPreviewImage={(prod) => setPreviewImageItem(prod)}
               isProcessing={processingId === (item.id || item.name)}
             />
           ))}
@@ -881,11 +931,14 @@ const loadRazorpaySDK = (): Promise<boolean> => {
       {/* Collector & Delivery Details Modal */}
       {checkoutItem && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="checkout-modal-title"
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6"
           onClick={() => setCheckoutItem(null)}
         >
           <div
-            className="relative bg-[#161412] border border-white/15 rounded-3xl max-w-lg w-full max-h-[95vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.85)] z-10"
+            className="relative bg-[#161412] border border-white/15 rounded-3xl max-w-lg w-full max-h-[95vh] overflow-y-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.85)] z-10"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -896,6 +949,7 @@ const loadRazorpaySDK = (): Promise<boolean> => {
               Collector & Delivery Details
             </span>
             <h3
+              id="checkout-modal-title"
               className="text-xl sm:text-2xl font-semibold font-kodchasan text-white truncate max-w-[calc(100%-48px)] block mb-1"
               title={`Acquire ${checkoutItem.item.name}`}
             >
@@ -919,7 +973,7 @@ const loadRazorpaySDK = (): Promise<boolean> => {
                 </div>
                 <div className="min-w-0">
                   <h4
-                    className="text-white font-medium truncate max-w-[170px] sm:max-w-[210px] block"
+                    className="text-white font-medium truncate max-w-42.5 sm:max-w-52.5 block"
                     title={checkoutItem.item.name}
                   >
                     {checkoutItem.item.name}
@@ -935,6 +989,22 @@ const loadRazorpaySDK = (): Promise<boolean> => {
               </div>
             </div>
 
+            {/* Domestic Shipping Badge */}
+            <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/3 border border-white/10 text-[11px] font-avenir-next mb-4">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-1.5 w-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF5500] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#FF5500]"></span>
+                </span>
+                <span className="text-white/80 font-medium text-[11px] tracking-wide">
+                  Pan-India Domestic Fulfillment
+                </span>
+              </div>
+              <span className="text-[10px] uppercase tracking-wider text-[#FF5500] font-semibold">
+                India Only
+              </span>
+            </div>
+
             {/* Customer Form */}
             <form
               onSubmit={(e) => {
@@ -944,11 +1014,14 @@ const loadRazorpaySDK = (): Promise<boolean> => {
               className="space-y-3.5"
             >
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                <label htmlFor="customer-name" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
                   Full Name *
                 </label>
                 <input
                   type="text"
+                  id="customer-name"
+                  name="name"
+                  autoComplete="name"
                   required
                   placeholder="e.g. Gauri Gautam"
                   value={customerForm.name}
@@ -959,11 +1032,14 @@ const loadRazorpaySDK = (): Promise<boolean> => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                  <label htmlFor="customer-email" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
                     Email Address *
                   </label>
                   <input
                     type="email"
+                    id="customer-email"
+                    name="email"
+                    autoComplete="email"
                     required
                     placeholder="collector@gmail.com"
                     value={customerForm.email}
@@ -972,25 +1048,33 @@ const loadRazorpaySDK = (): Promise<boolean> => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
-                    Phone Number *
+                  <label htmlFor="customer-phone" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                    Phone Number (10 Digits) *
                   </label>
                   <input
                     type="tel"
+                    id="customer-phone"
+                    name="tel"
+                    autoComplete="tel"
                     required
-                    placeholder="9876543210"
+                    maxLength={10}
+                    pattern="[6-9][0-9]{9}"
+                    placeholder="e.g. 9876543210"
                     value={customerForm.phone}
-                    onChange={(e) => setCustomerForm((prev) => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) => setCustomerForm((prev) => ({ ...prev, phone: e.target.value.replace(/\D/g, "") }))}
                     className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 focus:border-[#FF5500] rounded-xl text-xs text-white placeholder:text-white/30 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                <label htmlFor="customer-address" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
                   Delivery / Shipping Address *
                 </label>
                 <textarea
+                  id="customer-address"
+                  name="street-address"
+                  autoComplete="street-address"
                   required
                   rows={2}
                   placeholder="Flat / House No., Apartment or Street Name, Landmark"
@@ -1002,11 +1086,14 @@ const loadRazorpaySDK = (): Promise<boolean> => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                  <label htmlFor="customer-city" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
                     City / Town *
                   </label>
                   <input
                     type="text"
+                    id="customer-city"
+                    name="address-level2"
+                    autoComplete="address-level2"
                     required
                     placeholder="e.g. New Delhi"
                     value={customerForm.city}
@@ -1015,15 +1102,20 @@ const loadRazorpaySDK = (): Promise<boolean> => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
-                    PIN / Postal Code *
+                  <label htmlFor="customer-postal" className="block text-[11px] uppercase tracking-wider text-white/70 mb-1 font-medium">
+                    PIN Code (6 Digits) *
                   </label>
                   <input
                     type="text"
+                    id="customer-postal"
+                    name="postal-code"
+                    autoComplete="postal-code"
                     required
+                    maxLength={6}
+                    pattern="[1-9][0-9]{5}"
                     placeholder="e.g. 110001"
                     value={customerForm.postalCode}
-                    onChange={(e) => setCustomerForm((prev) => ({ ...prev, postalCode: e.target.value }))}
+                    onChange={(e) => setCustomerForm((prev) => ({ ...prev, postalCode: e.target.value.replace(/\D/g, "") }))}
                     className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 focus:border-[#FF5500] rounded-xl text-xs text-white placeholder:text-white/30 focus:outline-none transition-colors"
                   />
                 </div>
@@ -1038,9 +1130,20 @@ const loadRazorpaySDK = (): Promise<boolean> => {
         </div>
       )}
 
+      {/* Image Lightbox Modal */}
+      {previewImageItem && (
+        <ImageLightboxModal
+          item={previewImageItem}
+          onClose={() => setPreviewImageItem(null)}
+        />
+      )}
+
       {/* Acquisition Celebration Modal */}
       {orderSuccess && (
         <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="success-modal-title"
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
           onClick={() => setOrderSuccess(null)}
         >
@@ -1060,6 +1163,7 @@ const loadRazorpaySDK = (): Promise<boolean> => {
             </span>
 
             <h3 
+              id="success-modal-title"
               className="text-xl sm:text-2xl font-semibold font-kodchasan text-white mb-2 truncate max-w-full block"
               title={orderSuccess.productName}
             >

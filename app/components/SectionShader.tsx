@@ -107,108 +107,154 @@ export default function SectionShader({
     const sizeElement = sizeTarget ? document.querySelector(sizeTarget) as HTMLElement : sectionElement;
     if (!sizeElement) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: false,
-    });
-
-    const rgb = hexToRgb(color);
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        uProgress: { value: 0 },
-        uResolution: {
-          value: new THREE.Vector2(sectionElement.offsetWidth, sectionElement.offsetHeight),
-        },
-        uColor: { value: new THREE.Vector3(rgb.r, rgb.g, rgb.b) },
-        uSpread: { value: spread },
-        uInvert: { value: invert ? 1.0 : 0.0 },
-      },
-      transparent: true,
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const resizeWebGL = () => {
-      if (!sectionElement || !renderer || !material) return;
-      const width = sizeElement.offsetWidth;
-      const height = sizeElement.offsetHeight;
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      material.uniforms.uResolution.value.set(width, height);
-    };
-
-    resizeWebGL();
-    window.addEventListener("resize", resizeWebGL);
-
+    let scene: THREE.Scene;
+    let camera: THREE.OrthographicCamera;
+    let renderer: THREE.WebGLRenderer;
+    let material: THREE.ShaderMaterial;
+    let geometry: THREE.BufferGeometry;
+    let isVisible = false;
     let targetProgress = 0;
-    const handleScroll = () => {
-      if (!sectionElement) return;
-      const rect = sectionElement.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+    let animationFrameId: number | null = null;
+    let isRunning = false;
+
+    try {
+      scene = new THREE.Scene();
+      camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: false,
+      });
+
+      const rgb = hexToRgb(color);
+      geometry = new THREE.PlaneGeometry(2, 2);
       
-      const currentScroll = windowHeight - rect.top;
-      
-      if (currentScroll >= 0) {
-        if (playLate) {
-          const startScroll = windowHeight * 0.75;
-          const endScroll = windowHeight * 0.95;
-          if (currentScroll > startScroll) {
-            const range = endScroll - startScroll;
-            const factor = Math.min((currentScroll - startScroll) / range, 1.0);
-            targetProgress = factor * 0.35;
+      material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          uProgress: { value: 0 },
+          uResolution: {
+            value: new THREE.Vector2(sectionElement.offsetWidth, sectionElement.offsetHeight),
+          },
+          uColor: { value: new THREE.Vector3(rgb.r, rgb.g, rgb.b) },
+          uSpread: { value: spread },
+          uInvert: { value: invert ? 1.0 : 0.0 },
+        },
+        transparent: true,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      const animateWebGL = () => {
+        if (!material || !renderer) {
+          isRunning = false;
+          return;
+        }
+
+        const diff = targetProgress - material.uniforms.uProgress.value;
+        
+        if (Math.abs(diff) > 0.0008) {
+          material.uniforms.uProgress.value += diff * 0.06;
+          renderer.render(scene, camera);
+          animationFrameId = requestAnimationFrame(animateWebGL);
+        } else {
+          material.uniforms.uProgress.value = targetProgress;
+          renderer.render(scene, camera);
+          isRunning = false;
+          animationFrameId = null;
+        }
+      };
+
+      const requestRender = () => {
+        if (!isRunning && isVisible) {
+          isRunning = true;
+          animationFrameId = requestAnimationFrame(animateWebGL);
+        }
+      };
+
+      const resizeWebGL = () => {
+        if (!sectionElement || !renderer || !material) return;
+        const width = sizeElement.offsetWidth;
+        const height = sizeElement.offsetHeight;
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        material.uniforms.uResolution.value.set(width, height);
+        requestRender();
+      };
+
+      const handleScroll = () => {
+        if (!sectionElement || !isVisible) return;
+        const rect = sectionElement.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        const currentScroll = windowHeight - rect.top;
+        
+        if (currentScroll >= 0) {
+          if (playLate) {
+            const startScroll = windowHeight * 0.75;
+            const endScroll = windowHeight * 0.95;
+            if (currentScroll > startScroll) {
+              const range = endScroll - startScroll;
+              const factor = Math.min((currentScroll - startScroll) / range, 1.0);
+              targetProgress = factor * 0.35;
+            } else {
+              targetProgress = 0;
+            }
           } else {
-            targetProgress = 0;
+            targetProgress = Math.min((currentScroll / windowHeight) * speed, 1.2);
           }
         } else {
-          targetProgress = Math.min((currentScroll / windowHeight) * speed, 1.2);
+          targetProgress = 0;
         }
-      } else {
-        targetProgress = 0;
-      }
-    };
+        requestRender();
+      };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+      resizeWebGL();
+      window.addEventListener("resize", resizeWebGL);
+      window.addEventListener("scroll", handleScroll, { passive: true });
 
-    let animationFrameId: number;
-    let lastRenderedProgress = -1;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            handleScroll();
+            requestRender();
+          }
+        },
+        { rootMargin: "150px 0px 150px 0px" }
+      );
 
-    const animateWebGL = () => {
-      if (!material || !renderer) return;
+      observer.observe(sectionElement);
 
-      const diff = targetProgress - material.uniforms.uProgress.value;
-      
-      if (Math.abs(diff) > 0.001) {
-        material.uniforms.uProgress.value += diff * 0.05;
-        renderer.render(scene, camera);
-        lastRenderedProgress = material.uniforms.uProgress.value;
-      } 
-      else if (lastRenderedProgress !== targetProgress) {
-        material.uniforms.uProgress.value = targetProgress;
-        renderer.render(scene, camera);
-        lastRenderedProgress = targetProgress;
-      }
+      const handleContextLost = (event: Event) => {
+        event.preventDefault();
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        isRunning = false;
+      };
 
-      animationFrameId = requestAnimationFrame(animateWebGL);
-    };
-    animateWebGL();
+      canvas.addEventListener("webglcontextlost", handleContextLost, false);
 
-    return () => {
-      window.removeEventListener("resize", resizeWebGL);
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(animationFrameId);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-    };
+      return () => {
+        canvas.removeEventListener("webglcontextlost", handleContextLost);
+        observer.disconnect();
+        window.removeEventListener("resize", resizeWebGL);
+        window.removeEventListener("scroll", handleScroll);
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        renderer.dispose();
+        geometry.dispose();
+        material.dispose();
+      };
+    } catch (err) {
+      console.warn("WebGL initialization failed for SectionShader:", err);
+    }
   }, [color, spread, speed, scrollTarget, sizeTarget, playLate, invert]);
 
   return (

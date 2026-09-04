@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -48,7 +48,7 @@ const formatStatus = (status: string) => {
       </div>
     );
   }
-  return <span className="text-[9.5px] md:text-[12px] font-black leading-tight tracking-wider capitalize text-black">{status}</span>;
+  return <span className="text-[9.5px] md:text-xs font-black leading-tight tracking-wider capitalize text-black">{status}</span>;
 };
 
 const headingTextFillStyle: React.CSSProperties = {
@@ -89,14 +89,17 @@ export default function LimitedEditions({
   const finalItems = items && items.length > 0 ? items : DEFAULT_ITEMS;
   const N = finalItems.length;
 
-  const layout = {
-    rotation: Array.from({ length: N }, (_, i) => [-5, 5, -8, 6, -4, 7][i % 6] || 0),
-    x: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 350),
-    y: Array.from({ length: N }, (_, i) => [-10, 8, -5, 10, -8, 5][i % 6] || 0),
-    mobileRotation: Array.from({ length: N }, (_, i) => [-2, 1, -3, 2, -1, 3][i % 6] || 0),
-    mobileX: Array.from({ length: N }, () => 0),
-    mobileY: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 340),
-  };
+  const layout = useMemo(
+    () => ({
+      rotation: Array.from({ length: N }, (_, i) => [-5, 5, -8, 6, -4, 7][i % 6] || 0),
+      x: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 350),
+      y: Array.from({ length: N }, (_, i) => [-10, 8, -5, 10, -8, 5][i % 6] || 0),
+      mobileRotation: Array.from({ length: N }, (_, i) => [-2, 1, -3, 2, -1, 3][i % 6] || 0),
+      mobileX: Array.from({ length: N }, () => 0),
+      mobileY: Array.from({ length: N }, (_, i) => (i - (N - 1) / 2) * 340),
+    }),
+    [N]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -185,7 +188,7 @@ export default function LimitedEditions({
         ref={headingRef} 
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-6 sm:mb-8 px-4 pt-4 md:pt-8"
       >
-        <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] w-fit text-center">
+        <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-tight w-fit text-center">
           <span 
             className="fill-line inline-block pb-[0.2em] will-change-[background-position,transform]"
             style={headingTextFillStyle}
@@ -199,7 +202,7 @@ export default function LimitedEditions({
             Editions
           </span>
         </h2>
-        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center mt-2.5 sm:mt-3.5">
+        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-wider leading-relaxed text-center mt-2.5 sm:mt-3.5">
           A small collection of objects grown in our lab. Produced in extremely limited quantities and released when available.
         </p>
 
@@ -208,8 +211,8 @@ export default function LimitedEditions({
       </div>
 
       {/* Cards container */}
-      <div className="relative w-full grow flex items-center justify-center h-[1140px] md:h-full">
-        <div className="cards absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]">
+      <div className="relative w-full grow flex items-center justify-center h-285 md:h-full">
+        <div className="cards absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
           {finalItems.map((item, idx) => (
             <div
               key={idx}
@@ -218,7 +221,7 @@ export default function LimitedEditions({
               }}
               className="absolute pointer-events-auto"
             >
-              <div className="card opacity-0 w-[230px] h-[310px] md:w-[280px] md:h-[375px] rounded-2xl overflow-hidden bg-[#1c1a17] border border-white/10 will-change-transform">
+              <div className="card opacity-0 w-57.5 h-77.5 md:w-70 md:h-93.75 rounded-2xl overflow-hidden bg-[#1c1a17] border border-white/10 will-change-transform">
                 {/* Card Image */}
                 <div className="relative w-full h-full">
                   <Image

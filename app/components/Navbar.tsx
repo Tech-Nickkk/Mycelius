@@ -44,7 +44,7 @@ function MenuLinkItem({ link, onClick }: MenuLinkItemProps) {
         <Link
           href={link.targetId.startsWith("/") ? link.targetId : "/"}
           onClick={(e) => onClick(e, link.targetId)}
-          className="menu-anim-line relative block text-[1.8rem] xs:text-[2.2rem] md:text-[2.5rem] lg:text-[2.85rem] font-extralight font-kodchasan leading-[1.25] pb-0.5 translate-y-[-110%] will-change-transform capitalize tracking-tight"
+          className="menu-anim-line relative block text-[1.8rem] xs:text-[2.2rem] md:text-[2.5rem] lg:text-[2.85rem] font-extralight font-kodchasan leading-tight pb-0.5 translate-y-[-110%] will-change-transform capitalize tracking-tight"
         >
           {/* White text (slides up and out on hover) */}
           <span className="block text-white transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full group-hover:opacity-0">
@@ -286,7 +286,7 @@ export default function Navbar() {
   return (
     <div ref={containerRef}>
       {/* Fixed Menu Bar (Always visible) */}
-      <div className={`fixed top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-50 pointer-events-none ${isScrolled ? "mix-blend-difference" : ""}`}>
+      <header className={`fixed top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-50 pointer-events-none ${isScrolled ? "mix-blend-difference" : ""}`}>
         
         {/* Logo */}
         <div className="pointer-events-auto flex items-center h-12 md:h-14">
@@ -294,6 +294,7 @@ export default function Navbar() {
             href="/"
             onClick={(e) => handleLinkClick(e, "#home")}
             className="block"
+            aria-label="Mycelius Home"
           >
             <Image
               src="/mycelius-logo.png"
@@ -307,7 +308,7 @@ export default function Navbar() {
         </div>
 
         {/* Centered Limited Edition & Collab Buttons */}
-        <div className="menu-collab-btn pointer-events-auto flex items-center justify-center gap-2 md:gap-3 will-change-[opacity,transform] h-12 md:h-14">
+        <nav aria-label="Quick Actions" className="menu-collab-btn pointer-events-auto flex items-center justify-center gap-2 md:gap-3 will-change-[opacity,transform] h-12 md:h-14">
           <Link
             href="/limited-editions"
             onClick={() => {
@@ -335,10 +336,11 @@ export default function Navbar() {
               Collab
             </span>
           </Link>
-        </div>
+        </nav>
 
         {/* Toggle Button */}
-        <div
+        <button
+          type="button"
           onClick={() => {
             if (isOpen) {
               closeMenu();
@@ -347,11 +349,13 @@ export default function Navbar() {
             }
           }}
           {...menuHandlers}
-          className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans group"
+          aria-expanded={isOpen}
+          aria-label={isOpen ? "Close main menu" : "Open main menu"}
+          className="menu-toggle-btn flex items-center gap-4 cursor-pointer select-none pointer-events-auto text-white font-sans group bg-transparent border-0 p-0 focus:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-full"
         >
           <div className="menu-toggle-label hidden md:block overflow-hidden h-[1.2em]">
             <p className="menu-toggle-label-text relative translate-y-0 will-change-transform uppercase tracking-[0.07em] text-xs font-semibold">
-              Menu
+              {isOpen ? "Close" : "Menu"}
             </p>
           </div>
 
@@ -359,23 +363,23 @@ export default function Navbar() {
           <div className="menu-hamburger-icon w-12 h-12 flex flex-col justify-center items-center border border-white/20 rounded-full relative overflow-hidden transition-colors duration-300 group-hover:border-white">
             <ButtonShader isHovered={isMenuHovered} colorA="#12110E" colorB="#ffffff" />
             <span
-              className={`absolute w-[15px] h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+              className={`absolute w-3.75 h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
                 isMenuHovered ? "bg-black" : "bg-white"
               } ${
-                isOpen ? "translate-y-0 rotate-45 scale-x-[1.05]" : "translate-y-[-3px]"
+                isOpen ? "translate-y-0 rotate-45 scale-x-105" : "-translate-y-0.75"
               }`}
             />
             <span
-              className={`absolute w-[15px] h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
+              className={`absolute w-3.75 h-[1.25px] transition-all duration-750 ease-[cubic-bezier(0.87,0,0.13,1)] origin-center will-change-transform z-10 ${
                 isMenuHovered ? "bg-black" : "bg-white"
               } ${
-                isOpen ? "translate-y-0 -rotate-45 scale-x-[1.05]" : "translate-y-[3px]"
+                isOpen ? "translate-y-0 -rotate-45 scale-x-105" : "translate-y-0.75"
               }`}
             />
           </div>
-        </div>
+        </button>
 
-      </div>
+      </header>
 
       {/* Menu Overlay Panel */}
       <div className="menu-overlay fixed top-0 left-0 w-screen h-screen text-white bg-[#12110E] overflow-hidden z-40 [clip-path:polygon(0%_0%,100%_0%,100%_0%,0%_0%)] will-change-[clip-path]">
@@ -406,45 +410,45 @@ export default function Navbar() {
             <div className="menu-footer w-full flex flex-wrap items-end justify-between gap-6 md:gap-8 mt-4 md:mt-6 border-t border-white/10 pt-3 md:pt-4">
               
               {/* Location */}
-              <div className="menu-col flex flex-col gap-1 min-w-[200px]">
+              <div className="menu-col flex flex-col gap-1 min-w-50">
                 <div className="menu-footer-line overflow-hidden">
                   <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Location
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider">
                     Delhi NCR, India
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
+                  <p className="menu-anim-line text-sm text-white/90 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider">
                     +91 9354097886
                   </p>
                 </div>
               </div>
 
               {/* Contact details */}
-              <div className="menu-col flex flex-col gap-1 min-w-[200px]">
+              <div className="menu-col flex flex-col gap-1 min-w-50">
                 <div className="menu-footer-line overflow-hidden">
                   <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Contact
                   </p>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
+                  <a href="mailto:bioshift@myceliuslab.com" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider">
                     bioshift@myceliuslab.com
                   </a>
                 </div>
                 <div className="menu-footer-line overflow-hidden">
-                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]">
+                  <a href="https://www.myceliuslab.com" target="_blank" rel="noopener noreferrer" className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider">
                     www.myceliuslab.com
                   </a>
                 </div>
               </div>
 
               {/* Legal */}
-              <div className="menu-col flex flex-col gap-1 min-w-[140px]">
+              <div className="menu-col flex flex-col gap-1 min-w-35">
                 <div className="menu-footer-line overflow-hidden">
                   <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Legal
@@ -455,7 +459,7 @@ export default function Navbar() {
                     href="/docx/Mycelius_Terms_and_Conditions.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]"
+                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider"
                   >
                     Terms & Conditions
                   </a>
@@ -465,7 +469,7 @@ export default function Navbar() {
                     href="/docx/Mycelius_Privacy_Policy.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-[0.05em]"
+                    className="menu-anim-line block text-sm text-white/90 hover:text-[#F15B20] transition-colors duration-300 translate-y-[-110%] will-change-transform font-light font-avenir-next tracking-wider"
                   >
                     Privacy Policy
                   </a>
@@ -473,7 +477,7 @@ export default function Navbar() {
               </div>
 
               {/* Socials */}
-              <div className="menu-col flex flex-col gap-1 min-w-[120px]">
+              <div className="menu-col flex flex-col gap-1 min-w-30">
                 <div className="menu-footer-line overflow-hidden">
                   <p className="menu-anim-line text-[10px] uppercase tracking-widest text-[#D4D0C9] translate-y-[-110%] will-change-transform font-light font-avenir-next">
                     Follow

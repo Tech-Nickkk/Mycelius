@@ -35,36 +35,38 @@ const textFillStyleOrange: React.CSSProperties = {
 };
 
 
+const r = (n: number) => Math.round(n * 1000) / 1000;
+
 const getClipPathD = (xTop: number, xBottom: number) => {
   const w = 0.45; // notch width
   const c = 0.08; // transition width
   
   // Top notch (indented down to y = 0.08)
-  const x1_top = xTop - w / 2;
-  const x2_top = x1_top + c;
-  const x3_top = xTop + w / 2 - c;
-  const x4_top = xTop + w / 2;
+  const x1_top = r(xTop - w / 2);
+  const x2_top = r(x1_top + c);
+  const x3_top = r(xTop + w / 2 - c);
+  const x4_top = r(xTop + w / 2);
 
   // Bottom notch (indented up to y = 0.92)
-  const x1_bot = xBottom - w / 2;
-  const x2_bot = x1_bot + c;
-  const x3_bot = xBottom + w / 2 - c;
-  const x4_bot = xBottom + w / 2;
+  const x1_bot = r(xBottom - w / 2);
+  const x2_bot = r(x1_bot + c);
+  const x3_bot = r(xBottom + w / 2 - c);
+  const x4_bot = r(xBottom + w / 2);
 
   return `M 0,0.04 ` +
     `C 0,0.02 0.02,0 0.04,0 ` +
     `L ${x1_top},0 ` +
-    `C ${x1_top + c*0.4},0 ${x1_top + c*0.6},0.08 ${x2_top},0.08 ` +
+    `C ${r(x1_top + c*0.4)},0 ${r(x1_top + c*0.6)},0.08 ${x2_top},0.08 ` +
     `L ${x3_top},0.08 ` +
-    `C ${x4_top - c*0.6},0.08 ${x4_top - c*0.4},0 ${x4_top},0 ` +
+    `C ${r(x4_top - c*0.6)},0.08 ${r(x4_top - c*0.4)},0 ${x4_top},0 ` +
     `L 0.96,0 ` +
     `C 0.98,0 1,0.02 1,0.04 ` +
     `L 1,0.96 ` +
     `C 1,0.98 0.98,1 0.96,1 ` +
     `L ${x4_bot},1 ` +
-    `C ${x4_bot - c*0.4},1 ${x4_bot - c*0.6},0.92 ${x3_bot},0.92 ` +
+    `C ${r(x4_bot - c*0.4)},1 ${r(x4_bot - c*0.6)},0.92 ${x3_bot},0.92 ` +
     `L ${x2_bot},0.92 ` +
-    `C ${x1_bot + c*0.6},0.92 ${x1_bot + c*0.4},1 ${x1_bot},1 ` +
+    `C ${r(x1_bot + c*0.6)},0.92 ${r(x1_bot + c*0.4)},1 ${x1_bot},1 ` +
     `L 0.04,1 ` +
     `C 0.02,1 0,0.98 0,0.96 ` +
     `Z`;
@@ -75,33 +77,33 @@ const getClipPathMobileD = (yLeft: number, yRight: number) => {
   const c = 0.08; // transition width
   
   // Right notch (indented left to x = 0.92)
-  const y1_right = yRight - w / 2;
-  const y2_right = y1_right + c;
-  const y3_right = yRight + w / 2 - c;
-  const y4_right = yRight + w / 2;
+  const y1_right = r(yRight - w / 2);
+  const y2_right = r(y1_right + c);
+  const y3_right = r(yRight + w / 2 - c);
+  const y4_right = r(yRight + w / 2);
 
   // Left notch (indented right to x = 0.08)
-  const y1_left = yLeft - w / 2;
-  const y2_left = y1_left + c;
-  const y3_left = yLeft + w / 2 - c;
-  const y4_left = yLeft + w / 2;
+  const y1_left = r(yLeft - w / 2);
+  const y2_left = r(y1_left + c);
+  const y3_left = r(yLeft + w / 2 - c);
+  const y4_left = r(yLeft + w / 2);
 
   return `M 0,0.04 ` +
     `C 0,0.02 0.02,0 0.04,0 ` +
     `L 0.96,0 ` +
     `C 0.98,0 1,0.02 1,0.04 ` +
     `L 1,${y1_right} ` +
-    `C 1,${y1_right + c*0.4} 0.92,${y1_right + c*0.6} 0.92,${y2_right} ` +
+    `C 1,${r(y1_right + c*0.4)} 0.92,${r(y1_right + c*0.6)} 0.92,${y2_right} ` +
     `L 0.92,${y3_right} ` +
-    `C 0.92,${y4_right - c*0.6} 1,${y4_right - c*0.4} 1,${y4_right} ` +
+    `C 0.92,${r(y4_right - c*0.6)} 1,${r(y4_right - c*0.4)} 1,${y4_right} ` +
     `L 1,0.96 ` +
     `C 1,0.98 0.98,1 0.96,1 ` +
     `L 0.04,1 ` +
     `C 0.02,1 0,0.98 0,0.96 ` +
     `L 0,${y4_left} ` +
-    `C 0,${y4_left - c*0.4} 0.08,${y4_left - c*0.6} 0.08,${y3_left} ` +
+    `C 0,${r(y4_left - c*0.4)} 0.08,${r(y4_left - c*0.6)} 0.08,${y3_left} ` +
     `L 0.08,${y2_left} ` +
-    `C 0.08,${y1_left + c*0.6} 0,${y1_left + c*0.4} 0,${y1_left} ` +
+    `C 0.08,${r(y1_left + c*0.6)} 0,${r(y1_left + c*0.4)} 0,${y1_left} ` +
     `Z`;
 };
 
@@ -149,7 +151,6 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             scrub: 0.3,
             pin: true,
             pinSpacing: true,
-            pinType: "transform",
           },
         });
 
@@ -207,6 +208,8 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           const pathEl = document.getElementById(`audience-card-path-${i}`);
           if (pathEl) {
             const animObj = { xTop: 0.7, xBot: 0.3 };
+            let lastXTop = 0.7;
+            let lastXBot = 0.3;
             tl.fromTo(
               animObj,
               { xTop: 0.7, xBot: 0.3 },
@@ -216,7 +219,11 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
                 ease: "none",
                 duration: end - start,
                 onUpdate: () => {
-                  pathEl.setAttribute("d", getClipPathD(animObj.xTop, animObj.xBot));
+                  if (Math.abs(animObj.xTop - lastXTop) > 0.004 || Math.abs(animObj.xBot - lastXBot) > 0.004) {
+                    lastXTop = animObj.xTop;
+                    lastXBot = animObj.xBot;
+                    pathEl.setAttribute("d", getClipPathD(animObj.xTop, animObj.xBot));
+                  }
                 },
               },
               start
@@ -303,6 +310,8 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
           const pathElMobile = document.getElementById(`audience-card-path-mobile-${i}`);
           if (pathElMobile) {
             const animObj = { yLeft: 0.7, yRight: 0.3 };
+            let lastYLeft = 0.7;
+            let lastYRight = 0.3;
             gsap.fromTo(
               animObj,
               { yLeft: 0.7, yRight: 0.3 },
@@ -317,7 +326,11 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
                   scrub: true,
                 },
                 onUpdate: () => {
-                  pathElMobile.setAttribute("d", getClipPathMobileD(animObj.yLeft, animObj.yRight));
+                  if (Math.abs(animObj.yLeft - lastYLeft) > 0.004 || Math.abs(animObj.yRight - lastYRight) > 0.004) {
+                    lastYLeft = animObj.yLeft;
+                    lastYRight = animObj.yRight;
+                    pathElMobile.setAttribute("d", getClipPathMobileD(animObj.yLeft, animObj.yRight));
+                  }
                 },
               }
             );
@@ -412,10 +425,10 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
             >
               {/* Image Wrapper */}
               <div 
-                className={`audience-card audience-card-clip-${i} relative w-full h-[55vh] md:h-[50vh] p-px bg-white/10 skeleton-shimmer-dark`}
+                className={`audience-card audience-card-clip-${i} relative w-full h-[55vh] md:h-[50vh] p-px bg-white/10 transform-gpu will-change-transform`}
               >
                 <div 
-                  className={`audience-card-clip-${i} relative w-full h-full overflow-hidden bg-[#12110E]`}
+                  className={`audience-card-clip-${i} relative w-full h-full overflow-hidden bg-[#12110E] transform-gpu`}
                 >
                   <Image
                     src={item.image}
@@ -423,7 +436,7 @@ export default function TargetAudience({ audiences }: { audiences: Audience[] })
                     fill
                     sizes="(max-width: 768px) 100vw, 35vw"
                     unoptimized
-                    className="object-cover scale-[1.2] will-change-transform"
+                    className="object-cover scale-[1.2] will-change-transform transform-gpu"
                   />
                 </div>
               </div>

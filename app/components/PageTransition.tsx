@@ -43,7 +43,7 @@ export default function PageTransition() {
     try {
       CustomEase.create("hop", ".87, 0, .13, 1");
       CustomEase.create("fluid", ".65, 0, .35, 1"); // Slightly softer for fluid
-    } catch (e) {
+    } catch {
       // CustomEase already exists
     }
   }, []);
@@ -213,13 +213,13 @@ export default function PageTransition() {
       {/* Sliding Transition Curtain */}
       <div
         ref={overlayRef}
-        className={`fixed inset-0 w-screen h-screen bg-[#12110E] z-[99998] will-change-[clip-path] ${
+        className={`fixed inset-0 w-screen h-screen bg-[#12110E] z-99998 will-change-[clip-path] ${
           isActive ? "pointer-events-auto" : "pointer-events-none"
         }`}
         style={{ clipPath: "url(#curtain-clip)" }}
       >
         {/* Subtle decorative grid/grain backdrop */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] bg-size-[24px_24px] pointer-events-none" />
 
         {/* Minimalist Centered Brand Mark during transition */}
         <div className="w-full h-full flex items-center justify-center pointer-events-none">

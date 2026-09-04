@@ -115,7 +115,7 @@ export default function CountdownTimer({
           ) : (
             <div className="flex items-center justify-center gap-2.5 sm:gap-5 font-kodchasan">
               {/* Days */}
-              <div className="flex flex-col items-center min-w-[36px] sm:min-w-[44px]">
+              <div className="flex flex-col items-center min-w-9 sm:min-w-11">
                 <span className="text-xl sm:text-2xl md:text-3xl font-extralight tracking-tight text-white leading-none">
                   {mounted ? padZero(timeLeft.days) : "00"}
                 </span>
@@ -127,7 +127,7 @@ export default function CountdownTimer({
               <span className="text-base sm:text-lg font-light text-[#F15B20] -mt-3 opacity-80">:</span>
 
               {/* Hours */}
-              <div className="flex flex-col items-center min-w-[36px] sm:min-w-[44px]">
+              <div className="flex flex-col items-center min-w-9 sm:min-w-11">
                 <span className="text-xl sm:text-2xl md:text-3xl font-extralight tracking-tight text-white leading-none">
                   {mounted ? padZero(timeLeft.hours) : "00"}
                 </span>
@@ -139,7 +139,7 @@ export default function CountdownTimer({
               <span className="text-base sm:text-lg font-light text-[#F15B20] -mt-3 opacity-80">:</span>
 
               {/* Minutes */}
-              <div className="flex flex-col items-center min-w-[36px] sm:min-w-[44px]">
+              <div className="flex flex-col items-center min-w-9 sm:min-w-11">
                 <span className="text-xl sm:text-2xl md:text-3xl font-extralight tracking-tight text-white leading-none">
                   {mounted ? padZero(timeLeft.minutes) : "00"}
                 </span>
@@ -151,7 +151,7 @@ export default function CountdownTimer({
               <span className="text-base sm:text-lg font-light text-[#F15B20] -mt-3 opacity-80">:</span>
 
               {/* Seconds */}
-              <div className="flex flex-col items-center min-w-[36px] sm:min-w-[44px]">
+              <div className="flex flex-col items-center min-w-9 sm:min-w-11">
                 <span className="text-xl sm:text-2xl md:text-3xl font-extralight tracking-tight text-[#F15B20] leading-none">
                   {mounted ? padZero(timeLeft.seconds) : "00"}
                 </span>

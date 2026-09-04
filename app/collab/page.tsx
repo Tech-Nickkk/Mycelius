@@ -22,7 +22,6 @@ export default function CollabPage() {
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [testSimulateError, setTestSimulateError] = useState(false);
 
   const web3FormsAccessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "";
 
@@ -38,7 +37,7 @@ export default function CollabPage() {
       console.log("[Test Mode] Submitting collaboration form:", formData);
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      if (testSimulateError || formData.message.toLowerCase().includes("error")) {
+      if (formData.message.toLowerCase().includes("error")) {
         setStatus("error");
         setErrorMessage("Test Error: Unable to reach server. Please try again later.");
       } else {
@@ -149,7 +148,7 @@ export default function CollabPage() {
       </header>
 
       {/* Main Container mirroring the visual layout */}
-      <div className="w-full max-w-[680px] bg-transparent flex flex-col justify-center h-full max-h-[92vh] py-4 relative z-20 mx-auto px-4 sm:px-0">
+      <div className="w-full max-w-170 bg-transparent flex flex-col justify-center h-full max-h-[92vh] py-4 relative z-20 mx-auto px-4 sm:px-0">
         
         {/* Header Block */}
         <div className={`text-center w-full flex justify-center ${status === "success" ? "mb-4 md:mb-6" : "mb-10 md:mb-14"}`}>
@@ -164,12 +163,12 @@ export default function CollabPage() {
 
         {status === "success" ? (
           /* Success Screen */
-          <div className="flex flex-col items-center text-center max-w-[580px] w-full mx-auto font-avenir-next animate-fadeIn">
+          <div className="flex flex-col items-center text-center max-w-145 w-full mx-auto font-avenir-next animate-fadeIn">
             <div className="w-16 h-16 rounded-full bg-[#F15B20] flex items-center justify-center text-[#12110E] text-3xl font-bold my-6 md:my-8 shadow-sm">
               ✓
             </div>
             
-            <p className="text-xl md:text-2xl font-bold tracking-tight text-[#12110E] leading-relaxed max-w-[500px]">
+            <p className="text-xl md:text-2xl font-bold tracking-tight text-[#12110E] leading-relaxed max-w-125">
               Sent. Somewhere, a mushroom just got excited (:
             </p>
 
@@ -189,12 +188,14 @@ export default function CollabPage() {
           </div>
         ) : (
           /* Minimal Underlined Form */
-          <form onSubmit={handleSubmit} className="flex flex-col gap-7 md:gap-8 font-extralight font-avenir-next max-w-[580px] w-full mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-7 md:gap-8 font-extralight font-avenir-next max-w-145 w-full mx-auto">
             
             {/* Botcheck Honeypot Field */}
             <input
               type="checkbox"
               name="botcheck"
+              tabIndex={-1}
+              aria-hidden="true"
               className="hidden"
               style={{ display: "none" }}
               checked={!!formData.botcheck}
@@ -210,12 +211,13 @@ export default function CollabPage() {
                 type="text"
                 id="name"
                 name="name"
+                autoComplete="name"
                 required
                 disabled={status === "submitting"}
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="The one who signs the emails"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-wider text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-wider transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -228,12 +230,13 @@ export default function CollabPage() {
                 type="email"
                 id="email"
                 name="email"
+                autoComplete="email"
                 required
                 disabled={status === "submitting"}
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Where replies go to live"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-wider text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-wider transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -251,7 +254,7 @@ export default function CollabPage() {
                 value={formData.message}
                 onChange={handleInputChange}
                 placeholder="Tell us what's growing in your mind"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-wider text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-wider transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
@@ -264,17 +267,18 @@ export default function CollabPage() {
                 type="url"
                 id="website"
                 name="website"
+                autoComplete="url"
                 disabled={status === "submitting"}
                 value={formData.website}
                 onChange={handleInputChange}
                 placeholder="Optional, but we'll look it up anyway"
-                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-[0.05em] text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-[0.05em] transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
+                className="w-full pb-3 bg-transparent text-lg md:text-xl font-bold font-avenir-next tracking-wider text-[#000000] border-b border-[#12110E]/20 focus:border-[#F15B20] focus:outline-none placeholder:text-[#12110E]/70 placeholder:font-extralight placeholder:font-avenir-next placeholder:tracking-wider transition-colors duration-300 disabled:opacity-50 pointer-events-auto touch-manipulation"
               />
             </div>
 
             {/* Error Message Box */}
             {status === "error" && (
-              <div className="p-4 bg-[#DC2626] border border-red-700 text-white text-xs md:text-sm font-medium rounded-xl flex items-center justify-between gap-3 shadow-md">
+              <div role="alert" aria-live="polite" className="p-4 bg-[#DC2626] border border-red-700 text-white text-xs md:text-sm font-medium rounded-xl flex items-center justify-between gap-3 shadow-md">
                 <span>{errorMessage || "An error occurred while submitting. Please try again."}</span>
                 <button
                   type="button"

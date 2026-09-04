@@ -289,7 +289,6 @@ class X {
     this.clear();
     this.#postprocessing?.dispose();
     this.renderer.dispose();
-    this.renderer.forceContextLoss();
     this.isDisposed = true;
   }
 

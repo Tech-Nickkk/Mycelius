@@ -86,6 +86,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // Validate Indian domestic postal PIN code (6 digits)
+    const postalCode = customer?.postalCode?.toString().replace(/\D/g, "");
+    if (postalCode && !/^[1-9]\d{5}$/.test(postalCode)) {
+      return NextResponse.json(
+        { error: "Orders are currently restricted to Indian delivery addresses. Please provide a valid 6-digit Indian PIN code." },
+        { status: 400 }
+      );
+    }
+
     // 2. Create Razorpay order with complete customer & shipping metadata
     const orderOptions = {
       amount: totalAmountInPaise,

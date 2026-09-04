@@ -121,7 +121,6 @@ export default function ProductAdvantage() {
             scrub: 0.3,
             pin: true,
             pinSpacing: true,
-            pinType: "transform",
           },
         });
 
@@ -271,7 +270,7 @@ export default function ProductAdvantage() {
         }}
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none will-change-transform mb-8 md:mb-0 px-6 md:px-0 pt-8 md:pt-0 md:absolute md:left-24 md:top-1/2 md:-translate-y-1/2 md:w-auto md:block"
       >
-        <h1 className="text-[11.5vw] xs:text-[10.5vw] sm:text-[9.2vw] md:text-[6vw] font-extralight font-kodchasan tracking-tight uppercase leading-[1.15] w-full md:w-fit text-center md:text-left">
+        <h2 className="text-[11.5vw] xs:text-[10.5vw] sm:text-[9.2vw] md:text-[6vw] font-extralight font-kodchasan tracking-tight uppercase leading-[1.15] w-full md:w-fit text-center md:text-left">
           <span
             className="fill-line slide-left block text-center md:text-left pl-0 md:pl-0 pb-[0.15em] will-change-[background-position,transform]"
             style={headingTextFillStyle}
@@ -290,7 +289,7 @@ export default function ProductAdvantage() {
           >
             Perform
           </span>
-        </h1>
+        </h2>
       </div>
 
       {/* Horizontal scroll track */}

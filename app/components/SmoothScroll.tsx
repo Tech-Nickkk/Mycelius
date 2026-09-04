@@ -65,7 +65,7 @@ export default function SmoothScroll({
       // Clean up any registered ScrollTriggers
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

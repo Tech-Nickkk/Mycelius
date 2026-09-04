@@ -35,12 +35,12 @@ const defaultAudiences: Audience[] = [
 const getSanityImageUrl = (source: SanityImageSource, updatedAt?: string) => {
   if (!source) return "";
   try {
-    const url = urlFor(source).url();
+    const url = urlFor(source).auto("format").quality(80).url();
     if (!url) return "";
     if (!updatedAt) return url;
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}t=${updatedAt}`;
-  } catch (e) {
+  } catch {
     return "";
   }
 };

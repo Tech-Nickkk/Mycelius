@@ -169,7 +169,7 @@ export default function Gallery({ items }: { items?: GalleryItem[] }) {
         ref={headingRef}
         className="w-full flex flex-col items-center justify-center z-20 pointer-events-none mb-16 sm:mb-20 md:mb-24 px-4"
       >
-        <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-[1.25] text-center">
+        <h2 className="text-[8.5vw] xs:text-[7.5vw] sm:text-[6.5vw] md:text-[4.4vw] font-extralight font-kodchasan tracking-tight leading-tight text-center">
           <span className="fill-line inline-block pb-[0.05em] will-change-[background-position,transform]" style={headingTextFillStyle}>
             What&nbsp;We&apos;ve&nbsp;
           </span>
@@ -177,7 +177,7 @@ export default function Gallery({ items }: { items?: GalleryItem[] }) {
             Grown
           </span>
         </h2>
-        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-[0.05em] leading-relaxed text-center mt-1 sm:mt-1.5">
+        <p className="text-[#D4D0C9] text-xs sm:text-sm max-w-2xl mx-auto font-light font-avenir-next tracking-wider leading-relaxed text-center mt-1 sm:mt-1.5">
           India&apos;s first fungi-grown interior biomaterial. And this is what it looks like:
         </p>
       </div>
@@ -191,11 +191,20 @@ export default function Gallery({ items }: { items?: GalleryItem[] }) {
             key={item.id || index}
             onClick={() => setSelectedIndex(index)}
             className="gallery-card group relative aspect-square rounded-none overflow-hidden bg-[#1c1a17] border border-white/10 cursor-pointer"
+            role="button"
+            tabIndex={0}
+            aria-label={`View specimen ${item.title || index + 1} in high resolution`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setSelectedIndex(index);
+              }
+            }}
           >
             {/* Image */}
             <Image
               src={item.image}
-              alt=""
+              alt={item.title || `Mycelius biomaterial specimen ${index + 1}`}
               fill
               unoptimized
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 will-change-transform"
@@ -211,7 +220,10 @@ export default function Gallery({ items }: { items?: GalleryItem[] }) {
       {/* Lightbox Image-Only Modal */}
       {selectedItem && selectedIndex !== null && (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10 cursor-zoom-out"
+          role="dialog"
+          aria-modal="true"
+          aria-label={selectedItem.title || "Gallery specimen preview"}
+          className="fixed inset-0 z-100 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10 cursor-zoom-out"
           onClick={() => setSelectedIndex(null)}
         >
 
